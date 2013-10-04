@@ -7,18 +7,18 @@ import com.google.common.collect.Iterables;
 
 public abstract class CanvasObject {
     
-    private final Set<CanvasListener> listeners = new CopyOnWriteArraySet<>();
+    private final Set<CanvasObjectListener> listeners = new CopyOnWriteArraySet<>();
     
-    public void addListener(CanvasListener listener) {
+    public void addListener(CanvasObjectListener listener) {
         listeners.add(listener);
     }
     
-    public void addAllListeners(Iterable<? extends CanvasListener> iter) {
+    public void addAllListeners(Iterable<? extends CanvasObjectListener> iter) {
         Iterables.addAll(listeners, iter);
     }
     
     protected void notifyListeners() {
-        for (CanvasListener listener : listeners) {
+        for (CanvasObjectListener listener : listeners) {
             listener.updated(this);
         }
     }

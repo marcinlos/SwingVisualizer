@@ -1,6 +1,6 @@
 package mlos.sgl.model;
 
-public interface CanvasListener {
+public interface CanvasObjectListener {
 
     void updated(CanvasObject object);
     
