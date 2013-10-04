@@ -22,8 +22,12 @@ public class CanvasPoint extends CanvasObject {
     /** Diameter of the point */
     private int size = DEFAULT_SIZE;
     
-
     public CanvasPoint(Point point) {
+        this(point, DEFAULT_Z);
+    }
+
+    public CanvasPoint(Point point, double z) {
+        super(z);
         setPoint(point);
     }
     

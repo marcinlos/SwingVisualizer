@@ -17,8 +17,6 @@ public abstract class Scene {
     
     private final Canvas canvas;
     
-    private final Painter painter;
-    
     private final CanvasPanel canvasPanel;
 
     public Scene(String name) {
@@ -28,7 +26,7 @@ public abstract class Scene {
     public Scene(String name, double width, double height) {
         this.name = checkNotNull(name);
         this.canvas = new Canvas();
-        this.painter = new CanvasPainter(canvas);
+        Painter painter = new CanvasPainter(canvas);
         this.canvasPanel = new CanvasPanel(painter, width, height);
     }
     
@@ -54,6 +52,14 @@ public abstract class Scene {
     
     protected Component getUI() {
         return panel();
+    }
+    
+    protected Painter getPainter(Painter painter) {
+        return canvasPanel.getPainter();
+    }
+    
+    protected void setPainter(Painter painter) {
+        canvasPanel.setPainter(painter);
     }
 
 }

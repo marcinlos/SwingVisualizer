@@ -6,6 +6,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 
 import javax.swing.JPanel;
 
@@ -18,9 +22,12 @@ public class CanvasPanel {
 
     /** Virtual height of the canvas */
     private double height;
+    
+//    /** Virtual coordinate system of the canvas */
+//    private Rect viewport;
 
     /** Painter drawing content */
-    private final Painter painter;
+    private Painter painter;
 
     private final class SwingPanelAdapter extends JPanel {
         @Override
@@ -57,7 +64,7 @@ public class CanvasPanel {
         this.painter = checkNotNull(painter);
         doSetWidth(width);
         doSetHeight(height);
-        
+
         swingPanel.setBackground(Color.white);
     }
 
@@ -170,6 +177,36 @@ public class CanvasPanel {
      */
     public Point toVirtual(ScreenPoint p) {
         return toVirtual(p.x, p.y);
+    }
+    
+    public Painter getPainter() {
+        return painter;
+    }
+
+    /**
+     * Sets the current painter used to draw panel content.
+     * 
+     * @param painter
+     *            Painter to paint panel with
+     */
+    public void setPainter(Painter painter) {
+        this.painter = checkNotNull(painter);
+    }
+
+    public void addMouseListener(MouseListener listener) {
+        swingPanel.addMouseListener(checkNotNull(listener));
+    }
+
+    public void addMouseMotionListener(MouseMotionListener listener) {
+        swingPanel.addMouseMotionListener(checkNotNull(listener));
+    }
+
+    public void addMouseWheelListener(MouseWheelListener listener) {
+        swingPanel.addMouseWheelListener(checkNotNull(listener));
+    }
+
+    public void addKeyListener(KeyListener listener) {
+        swingPanel.addKeyListener(checkNotNull(listener));
     }
 
 }
