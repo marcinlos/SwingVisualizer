@@ -1,17 +1,21 @@
-package mlos.sgl.view;
+package mlos.sgl.core;
 
 import java.util.Objects;
 
-public class Point {
-
-    public final int x;
-    public final int y;
+public final class Point {
     
-    public Point(int x, int y) {
+    public final double x;
+    public final double y;
+
+    public Point() {
+        this(0, 0);
+    }
+    
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
-
+    
     @Override
     public boolean equals(Object o) {
         if (o instanceof Point) {
@@ -31,4 +35,5 @@ public class Point {
     public String toString() {
         return String.format("(%d, %d)", x, y);
     }
+
 }

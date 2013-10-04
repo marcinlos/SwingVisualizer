@@ -1,21 +1,21 @@
-package mlos.sgl.core;
+package mlos.sgl.view;
 
 import java.util.Objects;
 
-public final class Vec2 {
-    
-    public final double x;
-    public final double y;
+public class ScreenPoint {
 
-    public Vec2(double x, double y) {
+    public final int x;
+    public final int y;
+    
+    public ScreenPoint(int x, int y) {
         this.x = x;
         this.y = y;
     }
-    
+
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Vec2) {
-            Vec2 other = (Vec2) o;
+        if (o instanceof ScreenPoint) {
+            ScreenPoint other = (ScreenPoint) o;
             return x == other.x && y == other.y;
         } else {
             return false;
@@ -31,5 +31,4 @@ public final class Vec2 {
     public String toString() {
         return String.format("(%d, %d)", x, y);
     }
-
 }

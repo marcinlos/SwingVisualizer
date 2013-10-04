@@ -2,13 +2,13 @@ package mlos.sgl;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
 
+import mlos.sgl.model.Canvas;
+import mlos.sgl.view.CanvasPainter;
 import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.Painter;
-import mlos.sgl.view.Point;
 
 public class MainWindow extends JFrame {
     
@@ -16,23 +16,18 @@ public class MainWindow extends JFrame {
     public static final int HEIGHT = 500;
     
     private final CanvasPanel canvasPanel;
+    
+    private final Canvas canvas = new Canvas();
+    
+    private Painter painter = new CanvasPainter(canvas);
 
     public MainWindow(double width, double height) {
         super("Visualizer");
         
-        final double w = width;
-        final double h = height;
-        this.canvasPanel = new CanvasPanel(new Painter() {
-            @Override
-            public void paint(CanvasPanel canvas, Graphics2D ctx) {
-                double x = w / 2;
-                double y = h / 2;
-                Point p = canvas.toScreen(x, y);
-                ctx.drawString("Test", p.x, p.y);
-            }
-        }, width, height);
-        
+        canvasPanel = new CanvasPanel(painter, width, height);
         setupUI();
+        
+        
     }
 
     private void setupUI() {
@@ -49,5 +44,5 @@ public class MainWindow extends JFrame {
     public CanvasPanel getCanvasPanel() {
         return canvasPanel;
     }
-
+    
 }

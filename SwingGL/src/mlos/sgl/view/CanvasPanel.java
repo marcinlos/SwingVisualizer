@@ -1,11 +1,14 @@
 package mlos.sgl.view;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import mlos.sgl.core.Vec2;
+import mlos.sgl.core.Point;
 
 public class CanvasPanel {
 
@@ -53,6 +56,8 @@ public class CanvasPanel {
         this.painter = painter;
         this.width = width;
         this.height = height;
+        
+        swingPanel.setBackground(Color.white);
     }
 
     public final JPanel swingPanel() {
@@ -76,7 +81,7 @@ public class CanvasPanel {
     }
 
     private void doSetWidth(double width) {
-        // checkArgument(width > 0, "Width %s must be positive", width);
+        checkArgument(width > 0, "Width %s must be positive", width);
         this.width = width;
     }
 
@@ -90,7 +95,7 @@ public class CanvasPanel {
     }
 
     private void doSetHeight(double height) {
-        // checkArgument(height > 0, "Height %s must be positive", height);
+        checkArgument(height > 0, "Height %s must be positive", height);
         this.height = height;
     }
 
@@ -112,10 +117,10 @@ public class CanvasPanel {
      * Transforms the virtual coordinates to the screen coordinates.
      * 
      * @param p
-     *            Point in virtual coordinates
-     * @return Point in screen coordinates
+     *            ScreenPoint in virtual coordinates
+     * @return ScreenPoint in screen coordinates
      */
-    public Point toScreen(Vec2 p) {
+    public ScreenPoint toScreen(Point p) {
         return toScreen(p.x, p.y);
     }
 
@@ -126,15 +131,15 @@ public class CanvasPanel {
      *            Abcissa of the point
      * @param y
      *            Ordinate of the point
-     * @return Point in screen coordinates
+     * @return ScreenPoint in screen coordinates
      */
-    public Point toScreen(double x, double y) {
+    public ScreenPoint toScreen(double x, double y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
         double invy = height - y;
         int screenx = (int) (x * sw / width);
         int screeny = (int) (invy * sh / height);
-        return new Point(screenx, screeny);
+        return new ScreenPoint(screenx, screeny);
     }
 
     /**
@@ -144,25 +149,25 @@ public class CanvasPanel {
      *            Abcissa of the point
      * @param y
      *            Ordinate of the point
-     * @return Point in virtual coordinates
+     * @return ScreenPoint in virtual coordinates
      */
-    public Vec2 toVirtual(int x, int y) {
+    public Point toVirtual(int x, int y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
         int invy = sh - y;
         double vx = width * x / sw;
         double vy = height * invy / sh;
-        return new Vec2(vx, vy);
+        return new Point(vx, vy);
     }
 
     /**
      * Transforms screen coordinates to the virtual coordinates.
      * 
      * @param p
-     *            Point in screen coordinates
-     * @return Point in virtual coordinates
+     *            ScreenPoint in screen coordinates
+     * @return ScreenPoint in virtual coordinates
      */
-    public Vec2 toVirtual(Point p) {
+    public Point toVirtual(ScreenPoint p) {
         return toVirtual(p.x, p.y);
     }
 
