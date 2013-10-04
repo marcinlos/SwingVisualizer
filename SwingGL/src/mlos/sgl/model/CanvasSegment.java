@@ -29,7 +29,7 @@ public class CanvasSegment extends CanvasObject {
     }
     
     public void setSegment(Segment segment) {
-        this.segment = segment;
+        this.segment = checkNotNull(segment);
         notifyListeners();
     }
     

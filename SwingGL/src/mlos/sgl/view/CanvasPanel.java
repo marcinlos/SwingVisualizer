@@ -1,6 +1,7 @@
 package mlos.sgl.view;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,7 +20,7 @@ public class CanvasPanel {
     private double height;
 
     /** Painter drawing content */
-    private Painter painter;
+    private final Painter painter;
 
     private final class SwingPanelAdapter extends JPanel {
         @Override
@@ -53,9 +54,9 @@ public class CanvasPanel {
      *            Height of the canvas
      */
     public CanvasPanel(Painter painter, double width, double height) {
-        this.painter = painter;
-        this.width = width;
-        this.height = height;
+        this.painter = checkNotNull(painter);
+        doSetWidth(width);
+        doSetHeight(height);
         
         swingPanel.setBackground(Color.white);
     }
