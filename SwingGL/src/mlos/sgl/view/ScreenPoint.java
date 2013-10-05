@@ -31,4 +31,11 @@ public class ScreenPoint {
     public String toString() {
         return String.format("(%d, %d)", x, y);
     }
+    
+    
+    public static int distSq(ScreenPoint a, ScreenPoint b) {
+        int dx = a.x - b.x;
+        int dy = a.y - b.y;
+        return dx * dx + dy * dy;
+    }
 }

@@ -14,8 +14,9 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JPanel;
 
 import mlos.sgl.core.Point;
+import mlos.sgl.core.ScreenTransform;
 
-public class CanvasPanel {
+public class CanvasPanel implements ScreenTransform {
 
     /** Virtual width of the canvas */
     private double width;
@@ -122,25 +123,17 @@ public class CanvasPanel {
     }
 
     /**
-     * Transforms the virtual coordinates to the screen coordinates.
-     * 
-     * @param p
-     *            ScreenPoint in virtual coordinates
-     * @return ScreenPoint in screen coordinates
+     * {@inheritDoc}
      */
+    @Override
     public ScreenPoint toScreen(Point p) {
         return toScreen(p.x, p.y);
     }
 
     /**
-     * Transforms the virtual coordinates to screen coordinates.
-     * 
-     * @param x
-     *            Abcissa of the point
-     * @param y
-     *            Ordinate of the point
-     * @return ScreenPoint in screen coordinates
+     * {@inheritDoc}
      */
+    @Override
     public ScreenPoint toScreen(double x, double y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
@@ -151,14 +144,9 @@ public class CanvasPanel {
     }
 
     /**
-     * Transforms screen coordinates to the virtual coordinates.
-     * 
-     * @param x
-     *            Abcissa of the point
-     * @param y
-     *            Ordinate of the point
-     * @return ScreenPoint in virtual coordinates
+     * {@inheritDoc}
      */
+    @Override
     public Point toVirtual(int x, int y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
@@ -169,12 +157,9 @@ public class CanvasPanel {
     }
 
     /**
-     * Transforms screen coordinates to the virtual coordinates.
-     * 
-     * @param p
-     *            ScreenPoint in screen coordinates
-     * @return ScreenPoint in virtual coordinates
+     * {@inheritDoc}
      */
+    @Override
     public Point toVirtual(ScreenPoint p) {
         return toVirtual(p.x, p.y);
     }

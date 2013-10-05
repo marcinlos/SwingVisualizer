@@ -11,7 +11,12 @@ public abstract class CanvasObject {
     
     private final Set<CanvasObjectListener> listeners = new CopyOnWriteArraySet<>();
 
+    
     private double z;
+    
+    private boolean hover;
+    
+    private boolean selected;
     
     protected CanvasObject(double z) {
         this.z = z;
@@ -35,10 +40,31 @@ public abstract class CanvasObject {
         }
     }
     
-    public final double getZ() {
+    public void setZ(double z) {
+        this.z = z;
+        notifyListeners();
+    }
+    
+    public double getZ() {
         return z;
+    }
+    
+    public boolean isHover() {
+        return hover;
+    }
+    
+    public void setHover(boolean hover) {
+        this.hover = hover;
+    }
+    
+    public boolean isSelected() {
+        return selected;
+    }
+    
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     public abstract void accept(CanvasVisitor visitor);
-
+    
 }

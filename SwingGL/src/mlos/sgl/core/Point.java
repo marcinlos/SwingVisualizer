@@ -33,7 +33,7 @@ public final class Point {
     
     @Override
     public String toString() {
-        return String.format("(%d, %d)", x, y);
+        return String.format("(%.3f, %.3f)", x, y);
     }
 
 }

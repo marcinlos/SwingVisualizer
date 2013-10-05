@@ -32,6 +32,11 @@ public class CanvasObjectPainter implements CanvasVisitor {
         int hsize = size / 2;
         ctx.setColor(color);
         ctx.fillOval(s.x - hsize, s.y - hsize, size, size);
+
+        ctx.setColor(point.getBorderColor());
+        Stroke stroke = new BasicStroke(point.getBorderSize());
+        ctx.setStroke(stroke);
+        ctx.drawOval(s.x - hsize, s.y - hsize, size, size);
     }
     
     @Override
@@ -43,11 +48,9 @@ public class CanvasObjectPainter implements CanvasVisitor {
         int thickness = segment.getThickness();
         
         ctx.setColor(color);
-        Stroke old = ctx.getStroke();
         Stroke stroke = new BasicStroke(thickness);
         ctx.setStroke(stroke);
         ctx.drawLine(a.x, a.y, b.x, b.y);
-        ctx.setStroke(old);
     }
 
 

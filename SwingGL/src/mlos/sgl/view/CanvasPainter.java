@@ -3,44 +3,44 @@ package mlos.sgl.view;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import mlos.sgl.model.Canvas;
-import mlos.sgl.model.CanvasObject;
-
 public class CanvasPainter implements Painter {
 
-    private static class ZComparator implements Comparator<CanvasObject> {
+    private static class ZComparator implements Comparator<View> {
         @Override
-        public int compare(CanvasObject o1, CanvasObject o2) {
-            int res = Double.compare(o1.getZ(), o2.getZ());
+        public int compare(View a, View b) {
+            int res = Double.compare(a.getObject().getZ(), b.getObject().getZ());
             if (res != 0) {
                 return res;
             } else {
-                return Integer.compare(o1.hashCode(), o2.hashCode());
+                return Integer.compare(a.hashCode(), b.hashCode());
             }
         }
     };
 
     private static final ZComparator COMPARATOR = new ZComparator();
 
-    private final Canvas canvas;
+    private final Collection<View> views;
 
-    public CanvasPainter(Canvas canvas) {
-        this.canvas = checkNotNull(canvas);
+    public CanvasPainter(Collection<View> canvas) {
+        this.views = checkNotNull(canvas);
     }
 
     @Override
     public void paint(CanvasPanel panel, Graphics2D ctx) {
-        CanvasObjectPainter painter = new CanvasObjectPainter(panel, ctx);
+        ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        Set<View> ordered = new TreeSet<>(COMPARATOR);
+        ordered.addAll(views);
 
-        Set<CanvasObject> ordered = new TreeSet<>(COMPARATOR);
-        ordered.addAll(canvas.getObjects());
-
-        for (CanvasObject object : ordered) {
-            object.accept(painter);
+        for (View view : ordered) {
+            view.paint(panel, ctx);
         }
     }
 

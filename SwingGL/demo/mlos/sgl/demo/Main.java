@@ -12,7 +12,7 @@ public class Main {
     public static void setup() {
         MainWindow window = new MainWindow(1, 1);
         window.addScene(new Scene("Test") {{
-            canvas().add(new CanvasPoint(new Point(0.5, 0.5)));
+            addObject(new CanvasPoint(new Point(0.5, 0.5)));
         }});
         
         window.addScene(new Scene("Demo") {
