@@ -9,15 +9,12 @@ public class PointGeometry implements ObjectGeometry {
     
     private final CanvasPoint point;
     
-    private final ScreenTransform transform;
-
-    public PointGeometry(CanvasPoint point, ScreenTransform transform) {
+    public PointGeometry(CanvasPoint point) {
         this.point = point;
-        this.transform = transform;
     }
 
     @Override
-    public boolean hit(ScreenPoint p, int treshold) {
+    public boolean hit(ScreenPoint p, ScreenTransform transform, int treshold) {
         ScreenPoint s = transform.toScreen(point.getPoint());
         int distSq = ScreenPoint.distSq(p, s);
         

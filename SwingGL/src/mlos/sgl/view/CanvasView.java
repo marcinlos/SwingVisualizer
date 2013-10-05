@@ -8,13 +8,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import mlos.sgl.canvas.Canvas;
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 
 public class CanvasView implements Painter, CanvasListener {
     
-    private final Canvas canvas;
     
     private final Painter painter;
     
@@ -23,11 +21,9 @@ public class CanvasView implements Painter, CanvasListener {
     private final Map<CanvasObject, ObjectView> viewMap = new HashMap<>();
     
 
-    public CanvasView(Canvas canvas, ObjectViewFactory viewFactory) {
-        this.canvas = checkNotNull(canvas);
+    public CanvasView(ObjectViewFactory viewFactory) {
         this.viewFactory = checkNotNull(viewFactory);
         this.painter = createPainter();
-        canvas.addListener(this);
     }
 
     private Painter createPainter() {
