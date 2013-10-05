@@ -18,12 +18,12 @@ public class CanvasView implements Painter, CanvasListener {
     
     private final Painter painter;
     
-    private ViewFactory viewFactory;
+    private ObjectViewFactory viewFactory;
     
-    private final Map<CanvasObject, View> viewMap = new HashMap<>();
+    private final Map<CanvasObject, ObjectView> viewMap = new HashMap<>();
     
 
-    public CanvasView(Canvas canvas, ViewFactory viewFactory) {
+    public CanvasView(Canvas canvas, ObjectViewFactory viewFactory) {
         this.canvas = checkNotNull(canvas);
         this.viewFactory = checkNotNull(viewFactory);
         this.painter = createPainter();
@@ -31,7 +31,7 @@ public class CanvasView implements Painter, CanvasListener {
     }
 
     private Painter createPainter() {
-        Collection<View> views = viewMap.values();
+        Collection<ObjectView> views = viewMap.values();
         return new CanvasPainter(Collections.unmodifiableCollection(views));
     }
 
@@ -42,7 +42,7 @@ public class CanvasView implements Painter, CanvasListener {
 
     @Override
     public void objectAdded(CanvasObject object) {
-        View view = viewFactory.createView(object);
+        ObjectView view = viewFactory.createView(object);
         viewMap.put(object, view);
     }
 

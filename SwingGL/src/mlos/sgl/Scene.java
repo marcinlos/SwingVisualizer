@@ -15,11 +15,11 @@ import mlos.sgl.model.Canvas;
 import mlos.sgl.model.CanvasObject;
 import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasView;
-import mlos.sgl.view.DefaultViewFactory;
+import mlos.sgl.view.DefaultObjectViewFactory;
 import mlos.sgl.view.HitTester;
 import mlos.sgl.view.Painter;
 import mlos.sgl.view.ScreenPoint;
-import mlos.sgl.view.ViewFactory;
+import mlos.sgl.view.ObjectViewFactory;
 
 public abstract class Scene {
     
@@ -41,7 +41,7 @@ public abstract class Scene {
         private final Painter next;
         
         public ScenePainter(Painter next) {
-            this.next = next;
+            this.next = checkNotNull(next);
         }
 
         @Override
@@ -63,9 +63,11 @@ public abstract class Scene {
     public Scene(String name, double width, double height) {
         this.name = checkNotNull(name);
         this.canvas = new Canvas();
-        this.canvasPanel = new CanvasPanel(createPainter(), width, height);
-        this.hitTester = new HitTester(canvasPanel);
         this.view = new CanvasView(canvas, createViewFactory());
+        
+        Painter painter = createPainter(this.view);
+        this.canvasPanel = new CanvasPanel(painter, width, height);
+        this.hitTester = new HitTester(canvasPanel);
         
         canvasPanel.addMouseMotionListener(new MouseMotionListener() {
             
@@ -87,14 +89,13 @@ public abstract class Scene {
         canvas.add(object);
     }
 
-    protected Painter createPainter() {
-        Painter painter = this.view;
-        painter = new ScenePainter(painter);
+    protected Painter createPainter(Painter base) {
+        Painter painter = new ScenePainter(base);
         return painter;
     }
     
-    protected ViewFactory createViewFactory() {
-        return new DefaultViewFactory();
+    protected ObjectViewFactory createViewFactory() {
+        return new DefaultObjectViewFactory();
     }
     
     public String getName() {

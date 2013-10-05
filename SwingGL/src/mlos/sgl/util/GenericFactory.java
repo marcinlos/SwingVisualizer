@@ -1,20 +1,17 @@
-package mlos.sgl.view;
+package mlos.sgl.util;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import mlos.sgl.model.CanvasObject;
-
-class GenericViewFactory implements ViewFactory {
+public class GenericFactory<T> {
     
-    private final Map<Class<?>, Class<? extends View>> views = new HashMap<>();
+    private final Map<Class<?>, Class<? extends T>> impls = new HashMap<>();
 
-    @Override
-    public View createView(CanvasObject object) {
+    public T create(Object object) {
         Class<?> clazz = object.getClass();
-        Class<? extends View> viewClass = views.get(clazz);
-        Constructor<? extends View> ctor = getCtor(viewClass, clazz);
+        Class<? extends T> viewClass = impls.get(clazz);
+        Constructor<? extends T> ctor = getCtor(viewClass, clazz);
         try {
             return ctor.newInstance(object);
         } catch (Exception e) {
@@ -22,9 +19,8 @@ class GenericViewFactory implements ViewFactory {
         }
     }
     
-    public void register(Class<? extends CanvasObject> clazz, 
-            Class<? extends View> view) {
-        views.put(clazz, view);
+    public void register(Class<?> clazz, Class<? extends T> view) {
+        impls.put(clazz, view);
     }
 
     private static <T> Constructor<T> getCtor(Class<T> view, Class<?> clazz) {

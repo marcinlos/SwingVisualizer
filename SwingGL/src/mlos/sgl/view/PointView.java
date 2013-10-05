@@ -8,9 +8,9 @@ import java.awt.Stroke;
 import mlos.sgl.core.Point;
 import mlos.sgl.model.CanvasPoint;
 
-public class PointView implements View {
+public class PointView implements ObjectView {
     
-    private CanvasPoint point;
+    private final CanvasPoint point;
 
     public PointView(CanvasPoint point) {
         this.point = point;
