@@ -21,6 +21,10 @@ public class CanvasController implements CanvasListener {
     private final class MotionListener implements MouseMotionListener {
         @Override
         public void mouseMoved(MouseEvent e) {
+            update(e);
+        }
+
+        private void update(MouseEvent e) {
             Point p = e.getPoint();
             ScreenPoint cursor = new ScreenPoint(p.x, p.y);
             properties.put("cursor", cursor);
@@ -28,7 +32,7 @@ public class CanvasController implements CanvasListener {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-
+            update(e);
         }
     }
     
@@ -56,5 +60,7 @@ public class CanvasController implements CanvasListener {
     public void objectRemoved(CanvasObject object) {
         geometryMap.remove(object);
     }
+    
+    
 
 }
