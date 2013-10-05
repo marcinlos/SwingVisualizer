@@ -5,11 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 
+import mlos.sgl.canvas.CanvasPoint;
+import mlos.sgl.canvas.CanvasSegment;
+import mlos.sgl.canvas.CanvasVisitor;
 import mlos.sgl.core.Point;
 import mlos.sgl.core.Segment;
-import mlos.sgl.model.CanvasPoint;
-import mlos.sgl.model.CanvasSegment;
-import mlos.sgl.model.CanvasVisitor;
 
 public class CanvasObjectPainter implements CanvasVisitor {
 

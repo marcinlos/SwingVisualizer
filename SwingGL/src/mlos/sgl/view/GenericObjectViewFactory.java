@@ -1,6 +1,6 @@
 package mlos.sgl.view;
 
-import mlos.sgl.model.CanvasObject;
+import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.util.GenericFactory;
 
 public class GenericObjectViewFactory extends GenericFactory<ObjectView>

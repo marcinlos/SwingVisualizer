@@ -1,4 +1,4 @@
-package mlos.sgl.model;
+package mlos.sgl.canvas;
 
 public interface CanvasListener {
     

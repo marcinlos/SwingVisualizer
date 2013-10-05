@@ -1,6 +1,6 @@
 package mlos.sgl.ui;
 
-import mlos.sgl.model.CanvasObject;
+import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.view.ScreenPoint;
 
 public interface ObjectGeometry {

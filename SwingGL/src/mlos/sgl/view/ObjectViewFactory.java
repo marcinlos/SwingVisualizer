@@ -1,6 +1,6 @@
 package mlos.sgl.view;
 
-import mlos.sgl.model.CanvasObject;
+import mlos.sgl.canvas.CanvasObject;
 
 public interface ObjectViewFactory {
 

@@ -1,4 +1,4 @@
-package mlos.sgl.model;
+package mlos.sgl.canvas;
 
 import java.util.Collections;
 import java.util.HashSet;

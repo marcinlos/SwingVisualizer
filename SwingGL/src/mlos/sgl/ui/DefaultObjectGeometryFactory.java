@@ -1,6 +1,6 @@
 package mlos.sgl.ui;
 
-import mlos.sgl.model.CanvasPoint;
+import mlos.sgl.canvas.CanvasPoint;
 
 public class DefaultObjectGeometryFactory extends GenericObjectGeometryFactory {{
 

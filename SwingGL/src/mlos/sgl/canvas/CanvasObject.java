@@ -1,4 +1,4 @@
-package mlos.sgl.model;
+package mlos.sgl.canvas;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

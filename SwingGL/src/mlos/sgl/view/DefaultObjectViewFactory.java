@@ -1,6 +1,6 @@
 package mlos.sgl.view;
 
-import mlos.sgl.model.CanvasPoint;
+import mlos.sgl.canvas.CanvasPoint;
 
 public class DefaultObjectViewFactory extends GenericObjectViewFactory {{
     

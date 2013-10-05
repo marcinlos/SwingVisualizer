@@ -5,9 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import mlos.sgl.model.Canvas;
-import mlos.sgl.model.CanvasListener;
-import mlos.sgl.model.CanvasObject;
+import mlos.sgl.canvas.Canvas;
+import mlos.sgl.canvas.CanvasListener;
+import mlos.sgl.canvas.CanvasObject;
 
 public class CanvasController implements CanvasListener {
 

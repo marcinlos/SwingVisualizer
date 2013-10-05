@@ -4,8 +4,8 @@ import javax.swing.SwingUtilities;
 
 import mlos.sgl.MainWindow;
 import mlos.sgl.Scene;
+import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Point;
-import mlos.sgl.model.CanvasPoint;
 
 public class Main {
     

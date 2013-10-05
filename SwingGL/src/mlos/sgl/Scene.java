@@ -11,8 +11,8 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
-import mlos.sgl.model.Canvas;
-import mlos.sgl.model.CanvasObject;
+import mlos.sgl.canvas.Canvas;
+import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.ui.CanvasController;
 import mlos.sgl.ui.DefaultObjectGeometryFactory;
 import mlos.sgl.ui.ObjectGeometryFactory;

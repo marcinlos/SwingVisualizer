@@ -5,8 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 
+import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Point;
-import mlos.sgl.model.CanvasPoint;
 
 public class PointView implements ObjectView {
     

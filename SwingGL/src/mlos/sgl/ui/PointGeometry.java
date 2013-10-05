@@ -1,8 +1,8 @@
 package mlos.sgl.ui;
 
+import mlos.sgl.canvas.CanvasObject;
+import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.ScreenTransform;
-import mlos.sgl.model.CanvasObject;
-import mlos.sgl.model.CanvasPoint;
 import mlos.sgl.view.ScreenPoint;
 
 public class PointGeometry implements ObjectGeometry {
