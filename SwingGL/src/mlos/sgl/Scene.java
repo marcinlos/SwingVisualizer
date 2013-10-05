@@ -13,13 +13,15 @@ import javax.swing.JPanel;
 
 import mlos.sgl.model.Canvas;
 import mlos.sgl.model.CanvasObject;
+import mlos.sgl.ui.CanvasController;
+import mlos.sgl.ui.DefaultObjectGeometryFactory;
+import mlos.sgl.ui.ObjectGeometryFactory;
 import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.DefaultObjectViewFactory;
-import mlos.sgl.view.HitTester;
+import mlos.sgl.view.ObjectViewFactory;
 import mlos.sgl.view.Painter;
 import mlos.sgl.view.ScreenPoint;
-import mlos.sgl.view.ObjectViewFactory;
 
 public abstract class Scene {
     
@@ -31,7 +33,8 @@ public abstract class Scene {
 
     private final CanvasView view;
     
-    private final HitTester hitTester;
+    private final CanvasController controller;
+    
     
     
     private ScreenPoint cursor = new ScreenPoint(0, 0);
@@ -67,7 +70,7 @@ public abstract class Scene {
         
         Painter painter = createPainter(this.view);
         this.canvasPanel = new CanvasPanel(painter, width, height);
-        this.hitTester = new HitTester(canvasPanel);
+        this.controller = new CanvasController(canvas, createGeometryFactory());
         
         canvasPanel.addMouseMotionListener(new MouseMotionListener() {
             
@@ -84,7 +87,7 @@ public abstract class Scene {
             }
         });
     }
-    
+
     public void addObject(CanvasObject object) {
         canvas.add(object);
     }
@@ -96,6 +99,10 @@ public abstract class Scene {
     
     protected ObjectViewFactory createViewFactory() {
         return new DefaultObjectViewFactory();
+    }
+    
+    protected ObjectGeometryFactory createGeometryFactory() {
+        return new DefaultObjectGeometryFactory();
     }
     
     public String getName() {
