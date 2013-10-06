@@ -4,10 +4,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Segment {
     
-    public final Point a;
-    public final Point b;
+    public final Vec2d a;
+    public final Vec2d b;
 
-    public Segment(Point a, Point b) {
+    public Segment(Vec2d a, Vec2d b) {
         this.a = checkNotNull(a);
         this.b = checkNotNull(b);
     }

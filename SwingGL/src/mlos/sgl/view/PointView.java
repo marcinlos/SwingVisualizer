@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import mlos.sgl.canvas.CanvasPoint;
-import mlos.sgl.core.Point;
+import mlos.sgl.core.Vec2d;
 
 public class PointView implements ObjectView {
     
@@ -32,11 +32,11 @@ public class PointView implements ObjectView {
 
     @Override
     public void paint(CanvasPanel panel, Graphics2D ctx) {
-        Point p = point.getPoint();
+        Vec2d p = point.getPoint();
         int size = point.getSize();
         Color color = getColor();
 
-        Point s = panel.toScreen(p);
+        Vec2d s = panel.toScreen(p);
         int hsize = size / 2;
         ctx.setColor(color);
         int left = (int) s.x - hsize;

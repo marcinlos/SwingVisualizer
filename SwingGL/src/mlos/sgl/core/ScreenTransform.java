@@ -7,9 +7,9 @@ public interface ScreenTransform {
      * 
      * @param p
      *            ScreenPoint in virtual coordinates
-     * @return Point in screen coordinates
+     * @return Vec2d in screen coordinates
      */
-    Point toScreen(Point p);
+    Vec2d toScreen(Vec2d p);
 
     /**
      * Transforms the virtual coordinates to screen coordinates.
@@ -18,9 +18,9 @@ public interface ScreenTransform {
      *            Abcissa of the point
      * @param y
      *            Ordinate of the point
-     * @return Point in screen coordinates
+     * @return Vec2d in screen coordinates
      */
-    Point toScreen(double x, double y);
+    Vec2d toScreen(double x, double y);
 
     /**
      * Transforms screen coordinates to the virtual coordinates.
@@ -31,7 +31,7 @@ public interface ScreenTransform {
      *            Ordinate of the point
      * @return ScreenPoint in virtual coordinates
      */
-    Point toVirtual(double x, double y);
+    Vec2d toVirtual(double x, double y);
 
     /**
      * Transforms screen coordinates to the virtual coordinates.
@@ -40,5 +40,5 @@ public interface ScreenTransform {
      *            ScreenPoint in screen coordinates
      * @return ScreenPoint in virtual coordinates
      */
-    Point toVirtual(Point p);
+    Vec2d toVirtual(Vec2d p);
 }

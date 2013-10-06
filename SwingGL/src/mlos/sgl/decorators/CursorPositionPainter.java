@@ -3,7 +3,7 @@ package mlos.sgl.decorators;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import mlos.sgl.core.Point;
+import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.Painter;
@@ -18,7 +18,7 @@ public class CursorPositionPainter implements Painter {
 
     @Override
     public void paint(CanvasPanel canvas, Graphics2D ctx) {
-        Point cursor = properties.get("cursor", Point.class);
+        Vec2d cursor = properties.get("cursor", Vec2d.class);
         if (cursor != null) {
             String text = "Pos: " + canvas.toVirtual(cursor);
             ctx.setColor(Color.black);

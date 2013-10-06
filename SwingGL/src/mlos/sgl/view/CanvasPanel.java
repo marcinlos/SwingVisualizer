@@ -13,7 +13,7 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JPanel;
 
-import mlos.sgl.core.Point;
+import mlos.sgl.core.Vec2d;
 import mlos.sgl.core.ScreenTransform;
 
 public class CanvasPanel implements ScreenTransform {
@@ -126,7 +126,7 @@ public class CanvasPanel implements ScreenTransform {
      * {@inheritDoc}
      */
     @Override
-    public Point toScreen(Point p) {
+    public Vec2d toScreen(Vec2d p) {
         return toScreen(p.x, p.y);
     }
 
@@ -134,33 +134,33 @@ public class CanvasPanel implements ScreenTransform {
      * {@inheritDoc}
      */
     @Override
-    public Point toScreen(double x, double y) {
+    public Vec2d toScreen(double x, double y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
         double invy = height - y;
         int screenx = (int) (x * sw / width);
         int screeny = (int) (invy * sh / height);
-        return new Point(screenx, screeny);
+        return new Vec2d(screenx, screeny);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Point toVirtual(double x, double y) {
+    public Vec2d toVirtual(double x, double y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
         double invy = sh - y;
         double vx = width * x / sw;
         double vy = height * invy / sh;
-        return new Point(vx, vy);
+        return new Vec2d(vx, vy);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Point toVirtual(Point p) {
+    public Vec2d toVirtual(Vec2d p) {
         return toVirtual(p.x, p.y);
     }
     

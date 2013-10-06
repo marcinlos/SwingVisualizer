@@ -2,24 +2,24 @@ package mlos.sgl.core;
 
 import java.util.Objects;
 
-public final class Point {
+public final class Vec2d {
     
     public final double x;
     public final double y;
 
-    public Point() {
+    public Vec2d() {
         this(0, 0);
     }
     
-    public Point(double x, double y) {
+    public Vec2d(double x, double y) {
         this.x = x;
         this.y = y;
     }
     
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Point) {
-            Point other = (Point) o;
+        if (o instanceof Vec2d) {
+            Vec2d other = (Vec2d) o;
             return x == other.x && y == other.y;
         } else {
             return false;

@@ -14,7 +14,7 @@ import java.util.TreeSet;
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
-import mlos.sgl.core.Point;
+import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
 
@@ -36,7 +36,7 @@ public class CanvasController implements CanvasListener {
         @Override
         public void mouseDragged(MouseEvent e) {
             update(e);
-            Point p = getPosition(e);
+            Vec2d p = getPosition(e);
             int dx = (int) (p.x - dragBase.x);
             int dy = (int) (p.y - dragBase.y);
             if (captured != null) {
@@ -83,9 +83,9 @@ public class CanvasController implements CanvasListener {
         
     }
     
-    private Point getPosition(MouseEvent e) {
+    private Vec2d getPosition(MouseEvent e) {
         java.awt.Point p = e.getPoint();
-        return new Point(p.x, p.y);
+        return new Vec2d(p.x, p.y);
     }
     
     private final CanvasPanel panel;
@@ -97,7 +97,7 @@ public class CanvasController implements CanvasListener {
     private final Map<CanvasObject, ObjectGeometry> geometryMap = new HashMap<>();
     
     
-    private Point dragBase;
+    private Vec2d dragBase;
     
     private CanvasObject captured;
 
@@ -123,7 +123,7 @@ public class CanvasController implements CanvasListener {
     }
     
     
-    void onMouseHover(Point p) {
+    void onMouseHover(Vec2d p) {
         for (CanvasObject object : geometryMap.keySet()) {
             object.setHover(false);
         }
@@ -133,7 +133,7 @@ public class CanvasController implements CanvasListener {
         }
     }
     
-    public Collection<CanvasObject> findHits(Point p) {
+    public Collection<CanvasObject> findHits(Vec2d p) {
         Set<CanvasObject> hits = new TreeSet<>(ObjectZComparator.INSTANCE);
         for (ObjectGeometry geometry : geometryMap.values()) {
             if (geometry.hit(p, panel, DEFAULT_TRESHOLD)) {

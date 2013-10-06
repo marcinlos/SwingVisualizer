@@ -23,7 +23,7 @@ public final class Rect {
         return new Rect(left, bottom, right, top);
     }
     
-    public static Rect leftBottomRightTop(Point leftBottom, Point rightTop) {
+    public static Rect leftBottomRightTop(Vec2d leftBottom, Vec2d rightTop) {
         return leftBottomRightTop(leftBottom.x, leftBottom.y, rightTop.x, 
                 rightTop.y);
     }
@@ -61,24 +61,24 @@ public final class Rect {
         return top() - bottom();
     }
     
-    public Point center() {
-        return new Point((left + right) / 2, (top + bottom) / 2);
+    public Vec2d center() {
+        return new Vec2d((left + right) / 2, (top + bottom) / 2);
     }
     
-    public Point leftTop() {
-        return new Point(left, top);
+    public Vec2d leftTop() {
+        return new Vec2d(left, top);
     }
     
-    public Point leftBottom() {
-        return new Point(left, bottom);
+    public Vec2d leftBottom() {
+        return new Vec2d(left, bottom);
     }
     
-    public Point rightTop() {
-        return new Point(right, top);
+    public Vec2d rightTop() {
+        return new Vec2d(right, top);
     }
     
-    public Point rightBottom() {
-        return new Point(right, bottom);
+    public Vec2d rightBottom() {
+        return new Vec2d(right, bottom);
     }
     
     

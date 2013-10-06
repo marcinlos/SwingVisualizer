@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import mlos.sgl.canvas.CanvasSegment;
-import mlos.sgl.core.Point;
+import mlos.sgl.core.Vec2d;
 import mlos.sgl.core.Segment;
 
 public class SegmentView implements ObjectView {
@@ -20,8 +20,8 @@ public class SegmentView implements ObjectView {
     @Override
     public void paint(CanvasPanel panel, Graphics2D ctx) {
         Segment seg = segment.getSegment();
-        Point a = panel.toScreen(seg.a);
-        Point b = panel.toScreen(seg.b);
+        Vec2d a = panel.toScreen(seg.a);
+        Vec2d b = panel.toScreen(seg.b);
         Color color = getColor();
         int thickness = segment.getThickness();
         

@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.awt.Color;
 
-import mlos.sgl.core.Point;
+import mlos.sgl.core.Vec2d;
 
 public class CanvasPoint extends CanvasObject {
     
@@ -22,7 +22,7 @@ public class CanvasPoint extends CanvasObject {
     public static final int DEFAULT_BORDER_SIZE = 1;
     
     /** Position in virtual coordinates */
-    private Point point;
+    private Vec2d point;
     
     /** Diameter of the point */
     private int size = DEFAULT_SIZE;
@@ -39,11 +39,11 @@ public class CanvasPoint extends CanvasObject {
     private int borderSize = DEFAULT_BORDER_SIZE;
     
 
-    public CanvasPoint(Point point) {
+    public CanvasPoint(Vec2d point) {
         this(point, DEFAULT_Z);
     }
 
-    public CanvasPoint(Point point, double z) {
+    public CanvasPoint(Vec2d point, double z) {
         super(z);
         setPoint(point);
     }
@@ -54,11 +54,11 @@ public class CanvasPoint extends CanvasObject {
         visitor.visit(this);
     }
     
-    public Point getPoint() {
+    public Vec2d getPoint() {
         return point;
     }
     
-    public void setPoint(Point point) {
+    public void setPoint(Vec2d point) {
         this.point = checkNotNull(point);
         notifyListeners();
     }
@@ -69,7 +69,7 @@ public class CanvasPoint extends CanvasObject {
     }
 
     public void setSize(int size) {
-        checkArgument(size > 0, "Point size must be positive");
+        checkArgument(size > 0, "Vec2d size must be positive");
         this.size = size;
         notifyListeners();
     }
