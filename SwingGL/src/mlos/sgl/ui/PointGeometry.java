@@ -1,9 +1,10 @@
 package mlos.sgl.ui;
 
+import static mlos.sgl.core.Geom.distSq;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.CanvasPoint;
+import mlos.sgl.core.Point;
 import mlos.sgl.core.ScreenTransform;
-import mlos.sgl.view.ScreenPoint;
 
 public class PointGeometry implements ObjectGeometry {
     
@@ -14,9 +15,9 @@ public class PointGeometry implements ObjectGeometry {
     }
 
     @Override
-    public boolean hit(ScreenPoint p, ScreenTransform transform, int treshold) {
-        ScreenPoint s = transform.toScreen(point.getPoint());
-        int distSq = ScreenPoint.distSq(p, s);
+    public boolean hit(Point p, ScreenTransform transform, int treshold) {
+        Point s = transform.toScreen(point.getPoint());
+        double distSq = distSq(p, s);
         
         int r = point.getSize() / 2 + treshold;
         return distSq < r * r;

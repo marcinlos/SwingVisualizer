@@ -2,52 +2,113 @@ package mlos.sgl.ui;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
+import mlos.sgl.canvas.ObjectZComparator;
+import mlos.sgl.core.Point;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
-import mlos.sgl.view.ScreenPoint;
 
 public class CanvasController implements CanvasListener {
 
-    public static final int DEFAULT_TRESHOLD = 4;
+    public static final int DEFAULT_TRESHOLD = 14;
 
     private final class MotionListener implements MouseMotionListener {
         @Override
         public void mouseMoved(MouseEvent e) {
             update(e);
+            onMouseHover(getPosition(e));
         }
 
         private void update(MouseEvent e) {
-            Point p = e.getPoint();
-            ScreenPoint cursor = new ScreenPoint(p.x, p.y);
-            properties.put("cursor", cursor);
+            properties.put("cursor", getPosition(e));
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
             update(e);
+            Point p = getPosition(e);
+            int dx = (int) (p.x - dragBase.x);
+            int dy = (int) (p.y - dragBase.y);
+            if (captured != null) {
+//                captured.
+            }
         }
     }
+    
+    private final class ButtonListener implements MouseListener {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                Collection<CanvasObject> hits = findHits(getPosition(e));
+                if (! hits.isEmpty()) {
+                    captured = hits.iterator().next();
+                    captured.setSelected(true);
+                    panel.refresh();
+                }
+            }
+            dragBase = getPosition(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            properties.remove("cursor");
+        }
+        
+    }
+    
+    private Point getPosition(MouseEvent e) {
+        java.awt.Point p = e.getPoint();
+        return new Point(p.x, p.y);
+    }
+    
+    private final CanvasPanel panel;
     
     private final PropertyMap properties;
 
     private ObjectGeometryFactory geometryFactory;
 
     private final Map<CanvasObject, ObjectGeometry> geometryMap = new HashMap<>();
+    
+    
+    private Point dragBase;
+    
+    private CanvasObject captured;
 
     public CanvasController(CanvasPanel panel, PropertyMap properties, 
             ObjectGeometryFactory geometryFactory) {
+        this.panel = checkNotNull(panel);
         this.properties = checkNotNull(properties);
         this.geometryFactory = checkNotNull(geometryFactory);
         
         panel.addMouseMotionListener(new MotionListener());
+        panel.addMouseListener(new ButtonListener());
     }
 
     @Override
@@ -62,5 +123,24 @@ public class CanvasController implements CanvasListener {
     }
     
     
+    void onMouseHover(Point p) {
+        for (CanvasObject object : geometryMap.keySet()) {
+            object.setHover(false);
+        }
+        Collection<CanvasObject> hits = findHits(p);
+        for (CanvasObject object : hits) {
+            object.setHover(true);
+        }
+    }
+    
+    public Collection<CanvasObject> findHits(Point p) {
+        Set<CanvasObject> hits = new TreeSet<>(ObjectZComparator.INSTANCE);
+        for (ObjectGeometry geometry : geometryMap.values()) {
+            if (geometry.hit(p, panel, DEFAULT_TRESHOLD)) {
+                hits.add(geometry.getObject());
+            }
+        }
+        return hits;
+    }
 
 }

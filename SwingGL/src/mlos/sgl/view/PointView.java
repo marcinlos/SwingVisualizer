@@ -15,22 +15,38 @@ public class PointView implements ObjectView {
     public PointView(CanvasPoint point) {
         this.point = point;
     }
+    
+    public Color getColor() {
+        if (point.isSelected()) {
+            return point.getSelectedColor();
+        } else if (point.isHover()) {
+            return point.getHoverColor();
+        } else {
+            return point.getColor();
+        }
+    }
+    
+    public Color getBorderColor() {
+        return point.getBorderColor();
+    }
 
     @Override
-    public void paint(CanvasPanel canvas, Graphics2D ctx) {
+    public void paint(CanvasPanel panel, Graphics2D ctx) {
         Point p = point.getPoint();
         int size = point.getSize();
-        Color color = point.getColor();
+        Color color = getColor();
 
-        ScreenPoint s = canvas.toScreen(p);
+        Point s = panel.toScreen(p);
         int hsize = size / 2;
         ctx.setColor(color);
-        ctx.fillOval(s.x - hsize, s.y - hsize, size, size);
+        int left = (int) s.x - hsize;
+        int top = (int) s.y - hsize;
+        ctx.fillOval(left, top, size, size);
 
-        ctx.setColor(point.getBorderColor());
+        ctx.setColor(getBorderColor());
         Stroke stroke = new BasicStroke(point.getBorderSize());
         ctx.setStroke(stroke);
-        ctx.drawOval(s.x - hsize, s.y - hsize, size, size);
+        ctx.drawOval(left, top, size, size);
     }
 
     @Override

@@ -17,9 +17,9 @@ public class CanvasPoint extends CanvasObject {
     
     public static final Color DEFAULT_BORDER_COLOR = Color.black;
 
-    public static final int DEFAULT_SIZE = 15;
+    public static final int DEFAULT_SIZE = 10;
 
-    public static final int DEFAULT_BORDER_SIZE = 2;
+    public static final int DEFAULT_BORDER_SIZE = 1;
     
     /** Position in virtual coordinates */
     private Point point;

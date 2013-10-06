@@ -11,13 +11,17 @@ public class CanvasSegment extends CanvasObject {
     
     public static final Color DEFAULT_COLOR = Color.black;
     
-    public static final int DEFAULT_THICKNESS = 2;
+    public static final Color DEFAULT_HOVER_COLOR = Color.blue;
     
+    
+    public static final int DEFAULT_THICKNESS = 2;
     
     private Segment segment;
     
     private Color color = DEFAULT_COLOR;
     
+    private Color hoverColor = DEFAULT_HOVER_COLOR;
+
     private int thickness = DEFAULT_THICKNESS;
 
     public CanvasSegment(Segment segment) {
@@ -40,6 +44,14 @@ public class CanvasSegment extends CanvasObject {
     public void setColor(Color color) {
         this.color = checkNotNull(color);
         notifyListeners();
+    }
+    
+    public Color getHoverColor() {
+        return hoverColor;
+    }
+
+    public void setHoverColor(Color hoverColor) {
+        this.hoverColor = checkNotNull(hoverColor);
     }
     
     public int getThickness() {

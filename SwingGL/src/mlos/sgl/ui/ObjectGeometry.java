@@ -1,12 +1,12 @@
 package mlos.sgl.ui;
 
 import mlos.sgl.canvas.CanvasObject;
+import mlos.sgl.core.Point;
 import mlos.sgl.core.ScreenTransform;
-import mlos.sgl.view.ScreenPoint;
 
 public interface ObjectGeometry {
 
-    boolean hit(ScreenPoint p, ScreenTransform transform, int treshold); 
+    boolean hit(Point p, ScreenTransform transform, int treshold); 
     
     CanvasObject getObject();
     

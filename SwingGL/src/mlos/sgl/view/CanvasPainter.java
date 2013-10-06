@@ -9,20 +9,21 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import mlos.sgl.canvas.CanvasObject;
+import mlos.sgl.canvas.ObjectZComparator;
+
 public class CanvasPainter implements Painter {
 
     private static class ZComparator implements Comparator<ObjectView> {
+        
         @Override
         public int compare(ObjectView a, ObjectView b) {
-            int res = Double.compare(a.getObject().getZ(), b.getObject().getZ());
-            if (res != 0) {
-                return res;
-            } else {
-                return Integer.compare(a.hashCode(), b.hashCode());
-            }
+            CanvasObject aa = a.getObject();
+            CanvasObject bb = b.getObject();
+            return ObjectZComparator.INSTANCE.compare(aa, bb);
         }
     };
-
+    
     private static final ZComparator COMPARATOR = new ZComparator();
 
     private final Collection<ObjectView> views;

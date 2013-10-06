@@ -126,7 +126,7 @@ public class CanvasPanel implements ScreenTransform {
      * {@inheritDoc}
      */
     @Override
-    public ScreenPoint toScreen(Point p) {
+    public Point toScreen(Point p) {
         return toScreen(p.x, p.y);
     }
 
@@ -134,23 +134,23 @@ public class CanvasPanel implements ScreenTransform {
      * {@inheritDoc}
      */
     @Override
-    public ScreenPoint toScreen(double x, double y) {
+    public Point toScreen(double x, double y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
         double invy = height - y;
         int screenx = (int) (x * sw / width);
         int screeny = (int) (invy * sh / height);
-        return new ScreenPoint(screenx, screeny);
+        return new Point(screenx, screeny);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Point toVirtual(int x, int y) {
+    public Point toVirtual(double x, double y) {
         int sw = getScreenWidth();
         int sh = getScreenHeight();
-        int invy = sh - y;
+        double invy = sh - y;
         double vx = width * x / sw;
         double vy = height * invy / sh;
         return new Point(vx, vy);
@@ -160,7 +160,7 @@ public class CanvasPanel implements ScreenTransform {
      * {@inheritDoc}
      */
     @Override
-    public Point toVirtual(ScreenPoint p) {
+    public Point toVirtual(Point p) {
         return toVirtual(p.x, p.y);
     }
     

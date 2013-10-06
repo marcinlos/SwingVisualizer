@@ -1,6 +1,5 @@
 package mlos.sgl.core;
 
-import mlos.sgl.view.ScreenPoint;
 
 public interface ScreenTransform {
     /**
@@ -8,9 +7,9 @@ public interface ScreenTransform {
      * 
      * @param p
      *            ScreenPoint in virtual coordinates
-     * @return ScreenPoint in screen coordinates
+     * @return Point in screen coordinates
      */
-    ScreenPoint toScreen(Point p);
+    Point toScreen(Point p);
 
     /**
      * Transforms the virtual coordinates to screen coordinates.
@@ -19,9 +18,9 @@ public interface ScreenTransform {
      *            Abcissa of the point
      * @param y
      *            Ordinate of the point
-     * @return ScreenPoint in screen coordinates
+     * @return Point in screen coordinates
      */
-    ScreenPoint toScreen(double x, double y);
+    Point toScreen(double x, double y);
 
     /**
      * Transforms screen coordinates to the virtual coordinates.
@@ -32,7 +31,7 @@ public interface ScreenTransform {
      *            Ordinate of the point
      * @return ScreenPoint in virtual coordinates
      */
-    Point toVirtual(int x, int y);
+    Point toVirtual(double x, double y);
 
     /**
      * Transforms screen coordinates to the virtual coordinates.
@@ -41,5 +40,5 @@ public interface ScreenTransform {
      *            ScreenPoint in screen coordinates
      * @return ScreenPoint in virtual coordinates
      */
-    Point toVirtual(ScreenPoint p);
+    Point toVirtual(Point p);
 }

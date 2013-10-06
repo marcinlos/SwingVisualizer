@@ -11,11 +11,15 @@ public class GenericFactory<T> {
     public T create(Object object) {
         Class<?> clazz = object.getClass();
         Class<? extends T> viewClass = impls.get(clazz);
-        Constructor<? extends T> ctor = getCtor(viewClass, clazz);
-        try {
-            return ctor.newInstance(object);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (viewClass != null) {
+            Constructor<? extends T> ctor = getCtor(viewClass, clazz);
+            try {
+                return ctor.newInstance(object);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return null;
         }
     }
     

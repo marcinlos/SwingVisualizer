@@ -4,6 +4,6 @@ import java.awt.Graphics2D;
 
 public interface Painter {
     
-    void paint(CanvasPanel canvas, Graphics2D ctx);
+    void paint(CanvasPanel panel, Graphics2D ctx);
 
 }
