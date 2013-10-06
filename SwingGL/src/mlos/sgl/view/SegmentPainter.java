@@ -6,8 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import mlos.sgl.canvas.CanvasSegment;
-import mlos.sgl.core.Vec2d;
 import mlos.sgl.core.Segment;
+import mlos.sgl.core.Transform;
+import mlos.sgl.core.Vec2d;
 
 public class SegmentPainter implements ObjectPainter {
 
@@ -18,10 +19,10 @@ public class SegmentPainter implements ObjectPainter {
     }
 
     @Override
-    public void paint(CanvasPanel panel, Graphics2D ctx) {
+    public void paint(Transform toScreen, Graphics2D ctx) {
         Segment seg = segment.getSegment();
-        Vec2d a = panel.toScreen(seg.a);
-        Vec2d b = panel.toScreen(seg.b);
+        Vec2d a = toScreen.apply(seg.a);
+        Vec2d b = toScreen.apply(seg.b);
         Color color = getColor();
         int thickness = segment.getThickness();
         

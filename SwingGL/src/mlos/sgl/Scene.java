@@ -5,8 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.awt.Component;
 
-import javax.swing.JPanel;
-
 import mlos.sgl.canvas.Canvas;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.decorators.CursorPositionPainter;
@@ -15,8 +13,8 @@ import mlos.sgl.ui.DefaultObjectGeometryFactory;
 import mlos.sgl.ui.ObjectGeometryFactory;
 import mlos.sgl.util.PropertyListener;
 import mlos.sgl.util.PropertyMap;
-import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasPainter;
+import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CompositePainter;
 import mlos.sgl.view.DefaultObjectPainterFactory;
 import mlos.sgl.view.ObjectPainterFactory;
@@ -67,7 +65,7 @@ public abstract class Scene {
             .add(view)
             .add(new CursorPositionPainter(properties));
         
-        this.canvasPanel = new CanvasPanel(painter, width, height);
+        this.canvasPanel = new CanvasPanel(painter);
         this.controller = new CanvasController(canvasPanel, properties, 
                 createGeometryFactory());
         
@@ -96,12 +94,8 @@ public abstract class Scene {
         return canvas;
     }
 
-    protected CanvasPanel canvasPanel() {
+    protected CanvasPanel panel() {
         return canvasPanel;
-    }
-
-    protected JPanel panel() {
-        return canvasPanel.swingPanel();
     }
 
     protected void refresh() {

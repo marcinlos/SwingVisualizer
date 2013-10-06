@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 
 import mlos.sgl.canvas.CanvasPoint;
+import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
 
 public class PointPainter implements ObjectPainter {
@@ -31,12 +32,12 @@ public class PointPainter implements ObjectPainter {
     }
 
     @Override
-    public void paint(CanvasPanel panel, Graphics2D ctx) {
+    public void paint(Transform toScreen, Graphics2D ctx) {
         Vec2d p = point.getPoint();
         int size = point.getSize();
         Color color = getColor();
 
-        Vec2d s = panel.toScreen(p);
+        Vec2d s = toScreen.apply(p);
         int hsize = size / 2;
         ctx.setColor(color);
         int left = (int) s.x - hsize;

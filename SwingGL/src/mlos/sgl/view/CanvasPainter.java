@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
+import mlos.sgl.core.Transform;
 
 public class CanvasPainter implements Painter, CanvasListener {
 
@@ -53,12 +54,12 @@ public class CanvasPainter implements Painter, CanvasListener {
     }
 
     @Override
-    public void paint(CanvasPanel panel, Graphics2D ctx) {
+    public void paint(Transform toScreen, Graphics2D ctx) {
         ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         for (ObjectPainter view : views) {
-            view.paint(panel, ctx);
+            view.paint(toScreen, ctx);
         }
     }
 }
