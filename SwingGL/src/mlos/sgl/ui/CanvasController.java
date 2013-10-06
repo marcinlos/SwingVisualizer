@@ -14,13 +14,14 @@ import java.util.TreeSet;
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
+import mlos.sgl.core.Geometry;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
 
 public class CanvasController implements CanvasListener {
 
-    public static final int DEFAULT_TRESHOLD = 14;
+    public static final int DEFAULT_TRESHOLD = 10;
 
     private final class MotionListener implements MouseMotionListener {
         @Override
@@ -36,9 +37,9 @@ public class CanvasController implements CanvasListener {
         @Override
         public void mouseDragged(MouseEvent e) {
             update(e);
-            Vec2d p = getPosition(e);
-            int dx = (int) (p.x - dragBase.x);
-            int dy = (int) (p.y - dragBase.y);
+            Vec2d p = Geometry.diff(getPosition(e), dragBase);
+            int dx = (int) p.x;
+            int dy = (int) p.y;
             if (captured != null) {
 //                captured.
             }

@@ -13,8 +13,9 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.JPanel;
 
-import mlos.sgl.core.Vec2d;
 import mlos.sgl.core.ScreenTransform;
+import mlos.sgl.core.Transform;
+import mlos.sgl.core.Vec2d;
 
 public class CanvasPanel implements ScreenTransform {
 
@@ -24,9 +25,10 @@ public class CanvasPanel implements ScreenTransform {
     /** Virtual height of the canvas */
     private double height;
     
-//    /** Virtual coordinate system of the canvas */
-//    private Rect viewport;
-
+    private Transform toScreen;
+    
+    private Transform toVirtual;
+    
     /** Painter drawing content */
     private Painter painter;
 
@@ -34,6 +36,7 @@ public class CanvasPanel implements ScreenTransform {
         @Override
         protected final void paintComponent(Graphics g) {
             super.paintComponent(g);
+            recomputeTransform();
             Graphics2D graphics = (Graphics2D) g;
             painter.paint(CanvasPanel.this, graphics);
         }
@@ -121,13 +124,25 @@ public class CanvasPanel implements ScreenTransform {
     protected int getScreenHeight() {
         return swingPanel.getHeight();
     }
+    
+    private void recomputeTransform() {
+        int sw = getScreenWidth();
+        int sh = getScreenHeight();
+        Transform.Builder builder = new Transform.Builder()
+            .flipY()
+            .tY(height)
+            .s(sw / width, sh / height);
+        
+        toScreen = builder.create();
+        toVirtual = builder.invert().create();
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Vec2d toScreen(Vec2d p) {
-        return toScreen(p.x, p.y);
+        return toScreen.apply(p);
     }
 
     /**
@@ -135,12 +150,7 @@ public class CanvasPanel implements ScreenTransform {
      */
     @Override
     public Vec2d toScreen(double x, double y) {
-        int sw = getScreenWidth();
-        int sh = getScreenHeight();
-        double invy = height - y;
-        int screenx = (int) (x * sw / width);
-        int screeny = (int) (invy * sh / height);
-        return new Vec2d(screenx, screeny);
+        return toScreen(new Vec2d(x, y));
     }
 
     /**
@@ -148,12 +158,7 @@ public class CanvasPanel implements ScreenTransform {
      */
     @Override
     public Vec2d toVirtual(double x, double y) {
-        int sw = getScreenWidth();
-        int sh = getScreenHeight();
-        double invy = sh - y;
-        double vx = width * x / sw;
-        double vy = height * invy / sh;
-        return new Vec2d(vx, vy);
+        return toVirtual(new Vec2d(x, y));
     }
 
     /**
@@ -161,7 +166,7 @@ public class CanvasPanel implements ScreenTransform {
      */
     @Override
     public Vec2d toVirtual(Vec2d p) {
-        return toVirtual(p.x, p.y);
+        return toVirtual.apply(p);
     }
     
     public Painter getPainter() {
