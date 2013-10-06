@@ -8,11 +8,11 @@ import java.awt.Stroke;
 import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Vec2d;
 
-public class PointView implements ObjectView {
+public class PointPainter implements ObjectPainter {
     
     private final CanvasPoint point;
 
-    public PointView(CanvasPoint point) {
+    public PointPainter(CanvasPoint point) {
         this.point = point;
     }
     

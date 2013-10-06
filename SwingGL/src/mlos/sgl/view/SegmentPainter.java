@@ -9,11 +9,11 @@ import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.core.Segment;
 
-public class SegmentView implements ObjectView {
+public class SegmentPainter implements ObjectPainter {
 
     private final CanvasSegment segment;
     
-    public SegmentView(CanvasSegment segment) {
+    public SegmentPainter(CanvasSegment segment) {
         this.segment = segment;
     }
 

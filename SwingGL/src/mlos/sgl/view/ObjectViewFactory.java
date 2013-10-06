@@ -4,6 +4,6 @@ import mlos.sgl.canvas.CanvasObject;
 
 public interface ObjectViewFactory {
 
-    ObjectView createView(CanvasObject object);
+    ObjectPainter createView(CanvasObject object);
     
 }

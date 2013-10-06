@@ -5,7 +5,7 @@ import mlos.sgl.canvas.CanvasSegment;
 
 public class DefaultObjectViewFactory extends GenericObjectViewFactory {{
     
-    register(CanvasPoint.class, PointView.class);
-    register(CanvasSegment.class, SegmentView.class);
+    register(CanvasPoint.class, PointPainter.class);
+    register(CanvasSegment.class, SegmentPainter.class);
     
 }}

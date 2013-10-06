@@ -2,7 +2,7 @@ package mlos.sgl.view;
 
 import mlos.sgl.canvas.CanvasObject;
 
-public interface ObjectView extends Painter {
+public interface ObjectPainter extends Painter {
 
     CanvasObject getObject();
     

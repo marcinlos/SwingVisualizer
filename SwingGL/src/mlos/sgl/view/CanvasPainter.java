@@ -16,10 +16,10 @@ import mlos.sgl.canvas.ObjectZComparator;
 
 public class CanvasPainter implements Painter, CanvasListener {
 
-    private static class ZComparator implements Comparator<ObjectView> {
+    private static class ZComparator implements Comparator<ObjectPainter> {
 
         @Override
-        public int compare(ObjectView a, ObjectView b) {
+        public int compare(ObjectPainter a, ObjectPainter b) {
             CanvasObject aa = a.getObject();
             CanvasObject bb = b.getObject();
             return ObjectZComparator.INSTANCE.compare(aa, bb);
@@ -28,9 +28,9 @@ public class CanvasPainter implements Painter, CanvasListener {
 
     private static final ZComparator COMPARATOR = new ZComparator();
 
-    private final Map<CanvasObject, ObjectView> viewMap = new HashMap<>();
+    private final Map<CanvasObject, ObjectPainter> viewMap = new HashMap<>();
 
-    private final Collection<ObjectView> views = new TreeSet<>(COMPARATOR);
+    private final Collection<ObjectPainter> views = new TreeSet<>(COMPARATOR);
 
     private ObjectViewFactory viewFactory;
 
@@ -41,14 +41,14 @@ public class CanvasPainter implements Painter, CanvasListener {
 
     @Override
     public void objectAdded(CanvasObject object) {
-        ObjectView view = viewFactory.createView(object);
+        ObjectPainter view = viewFactory.createView(object);
         viewMap.put(object, view);
         views.add(view);
     }
 
     @Override
     public void objectRemoved(CanvasObject object) {
-        ObjectView view = viewMap.remove(object);
+        ObjectPainter view = viewMap.remove(object);
         views.remove(view);
     }
 
@@ -57,7 +57,7 @@ public class CanvasPainter implements Painter, CanvasListener {
         ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (ObjectView view : views) {
+        for (ObjectPainter view : views) {
             view.paint(panel, ctx);
         }
     }
