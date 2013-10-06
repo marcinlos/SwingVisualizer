@@ -32,16 +32,16 @@ public class CanvasPainter implements Painter, CanvasListener {
 
     private final Collection<ObjectPainter> views = new TreeSet<>(COMPARATOR);
 
-    private ObjectViewFactory viewFactory;
+    private ObjectPainterFactory viewFactory;
 
     
-    public CanvasPainter(ObjectViewFactory viewFactory) {
+    public CanvasPainter(ObjectPainterFactory viewFactory) {
         this.viewFactory = checkNotNull(viewFactory);
     }
 
     @Override
     public void objectAdded(CanvasObject object) {
-        ObjectPainter view = viewFactory.createView(object);
+        ObjectPainter view = viewFactory.createPainter(object);
         viewMap.put(object, view);
         views.add(view);
     }

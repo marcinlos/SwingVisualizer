@@ -18,8 +18,8 @@ import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasPainter;
 import mlos.sgl.view.CompositePainter;
-import mlos.sgl.view.DefaultObjectViewFactory;
-import mlos.sgl.view.ObjectViewFactory;
+import mlos.sgl.view.DefaultObjectPainterFactory;
+import mlos.sgl.view.ObjectPainterFactory;
 
 public abstract class Scene {
     
@@ -80,8 +80,8 @@ public abstract class Scene {
         canvas.add(object);
     }
 
-    protected ObjectViewFactory createViewFactory() {
-        return new DefaultObjectViewFactory();
+    protected ObjectPainterFactory createViewFactory() {
+        return new DefaultObjectPainterFactory();
     }
 
     protected ObjectGeometryFactory createGeometryFactory() {

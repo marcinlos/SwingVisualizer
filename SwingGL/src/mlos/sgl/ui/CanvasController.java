@@ -1,6 +1,7 @@
 package mlos.sgl.ui;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static mlos.sgl.core.Geometry.diff;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -14,7 +15,6 @@ import java.util.TreeSet;
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
-import mlos.sgl.core.Geometry;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
@@ -37,7 +37,7 @@ public class CanvasController implements CanvasListener {
         @Override
         public void mouseDragged(MouseEvent e) {
             update(e);
-            Vec2d p = Geometry.diff(getPosition(e), dragBase);
+            Vec2d p = diff(getPosition(e), dragBase);
             int dx = (int) p.x;
             int dy = (int) p.y;
             if (captured != null) {
