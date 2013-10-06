@@ -16,7 +16,7 @@ import mlos.sgl.ui.ObjectGeometryFactory;
 import mlos.sgl.util.PropertyListener;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
-import mlos.sgl.view.CanvasView;
+import mlos.sgl.view.CanvasPainter;
 import mlos.sgl.view.CompositePainter;
 import mlos.sgl.view.DefaultObjectViewFactory;
 import mlos.sgl.view.ObjectViewFactory;
@@ -44,7 +44,7 @@ public abstract class Scene {
 
     private final CanvasPanel canvasPanel;
 
-    private final CanvasView view;
+    private final CanvasPainter view;
 
     private final CanvasController controller;
 
@@ -61,7 +61,7 @@ public abstract class Scene {
 
         this.name = checkNotNull(name);
         this.canvas = new Canvas();
-        this.view = new CanvasView(createViewFactory());
+        this.view = new CanvasPainter(createViewFactory());
 
         this.painter = new CompositePainter()
             .add(view)

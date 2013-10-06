@@ -14,7 +14,7 @@ import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
 
-public class CanvasView implements Painter, CanvasListener {
+public class CanvasPainter implements Painter, CanvasListener {
 
     private static class ZComparator implements Comparator<ObjectView> {
 
@@ -35,7 +35,7 @@ public class CanvasView implements Painter, CanvasListener {
     private ObjectViewFactory viewFactory;
 
     
-    public CanvasView(ObjectViewFactory viewFactory) {
+    public CanvasPainter(ObjectViewFactory viewFactory) {
         this.viewFactory = checkNotNull(viewFactory);
     }
 
