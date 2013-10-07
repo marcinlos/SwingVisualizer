@@ -10,7 +10,7 @@ public class Transform {
         m[0][0] = m[1][1] = 1;
     }
     
-    private Transform(double [][] mat) {
+    private Transform(double[][] mat) {
         this.m = mat;
     }
     
@@ -45,6 +45,15 @@ public class Transform {
         } else {
             throw new ArithmeticException("det = 0");
         }
+    }
+    
+    @Override
+    public String toString() {
+        String rowFmt = String.format("{%1$s, %1$s, %1$s}", "%.2f");
+        String fmt = String.format("{%1$s,\n %1$s}", rowFmt);
+        return String.format(fmt,
+                m[0][0], m[0][1], m[0][2],
+                m[1][0], m[1][1], m[1][2]);
     }
 
     
@@ -127,6 +136,28 @@ public class Transform {
         
         public Builder flipY() {
             return sY(-1);
+        }
+        
+        public Builder r(double theta) {
+            double cos = Math.cos(theta);
+            double sin = Math.sin(theta);
+            
+            double m00 = m[0][0];
+            double m01 = m[0][1];
+            double m02 = m[0][2];
+            double m10 = m[1][0];
+            double m11 = m[1][1];
+            double m12 = m[1][2];
+            
+            m[0][0] = m00 * cos - m10 * sin;
+            m[0][1] = m01 * cos - m11 * sin;
+            m[0][2] = m02 * cos - m12 * sin;
+            
+            m[1][0] = m00 * sin + m10 * cos;
+            m[1][1] = m01 * sin + m11 * cos;
+            m[1][2] = m02 * sin + m12 * cos;
+            
+            return this;
         }
         
         public Builder invert() {

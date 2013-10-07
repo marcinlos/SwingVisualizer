@@ -14,8 +14,9 @@ import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
 import mlos.sgl.core.Transform;
+import mlos.sgl.core.Transforms;
 
-public class CanvasPainter implements Painter, CanvasListener {
+public class CanvasView implements Painter, CanvasListener {
 
     private static class ZComparator implements Comparator<ObjectPainter> {
 
@@ -25,6 +26,7 @@ public class CanvasPainter implements Painter, CanvasListener {
             CanvasObject bb = b.getObject();
             return ObjectZComparator.INSTANCE.compare(aa, bb);
         }
+        
     };
 
     private static final ZComparator COMPARATOR = new ZComparator();
@@ -35,9 +37,14 @@ public class CanvasPainter implements Painter, CanvasListener {
 
     private ObjectPainterFactory viewFactory;
 
+    private Transform transform = new Transform();
     
-    public CanvasPainter(ObjectPainterFactory viewFactory) {
+    public CanvasView(ObjectPainterFactory viewFactory) {
         this.viewFactory = checkNotNull(viewFactory);
+    }
+    
+    public void setTransform(Transform transform) {
+        this.transform = transform;
     }
 
     @Override
@@ -58,6 +65,9 @@ public class CanvasPainter implements Painter, CanvasListener {
         ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
+        Transform t = Transforms.compose(screen, transform);
+        
+        System.out.printf("%s\n*\n%s\n=\n%s", transform, screen, t);
         for (ObjectPainter view : views) {
             view.paint(screen, ctx);
         }

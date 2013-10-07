@@ -45,7 +45,7 @@ public class CanvasPanel extends JPanel {
         Transform.Builder builder = new Transform.Builder()
                 .flipY()
                 .t(1, 1)
-                .s(panelWidth / 2, panelHeight / 2);
+                .s(panelWidth / 2.0, panelHeight / 2.0);
 
         normToScreen = builder.create();
         screenToNorm = builder.invert().create();

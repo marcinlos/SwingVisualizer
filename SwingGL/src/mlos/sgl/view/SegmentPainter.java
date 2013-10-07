@@ -13,7 +13,7 @@ import mlos.sgl.core.Vec2d;
 public class SegmentPainter implements ObjectPainter {
 
     private final CanvasSegment segment;
-    
+
     public SegmentPainter(CanvasSegment segment) {
         this.segment = segment;
     }
@@ -25,15 +25,17 @@ public class SegmentPainter implements ObjectPainter {
         Vec2d b = screen.apply(seg.b);
         Color color = getColor();
         int thickness = segment.getThickness();
-        
+
         ctx.setColor(color);
         Stroke stroke = new BasicStroke(thickness);
         ctx.setStroke(stroke);
         ctx.drawLine((int) a.x, (int) a.y, (int) b.x, (int) b.y);
     }
-    
+
     private Color getColor() {
-        if (segment.isHover()) {
+        if (segment.isSelected()) {
+            return segment.getSelectedColor();
+        } else if (segment.isHover()) {
             return segment.getHoverColor();
         } else {
             return segment.getColor();
