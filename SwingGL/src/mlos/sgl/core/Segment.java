@@ -2,7 +2,7 @@ package mlos.sgl.core;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class Segment {
+public class Segment implements Transformable<Segment> {
     
     public final Vec2d a;
     public final Vec2d b;
@@ -25,6 +25,11 @@ public class Segment {
     @Override
     public String toString() {
         return String.format("[%s, %s]", a, b);
+    }
+
+    @Override
+    public Segment apply(Transform t) {
+        return new Segment(a.apply(t), b.apply(t));
     }
 
 }

@@ -80,10 +80,18 @@ public class Geometry {
         return lerp(t, a, b);
     }
     
+    public static double clamp(double t, double a, double b) {
+        return t < a ? a : t > b ? b : t;
+    }
+    
     public static Vec2d lerp(double t, Vec2d a, Vec2d b) {
         double x = t * b.x + (1 - t) * a.x;
         double y = t * b.y + (1 - t) * a.y;
         return new Vec2d(x, y);
     }
-
+    
+    public static Vec2d lerp(double t, Segment s) {
+        return lerp(t, s.a, s.b);
+    }
+    
 }

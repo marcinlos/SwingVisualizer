@@ -2,7 +2,7 @@ package mlos.sgl.core;
 
 import java.util.Objects;
 
-public final class Vec2d {
+public final class Vec2d implements Transformable<Vec2d> {
     
     public final double x;
     public final double y;
@@ -34,6 +34,11 @@ public final class Vec2d {
     @Override
     public String toString() {
         return String.format("(%.3f, %.3f)", x, y);
+    }
+
+    @Override
+    public Vec2d apply(Transform t) {
+        return t.apply(this);
     }
     
 }

@@ -1,5 +1,6 @@
 package mlos.sgl.ui;
 
+import static mlos.sgl.core.Geometry.clamp;
 import static mlos.sgl.core.Geometry.diff;
 import static mlos.sgl.core.Geometry.dist;
 import static mlos.sgl.core.Geometry.dot;
@@ -20,27 +21,19 @@ public class SegmentGeometry implements ObjectGeometry {
 
     @Override
     public boolean hit(Vec2d p, Transform screen, int treshold) {
-        
-        Segment seg = segment.getSegment();
-        Vec2d a = screen.apply(seg.a);
-        Vec2d b = screen.apply(seg.b);
-        
-        return distance(a, b, p) < treshold;
+        Segment seg = segment.getSegment().apply(screen);
+        return distance(seg, p) < treshold;
     }
     
-    private Vec2d closest(Vec2d a, Vec2d b, Vec2d p) {
-        Vec2d ab = diff(b, a);
-        Vec2d ap = diff(p, a);
+    private Vec2d closest(Segment s, Vec2d p) {
+        Vec2d ab = diff(s.b, s.a);
+        Vec2d ap = diff(p, s.a);
         double t = dot(ab, ap) / normSq(ab);
-        if (0 <= t && t <= 1) {
-            return lerp(t, a, b);
-        } else {
-            return t < 0 ? a : b;
-        }
+        return lerp(clamp(t, 0, 1), s);
     }
     
-    private double distance(Vec2d a, Vec2d b, Vec2d p) {
-        return dist(p, closest(a, b, p));
+    private double distance(Segment s, Vec2d p) {
+        return dist(p, closest(s, p));
     }
     
     @Override
