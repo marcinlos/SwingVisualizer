@@ -78,13 +78,13 @@ public class Transform {
         public Builder apply(Transform t) {
             double[][] a = t.m;
             
-            double m00 = m[0][0] * a[0][0] + m[0][1] * a[1][0];
-            double m01 = m[0][0] * a[0][1] + m[0][1] * a[1][1];
-            double m02 = m[0][0] * a[0][2] + m[0][1] * a[1][2];
+            double m00 = a[0][0] * m[0][0] + a[0][1] * m[1][0];
+            double m01 = a[0][0] * m[0][1] + a[0][1] * m[1][1];
+            double m02 = a[0][0] * m[0][2] + a[0][1] * m[1][2] + a[0][2];
             
-            double m10 = m[1][0] * a[0][0] + m[1][1] * a[1][0];
-            double m11 = m[1][0] * a[0][1] + m[1][1] * a[1][1];
-            double m12 = m[1][0] * a[0][2] + m[1][1] * a[1][2];
+            double m10 = a[1][0] * m[0][0] + a[1][1] * m[1][0];
+            double m11 = a[1][0] * m[0][1] + a[1][1] * m[1][1];
+            double m12 = a[1][0] * m[0][2] + a[1][1] * m[1][2] + a[1][2];
             
             
             m[0][0] = m00; 

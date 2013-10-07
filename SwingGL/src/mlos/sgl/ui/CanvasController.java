@@ -15,9 +15,12 @@ import java.util.TreeSet;
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
+import mlos.sgl.core.Transform;
+import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
+import mlos.sgl.view.CanvasView;
 
 public class CanvasController implements CanvasListener {
 
@@ -60,7 +63,7 @@ public class CanvasController implements CanvasListener {
                 if (! hits.isEmpty()) {
                     captured = hits.iterator().next();
                     captured.setSelected(true);
-                    panel.refresh();
+                    canvasPanel.refresh();
                 }
             }
             dragBase = getPosition(e);
@@ -89,7 +92,9 @@ public class CanvasController implements CanvasListener {
         return new Vec2d(p.x, p.y);
     }
     
-    private final CanvasPanel panel;
+    private final CanvasView view;
+    
+    private final CanvasPanel canvasPanel;
     
     private final PropertyMap properties;
 
@@ -102,14 +107,15 @@ public class CanvasController implements CanvasListener {
     
     private CanvasObject captured;
 
-    public CanvasController(CanvasPanel panel, PropertyMap properties, 
-            ObjectGeometryFactory geometryFactory) {
-        this.panel = checkNotNull(panel);
+    public CanvasController(CanvasView view, CanvasPanel canvasPanel, 
+            PropertyMap properties, ObjectGeometryFactory geometryFactory) {
+        this.view = checkNotNull(view);
+        this.canvasPanel = checkNotNull(canvasPanel);
         this.properties = checkNotNull(properties);
         this.geometryFactory = checkNotNull(geometryFactory);
         
-        panel.addMouseMotionListener(new MotionListener());
-        panel.addMouseListener(new ButtonListener());
+        canvasPanel.addMouseMotionListener(new MotionListener());
+        canvasPanel.addMouseListener(new ButtonListener());
     }
 
     @Override
@@ -136,8 +142,13 @@ public class CanvasController implements CanvasListener {
     
     public Collection<CanvasObject> findHits(Vec2d p) {
         Set<CanvasObject> hits = new TreeSet<>(ObjectZComparator.INSTANCE);
+        
+        Transform normToScreen = canvasPanel.normToScreen();
+        Transform planeToNorm = view.getTransform();
+        Transform planeToScreen = Transforms.compose(planeToNorm, normToScreen);
+        
         for (ObjectGeometry geometry : geometryMap.values()) {
-            if (geometry.hit(p, panel.normToScreen(), DEFAULT_TRESHOLD)) {
+            if (geometry.hit(p, planeToScreen, DEFAULT_TRESHOLD)) {
                 hits.add(geometry.getObject());
             }
         }

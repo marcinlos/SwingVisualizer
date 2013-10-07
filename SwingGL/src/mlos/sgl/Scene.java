@@ -7,14 +7,15 @@ import java.awt.Component;
 
 import mlos.sgl.canvas.Canvas;
 import mlos.sgl.canvas.CanvasObject;
+import mlos.sgl.core.Transform;
 import mlos.sgl.decorators.CursorPositionPainter;
 import mlos.sgl.ui.CanvasController;
 import mlos.sgl.ui.DefaultObjectGeometryFactory;
 import mlos.sgl.ui.ObjectGeometryFactory;
 import mlos.sgl.util.PropertyListener;
 import mlos.sgl.util.PropertyMap;
-import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.CanvasPanel;
+import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.CompositePainter;
 import mlos.sgl.view.DefaultObjectPainterFactory;
 import mlos.sgl.view.ObjectPainterFactory;
@@ -38,9 +39,9 @@ public abstract class Scene {
 
     private final Canvas canvas;
     
-    private CompositePainter painter;
-
     private final CanvasPanel canvasPanel;
+    
+    private CompositePainter painter;
 
     private final CanvasView view;
 
@@ -60,14 +61,17 @@ public abstract class Scene {
         this.name = checkNotNull(name);
         this.canvas = new Canvas();
         this.view = new CanvasView(createViewFactory());
+        
+        view.apply(new Transform.Builder().r(0.3).create());
 
         this.painter = new CompositePainter()
             .add(view)
             .add(new CursorPositionPainter(properties));
         
         this.canvasPanel = new CanvasPanel(painter);
-        this.controller = new CanvasController(canvasPanel, properties, 
-                createGeometryFactory());
+        
+        ObjectGeometryFactory geomFactory = createGeometryFactory();
+        this.controller = new CanvasController(view, canvasPanel, properties, geomFactory);
         
         canvas.addListener(view);
         canvas.addListener(controller);
@@ -94,16 +98,12 @@ public abstract class Scene {
         return canvas;
     }
 
-    protected CanvasPanel panel() {
-        return canvasPanel;
-    }
-
     protected void refresh() {
         canvasPanel.refresh();
     }
 
     protected Component getUI() {
-        return panel();
+        return canvasPanel;
     }
 
 }

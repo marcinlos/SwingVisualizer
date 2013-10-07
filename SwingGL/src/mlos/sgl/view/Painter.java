@@ -6,6 +6,6 @@ import mlos.sgl.core.Transform;
 
 public interface Painter {
     
-    void paint(Transform screen, Graphics2D ctx);
+    void paint(Transform normToScreen, Graphics2D ctx);
 
 }

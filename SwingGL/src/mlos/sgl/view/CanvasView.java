@@ -36,15 +36,25 @@ public class CanvasView implements Painter, CanvasListener {
     private final Collection<ObjectPainter> views = new TreeSet<>(COMPARATOR);
 
     private ObjectPainterFactory viewFactory;
+    
+    
 
-    private Transform transform = new Transform();
+    private Transform planeToNorm = new Transform();
     
     public CanvasView(ObjectPainterFactory viewFactory) {
         this.viewFactory = checkNotNull(viewFactory);
     }
     
     public void setTransform(Transform transform) {
-        this.transform = transform;
+        this.planeToNorm = transform;
+    }
+    
+    public Transform getTransform() {
+        return planeToNorm;
+    }
+    
+    public void apply(Transform t) {
+        planeToNorm = Transforms.compose(planeToNorm, t);
     }
 
     @Override
@@ -61,15 +71,14 @@ public class CanvasView implements Painter, CanvasListener {
     }
 
     @Override
-    public void paint(Transform screen, Graphics2D ctx) {
+    public void paint(Transform normToScreen, Graphics2D ctx) {
         ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Transform t = Transforms.compose(screen, transform);
+        Transform t = Transforms.compose(planeToNorm, normToScreen);
         
-        System.out.printf("%s\n*\n%s\n=\n%s", transform, screen, t);
         for (ObjectPainter view : views) {
-            view.paint(screen, ctx);
+            view.paint(t, ctx);
         }
     }
 }

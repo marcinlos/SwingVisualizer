@@ -17,10 +17,10 @@ public class CursorPositionPainter implements Painter {
     }
 
     @Override
-    public void paint(Transform screen, Graphics2D ctx) {
+    public void paint(Transform normToScreen, Graphics2D ctx) {
         Vec2d cursor = properties.get("cursor", Vec2d.class);
         if (cursor != null) {
-            String text = "Pos: " + screen.invert(cursor);
+            String text = "Pos: " + normToScreen.invert(cursor);
             ctx.setColor(Color.black);
             ctx.drawString(text, 8, 15);
 
