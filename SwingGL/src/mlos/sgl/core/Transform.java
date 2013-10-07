@@ -66,7 +66,7 @@ public class Transform {
         }
         
         public Builder(Transform t) {
-            copyMatrix(m, t.m);
+            copyMatrix(t.m, m);
         }
         
         private void copyMatrix(double[][] src, double[][] dst) {
