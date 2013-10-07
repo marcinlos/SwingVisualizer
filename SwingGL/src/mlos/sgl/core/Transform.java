@@ -19,6 +19,33 @@ public class Transform {
         double y = m[1][0] * a.x + m[1][1] * a.y + m[1][2];
         return new Vec2d(x, y);
     }
+    
+    public Vec2d invert(Vec2d p) {
+        double a = m[0][0];
+        double b = m[0][1];
+        double c = m[0][2];
+        double d = m[1][0];
+        double e = m[1][1];
+        double f = m[1][2];
+        
+        double det = a * e - b * d;
+        
+        if (Math.abs(det) > 1e-20) {
+            double m00 = e;
+            double m01 = -b;
+            double m02 = (b * f - c * e);
+            
+            double m10 = - d;
+            double m11 = a;
+            double m12 = (c * d - a * f);
+            
+            double x = m00 * p.x + m01 * p.y + m02;
+            double y = m10 * p.x + m11 * p.y + m12;
+            return new Vec2d(x / det, y / det);
+        } else {
+            throw new ArithmeticException("det = 0");
+        }
+    }
 
     
     public static class Builder {

@@ -137,7 +137,7 @@ public class CanvasController implements CanvasListener {
     public Collection<CanvasObject> findHits(Vec2d p) {
         Set<CanvasObject> hits = new TreeSet<>(ObjectZComparator.INSTANCE);
         for (ObjectGeometry geometry : geometryMap.values()) {
-            if (geometry.hit(p, panel, DEFAULT_TRESHOLD)) {
+            if (geometry.hit(p, panel.normToScreen(), DEFAULT_TRESHOLD)) {
                 hits.add(geometry.getObject());
             }
         }

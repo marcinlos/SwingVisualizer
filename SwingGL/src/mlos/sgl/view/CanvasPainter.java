@@ -54,12 +54,12 @@ public class CanvasPainter implements Painter, CanvasListener {
     }
 
     @Override
-    public void paint(Transform toScreen, Graphics2D ctx) {
+    public void paint(Transform screen, Graphics2D ctx) {
         ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         for (ObjectPainter view : views) {
-            view.paint(toScreen, ctx);
+            view.paint(screen, ctx);
         }
     }
 }

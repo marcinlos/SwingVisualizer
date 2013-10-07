@@ -8,22 +8,20 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import mlos.sgl.core.ScreenTransform;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
 
-public class CanvasPanel extends JPanel implements ScreenTransform {
+public class CanvasPanel extends JPanel {
 
-    private Transform toScreen;
-    
-    private Transform toVirtual;
-    
+    private Transform normToScreen;
+
+    private Transform screenToNorm;
+
     /** Painter drawing content */
     private final Painter painter;
 
-
     /**
-     * Creates new {@code width x height} canvas.
+     * Creates new canvas panel.
      * 
      * @param painter
      *            Painter used to draw canvas content
@@ -39,41 +37,57 @@ public class CanvasPanel extends JPanel implements ScreenTransform {
     public void refresh() {
         repaint();
     }
-    
+
     private void recomputeTransform() {
-        int sw = getWidth();
-        int sh = getHeight();
-        Transform.Builder builder = new Transform.Builder()
-            .flipY()
-            .t(1, 1)
-            .s(sw / 2, sh / 2);
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
         
-        toScreen = builder.create();
-        toVirtual = builder.invert().create();
+        Transform.Builder builder = new Transform.Builder()
+                .flipY()
+                .t(1, 1)
+                .s(panelWidth / 2, panelHeight / 2);
+
+        normToScreen = builder.create();
+        screenToNorm = builder.invert().create();
+    }
+
+    public Transform normToScreen() {
+        return normToScreen;
+    }
+
+    public Transform screenToNorm() {
+        return screenToNorm;
     }
 
     /**
-     * {@inheritDoc}
+     * Transforms the coordinates in the normalized space to the screen
+     * coordinates.
+     * 
+     * @param p
+     *            ScreenPoint in virtual coordinates
+     * @return Vec2d in screen coordinates
      */
-    @Override
     public Vec2d toScreen(Vec2d p) {
-        return toScreen.apply(p);
+        return normToScreen.apply(p);
     }
 
     /**
-     * {@inheritDoc}
+     * Transforms screen coordinates to the coordinates in the normalized space.
+     * 
+     * @param p
+     *            ScreenPoint in screen coordinates
+     * @return ScreenPoint in virtual coordinates
      */
-    @Override
-    public Vec2d toVirtual(Vec2d p) {
-        return toVirtual.apply(p);
+    public Vec2d toNorm(Vec2d p) {
+        return screenToNorm.apply(p);
     }
-    
+
     @Override
     protected final void paintComponent(Graphics g) {
         super.paintComponent(g);
         recomputeTransform();
         Graphics2D graphics = (Graphics2D) g;
-        painter.paint(toScreen, graphics);
+        painter.paint(normToScreen, graphics);
     }
 
 }

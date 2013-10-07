@@ -32,12 +32,12 @@ public class PointPainter implements ObjectPainter {
     }
 
     @Override
-    public void paint(Transform toScreen, Graphics2D ctx) {
+    public void paint(Transform screen, Graphics2D ctx) {
         Vec2d p = point.getPoint();
         int size = point.getSize();
         Color color = getColor();
 
-        Vec2d s = toScreen.apply(p);
+        Vec2d s = screen.apply(p);
         int hsize = size / 2;
         ctx.setColor(color);
         int left = (int) s.x - hsize;

@@ -1,11 +1,14 @@
 package mlos.sgl.ui;
 
-import static mlos.sgl.core.Geometry.*;
-
+import static mlos.sgl.core.Geometry.diff;
+import static mlos.sgl.core.Geometry.dist;
+import static mlos.sgl.core.Geometry.dot;
+import static mlos.sgl.core.Geometry.lerp;
+import static mlos.sgl.core.Geometry.normSq;
 import mlos.sgl.canvas.CanvasSegment;
-import mlos.sgl.core.Vec2d;
-import mlos.sgl.core.ScreenTransform;
 import mlos.sgl.core.Segment;
+import mlos.sgl.core.Transform;
+import mlos.sgl.core.Vec2d;
 
 public class SegmentGeometry implements ObjectGeometry {
     
@@ -16,11 +19,11 @@ public class SegmentGeometry implements ObjectGeometry {
     }
 
     @Override
-    public boolean hit(Vec2d p, ScreenTransform transform, int treshold) {
+    public boolean hit(Vec2d p, Transform screen, int treshold) {
         
         Segment seg = segment.getSegment();
-        Vec2d a = transform.toScreen(seg.a);
-        Vec2d b = transform.toScreen(seg.b);
+        Vec2d a = screen.apply(seg.a);
+        Vec2d b = screen.apply(seg.b);
         
         return distance(a, b, p) < treshold;
     }
