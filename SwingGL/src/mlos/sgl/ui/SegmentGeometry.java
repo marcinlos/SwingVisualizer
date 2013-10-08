@@ -19,12 +19,6 @@ public class SegmentGeometry implements ObjectGeometry {
         this.segment = segment;
     }
 
-    @Override
-    public boolean hit(Vec2d p, Transform screen, int treshold) {
-        Segment seg = segment.getSegment().apply(screen);
-        return distance(seg, p) < treshold;
-    }
-    
     private Vec2d closest(Segment s, Vec2d p) {
         Vec2d ab = diff(s.b, s.a);
         Vec2d ap = diff(p, s.a);
@@ -39,6 +33,12 @@ public class SegmentGeometry implements ObjectGeometry {
     @Override
     public CanvasSegment getObject() {
         return segment;
+    }
+
+    @Override
+    public double distance(Vec2d p, Transform planeToScreen) {
+        Segment seg = segment.getSegment().apply(planeToScreen);
+        return distance(seg, p);
     }
 
 }

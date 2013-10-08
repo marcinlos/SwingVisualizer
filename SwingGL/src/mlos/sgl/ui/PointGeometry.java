@@ -1,6 +1,6 @@
 package mlos.sgl.ui;
 
-import static mlos.sgl.core.Geometry.distSq;
+import static mlos.sgl.core.Geometry.dist;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Transform;
@@ -15,17 +15,17 @@ public class PointGeometry implements ObjectGeometry {
     }
 
     @Override
-    public boolean hit(Vec2d p, Transform screen, int treshold) {
-        Vec2d s = screen.apply(point.getPoint());
-        double distSq = distSq(p, s);
-        
-        int r = point.getSize() / 2 + treshold;
-        return distSq < r * r;
-    }
-
-    @Override
     public CanvasObject getObject() {
         return point;
     }
+
+    @Override
+    public double distance(Vec2d p, Transform planeToScreen) {
+        Vec2d s = planeToScreen.apply(point.getPoint());
+        double d = dist(p, s);
+        double r = point.getSize();
+        return Math.max(0, d - r);
+    }
+
 
 }

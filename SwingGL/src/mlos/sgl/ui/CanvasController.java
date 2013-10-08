@@ -6,15 +6,11 @@ import static mlos.sgl.core.Geometry.diff;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
-import mlos.sgl.canvas.ObjectZComparator;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
@@ -59,10 +55,9 @@ public class CanvasController implements CanvasListener {
         @Override
         public void mousePressed(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON3) {
-                Collection<CanvasObject> hits = findHits(getPosition(e));
-                if (! hits.isEmpty()) {
-                    captured = hits.iterator().next();
-                    captured.setSelected(true);
+                CanvasObject hit = findHit(getPosition(e));
+                if (hit != null) {
+                    hit.setSelected(true);
                     canvasPanel.refresh();
                 }
             }
@@ -76,7 +71,6 @@ public class CanvasController implements CanvasListener {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            // TODO Auto-generated method stub
             
         }
 
@@ -130,29 +124,30 @@ public class CanvasController implements CanvasListener {
     }
     
     
-    void onMouseHover(Vec2d p) {
+    private void onMouseHover(Vec2d p) {
         for (CanvasObject object : geometryMap.keySet()) {
             object.setHover(false);
         }
-        Collection<CanvasObject> hits = findHits(p);
-        for (CanvasObject object : hits) {
-            object.setHover(true);
-        }
+        CanvasObject hit = findHit(p);
+        hit.setHover(true);
     }
     
-    public Collection<CanvasObject> findHits(Vec2d p) {
-        Set<CanvasObject> hits = new TreeSet<>(ObjectZComparator.INSTANCE);
-        
+    public CanvasObject findHit(Vec2d p) {
         Transform normToScreen = canvasPanel.normToScreen();
         Transform planeToNorm = view.getTransform();
         Transform planeToScreen = Transforms.compose(planeToNorm, normToScreen);
         
+        CanvasObject closest = null;
+        double minDist = Double.MAX_VALUE;
         for (ObjectGeometry geometry : geometryMap.values()) {
-            if (geometry.hit(p, planeToScreen, DEFAULT_TRESHOLD)) {
-                hits.add(geometry.getObject());
+            double d = geometry.distance(p, planeToScreen);
+            if (d < DEFAULT_TRESHOLD) {
+                if (d < minDist) {
+                    closest = geometry.getObject();
+                }
             }
         }
-        return hits;
+        return closest;
     }
 
 }
