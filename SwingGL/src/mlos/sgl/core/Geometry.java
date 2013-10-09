@@ -84,9 +84,13 @@ public class Geometry {
         return t < a ? a : t > b ? b : t;
     }
     
+    public static double lerp(double t, double a, double b) {
+        return t * b + (1 - t) * a;
+    }
+    
     public static Vec2d lerp(double t, Vec2d a, Vec2d b) {
-        double x = t * b.x + (1 - t) * a.x;
-        double y = t * b.y + (1 - t) * a.y;
+        double x = lerp(t, a.x, b.x);
+        double y = lerp(t, a.y, b.y);
         return new Vec2d(x, y);
     }
     

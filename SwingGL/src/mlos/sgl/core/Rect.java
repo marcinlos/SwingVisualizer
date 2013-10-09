@@ -37,6 +37,10 @@ public final class Rect {
         return new Rect(left, bottom, left + width, bottom + height);
     }
     
+    public static Rect aroundOrigin(double halfWidth, double halfHeight) {
+        return leftBottomSize(-halfWidth, -halfHeight, 2 * halfWidth, 2 * halfHeight);
+    }
+    
     public double left() {
         return left;
     }
