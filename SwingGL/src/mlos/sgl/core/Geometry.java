@@ -1,5 +1,7 @@
 package mlos.sgl.core;
 
+import com.google.common.base.Predicate;
+
 public class Geometry {
 
     private Geometry() {
@@ -96,6 +98,54 @@ public class Geometry {
     
     public static Vec2d lerp(double t, Segment s) {
         return lerp(t, s.a, s.b);
+    }
+    
+    public static boolean inInterval(double t, double a, double b) {
+        return a <= t && t <= b;
+    }
+    
+    public static boolean inRect(Rect rect, Vec2d p) {
+        return inInterval(p.x, rect.left(), rect.right())
+                && inInterval(p.y, rect.bottom(), rect.top());
+    }
+    
+    
+    public static Predicate<Vec2d> inRectPred(final Rect rect) {
+        return new Predicate<Vec2d>() {
+
+            @Override
+            public boolean apply(Vec2d p) {
+                return inRect(rect, p);
+            }
+        };
+    }
+    
+    public static boolean inCircle(double r, Vec2d p) {
+        return normSq(p) <= r * r;
+    }
+    
+    public static Predicate<Vec2d> inCirclePred(final double r) {
+        return new Predicate<Vec2d>() {
+
+            @Override
+            public boolean apply(Vec2d p) {
+                return inCircle(r, p);
+            }
+        };
+    }
+    
+    public static boolean inSquare(double r, Vec2d p) {
+        return maxNorm(p) <= r;
+    }
+    
+    public static Predicate<Vec2d> inSquarePred(final double r) {
+        return new Predicate<Vec2d>() {
+
+            @Override
+            public boolean apply(Vec2d p) {
+                return inSquare(r, p);
+            }
+        };
     }
     
 }
