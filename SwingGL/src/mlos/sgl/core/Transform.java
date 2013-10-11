@@ -30,7 +30,7 @@ public class Transform {
         
         double det = a * e - b * d;
         
-        if (Math.abs(det) > 1e-20) {
+        if (Math.abs(det) > 1e-200) {
             double m00 = e;
             double m01 = -b;
             double m02 = (b * f - c * e);
@@ -101,6 +101,10 @@ public class Transform {
             m[0][2] += dx;
             m[1][2] += dy;
             return this;
+        }
+        
+        public Builder t(Vec2d v) {
+            return t(v.x, v.y);
         }
         
         public Builder tX(double dx) {

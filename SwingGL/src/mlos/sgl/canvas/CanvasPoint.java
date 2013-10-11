@@ -115,7 +115,7 @@ public class CanvasPoint extends CanvasObject {
     }
 
     public void setBorderSize(int borderSize) {
-        checkArgument(borderSize > 0, "Border size must be positive");
+        checkArgument(borderSize >= 0, "Border size must be non-negative");
         this.borderSize = borderSize;
     }
 

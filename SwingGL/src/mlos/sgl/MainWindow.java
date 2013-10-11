@@ -17,8 +17,12 @@ public class MainWindow extends JFrame {
     
     private final Collection<Scene> scenes = new HashSet<>();
     
+    
+    public MainWindow() {
+        this(WIDTH, HEIGHT);
+    }
 
-    public MainWindow(double width, double height) {
+    public MainWindow(int width, int height) {
         super("Visualizer");
         
         setupUI();

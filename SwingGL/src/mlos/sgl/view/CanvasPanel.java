@@ -18,17 +18,23 @@ public class CanvasPanel extends JPanel {
     private Transform screenToNorm;
 
     /** Painter drawing content */
-    private final Painter painter;
+    private Painter painter;
 
     /**
      * Creates new canvas panel.
+     */
+    public CanvasPanel() {
+        setBackground(Color.white);
+    }
+    
+    /**
+     * Specifies the painter used to draw panel content.
      * 
      * @param painter
      *            Painter used to draw canvas content
      */
-    public CanvasPanel(Painter painter) {
+    public void setPainter(Painter painter) {
         this.painter = checkNotNull(painter);
-        setBackground(Color.white);
     }
 
     /**
@@ -86,8 +92,10 @@ public class CanvasPanel extends JPanel {
     protected final void paintComponent(Graphics g) {
         super.paintComponent(g);
         recomputeTransform();
-        Graphics2D graphics = (Graphics2D) g;
-        painter.paint(normToScreen, graphics);
+        if (painter != null) {
+            Graphics2D graphics = (Graphics2D) g;
+            painter.paint(normToScreen, graphics);
+        }
     }
 
 }

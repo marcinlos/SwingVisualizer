@@ -4,6 +4,6 @@ import mlos.sgl.canvas.CanvasObject;
 
 public interface ObjectControllerFactory {
 
-    ObjectController createGeometry(CanvasObject object);
+    ObjectController createController(CanvasObject object);
     
 }

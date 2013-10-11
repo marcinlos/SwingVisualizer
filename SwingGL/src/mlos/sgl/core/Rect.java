@@ -18,27 +18,29 @@ public final class Rect {
         this.top = top;
     }
     
-    public static Rect leftBottomRightTop(double left, double bottom, 
+    public static Rect bounds(double left, double bottom, 
             double right, double top) {
         return new Rect(left, bottom, right, top);
     }
     
-    public static Rect leftBottomRightTop(Vec2d leftBottom, Vec2d rightTop) {
-        return leftBottomRightTop(leftBottom.x, leftBottom.y, rightTop.x, 
-                rightTop.y);
+    public static Rect bounds(Vec2d leftBottom, Vec2d rightTop) {
+        return bounds(leftBottom.x, leftBottom.y, rightTop.x, rightTop.y);
     }
     
-    public static Rect centerSize(double x, double y, double width, double height) {
-        return new Rect(x - width/2, y - height/2, x + width/2, y + height/2);
+    public static Rect at(double x, double y, double w, double h) {
+        return new Rect(x - w/2, y - h/2, x + w/2, y + h/2);
     }
     
-    public static Rect leftBottomSize(double left, double bottom, double width, 
-            double height) {
-        return new Rect(left, bottom, left + width, bottom + height);
+    public static Rect lbSize(double left, double bottom, double w, double h) {
+        return new Rect(left, bottom, left + w, bottom + h);
     }
     
     public static Rect aroundOrigin(double halfWidth, double halfHeight) {
-        return leftBottomSize(-halfWidth, -halfHeight, 2 * halfWidth, 2 * halfHeight);
+        return lbSize(-halfWidth, -halfHeight, 2 * halfWidth, 2 * halfHeight);
+    }
+    
+    public static Rect aroundOrigin(double extent) {
+        return aroundOrigin(extent, extent);
     }
     
     public double left() {

@@ -1,6 +1,5 @@
 package mlos.sgl;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.awt.Component;
@@ -19,7 +18,6 @@ import mlos.sgl.util.PropertyListener;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasView;
-import mlos.sgl.view.CompositePainter;
 import mlos.sgl.view.DefaultObjectPainterFactory;
 import mlos.sgl.view.ObjectPainterFactory;
 
@@ -44,8 +42,6 @@ public abstract class Scene {
     
     private final CanvasPanel canvasPanel;
     
-    private CompositePainter painter;
-
     private final CanvasView view;
 
     private final CanvasController controller;
@@ -54,25 +50,22 @@ public abstract class Scene {
     
 
     public Scene(String name) {
-        this(name, 1, 1);
-    }
-
-    public Scene(String name, double width, double height) {
-        checkArgument(width > 0, "Width must be positive, is %f", width);
-        checkArgument(height > 0, "Height must be positive, is %f", height);
 
         this.name = checkNotNull(name);
         this.canvas = new Canvas();
-        this.view = new CanvasView(createViewFactory());
+        this.canvasPanel = new CanvasPanel();
+        this.view = new CanvasView(canvasPanel, createViewFactory());
         
-        this.painter = new CompositePainter()
-            .add(view)
-            .add(new CursorPositionPainter(properties));
+        view.addPostPainter(new CursorPositionPainter(properties));
         
-        this.canvasPanel = new CanvasPanel(painter);
         
         ObjectControllerFactory geomFactory = createGeometryFactory();
-        this.controller = new CanvasController(view, canvasPanel, properties, geomFactory);
+        this.controller = new CanvasController(view, properties, geomFactory);
+        
+        canvasPanel.addMouseListener(controller.getMouseListener());
+        canvasPanel.addMouseMotionListener(controller.getMouseMotionListener());
+        canvasPanel.addMouseWheelListener(controller.getMouseWheelListener());
+        canvasPanel.addKeyListener(controller.getKeyListener());
         
         canvas.addListener(view);
         canvas.addListener(controller);
@@ -118,9 +111,13 @@ public abstract class Scene {
     protected Canvas canvas() {
         return canvas;
     }
+    
+    protected CanvasView view() {
+        return view;
+    }
 
     protected void refresh() {
-        canvasPanel.refresh();
+        view.refresh();
     }
 
     protected Component getUI() {

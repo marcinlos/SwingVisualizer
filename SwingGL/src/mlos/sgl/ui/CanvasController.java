@@ -3,9 +3,11 @@ package mlos.sgl.ui;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mlos.sgl.core.Geometry.diff;
 
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +17,6 @@ import mlos.sgl.core.Transform;
 import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
-import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasView;
 
 public class CanvasController implements CanvasListener {
@@ -37,8 +38,8 @@ public class CanvasController implements CanvasListener {
         public void mouseDragged(MouseEvent e) {
             update(e);
             Vec2d p = diff(getPosition(e), dragBase);
-            int dx = (int) p.x;
-            int dy = (int) p.y;
+//            int dx = (int) p.x;
+//            int dy = (int) p.y;
             if (captured != null) {
 //                captured.
             }
@@ -58,7 +59,7 @@ public class CanvasController implements CanvasListener {
                 CanvasObject hit = findHit(getPosition(e));
                 if (hit != null) {
                     hit.setSelected(true);
-                    canvasPanel.refresh();
+                    view.refresh();
                 }
             }
             dragBase = getPosition(e);
@@ -88,7 +89,7 @@ public class CanvasController implements CanvasListener {
     
     private final CanvasView view;
     
-    private final CanvasPanel canvasPanel;
+//    private final CanvasPanel canvasPanel;
     
     private final PropertyMap properties;
 
@@ -101,20 +102,16 @@ public class CanvasController implements CanvasListener {
     
     private CanvasObject captured;
 
-    public CanvasController(CanvasView view, CanvasPanel canvasPanel, 
-            PropertyMap properties, ObjectControllerFactory geometryFactory) {
+    public CanvasController(CanvasView view, PropertyMap properties, 
+            ObjectControllerFactory geometryFactory) {
         this.view = checkNotNull(view);
-        this.canvasPanel = checkNotNull(canvasPanel);
         this.properties = checkNotNull(properties);
         this.geometryFactory = checkNotNull(geometryFactory);
-        
-        canvasPanel.addMouseMotionListener(new MotionListener());
-        canvasPanel.addMouseListener(new ButtonListener());
     }
 
     @Override
     public void objectAdded(CanvasObject object) {
-        ObjectController geometry = geometryFactory.createGeometry(object);
+        ObjectController geometry = geometryFactory.createController(object);
         geometryMap.put(object, geometry);
     }
 
@@ -133,8 +130,8 @@ public class CanvasController implements CanvasListener {
     }
     
     public CanvasObject findHit(Vec2d p) {
-        Transform normToScreen = canvasPanel.normToScreen();
-        Transform planeToNorm = view.getTransform();
+        Transform normToScreen = view.normToScreen();
+        Transform planeToNorm = view.planeToNorm();
         Transform planeToScreen = Transforms.compose(planeToNorm, normToScreen);
         
         CanvasObject closest = null;
@@ -147,6 +144,24 @@ public class CanvasController implements CanvasListener {
             }
         }
         return closest;
+    }
+    
+    
+    
+    public MouseMotionListener getMouseMotionListener() {
+        return new MotionListener();
+    }
+    
+    public MouseListener getMouseListener() {
+        return new ButtonListener();
+    }
+    
+    public MouseWheelListener getMouseWheelListener() {
+        return null;
+    }
+    
+    public KeyListener getKeyListener() {
+        return null;
     }
 
 }
