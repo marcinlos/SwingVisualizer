@@ -2,7 +2,6 @@ package mlos.sgl.ui;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mlos.sgl.core.Geometry.diff;
-import static mlos.sgl.core.Geometry.mul;
 import static mlos.sgl.core.Geometry.neg;
 
 import java.awt.event.KeyListener;
@@ -16,7 +15,6 @@ import java.util.Map;
 
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
-import mlos.sgl.core.Geometry;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
@@ -31,22 +29,25 @@ public class CanvasController implements CanvasListener {
         @Override
         public void mouseMoved(MouseEvent e) {
             update(e);
-            onMouseHover(getPosition(e));
+            onMouseHover(getScreenPos(e));
+            prevPos = getScreenPos(e);
         }
 
         private void update(MouseEvent e) {
-            properties.put("cursor", getPosition(e));
+            properties.put("cursor", getScreenPos(e));
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
             update(e);
-            Vec2d p = diff(getPosition(e), dragBase);
-//            int dx = (int) p.x;
-//            int dy = (int) p.y;
-            if (captured != null) {
-//                captured.
+            Vec2d screenPos = getScreenPos(e);
+            if (captured == null) {
+                Vec2d prevPlanePos = view.planeToScreen().invert(prevPos);
+                Vec2d planePos = getPlanePos(e);
+                Vec2d d = diff(planePos, prevPlanePos);
+                view.prepend(Transforms.t(d));
             }
+            prevPos = screenPos;
         }
     }
     
@@ -59,14 +60,15 @@ public class CanvasController implements CanvasListener {
 
         @Override
         public void mousePressed(MouseEvent e) {
+            Vec2d screenPos = getScreenPos(e);
             if (e.getButton() == MouseEvent.BUTTON3) {
-                CanvasObject hit = findHit(getPosition(e));
+                CanvasObject hit = findHit(screenPos);
                 if (hit != null) {
                     hit.setSelected(true);
                     view.refresh();
                 }
             }
-            dragBase = getPosition(e);
+            prevPos = screenPos;
         }
 
         @Override
@@ -90,13 +92,10 @@ public class CanvasController implements CanvasListener {
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
-            Vec2d screenPos = getPosition(e);
-            Vec2d normPos = view.normToScreen().invert(screenPos);
-            Vec2d planePos = view.planeToNorm().invert(normPos);
+            Vec2d planePos = getPlanePos(e);
             
             double f = e.getPreciseWheelRotation();
             double scale = Math.pow(0.95, f);
-            Transform planeToNorm = view.planeToNorm();
             
             Transform scaling = new Transform.Builder()
                 .t(neg(planePos))
@@ -108,14 +107,18 @@ public class CanvasController implements CanvasListener {
         
     }
     
-    private Vec2d getPosition(MouseEvent e) {
+    private Vec2d getScreenPos(MouseEvent e) {
         java.awt.Point p = e.getPoint();
         return new Vec2d(p.x, p.y);
     }
     
+    private Vec2d getPlanePos(MouseEvent e) {
+        Vec2d screenPos = getScreenPos(e);
+        return view.planeToScreen().invert(screenPos);
+    }
+    
     private final CanvasView view;
     
-//    private final CanvasPanel canvasPanel;
     
     private final PropertyMap properties;
 
@@ -124,7 +127,7 @@ public class CanvasController implements CanvasListener {
     private final Map<CanvasObject, ObjectController> geometryMap = new HashMap<>();
     
     
-    private Vec2d dragBase;
+    private Vec2d prevPos;
     
     private CanvasObject captured;
 

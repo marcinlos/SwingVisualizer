@@ -100,6 +100,10 @@ public class Geometry {
         return lerp(t, s.a, s.b);
     }
     
+    public static Vec2d toVec(Segment s) {
+        return diff(s.b, s.a);
+    }
+    
     public static boolean inInterval(double t, double a, double b) {
         return a <= t && t <= b;
     }
@@ -108,6 +112,16 @@ public class Geometry {
         return inInterval(p.x, rect.left(), rect.right())
                 && inInterval(p.y, rect.bottom(), rect.top());
     }
+    
+    public static boolean inCircle(double r, Vec2d p) {
+        return normSq(p) <= r * r;
+    }
+    
+    public static boolean inSquare(double r, Vec2d p) {
+        return maxNorm(p) <= r;
+    }
+    
+    
     
     
     public static Predicate<Vec2d> inRectPred(final Rect rect) {
@@ -120,10 +134,6 @@ public class Geometry {
         };
     }
     
-    public static boolean inCircle(double r, Vec2d p) {
-        return normSq(p) <= r * r;
-    }
-    
     public static Predicate<Vec2d> inCirclePred(final double r) {
         return new Predicate<Vec2d>() {
 
@@ -132,10 +142,6 @@ public class Geometry {
                 return inCircle(r, p);
             }
         };
-    }
-    
-    public static boolean inSquare(double r, Vec2d p) {
-        return maxNorm(p) <= r;
     }
     
     public static Predicate<Vec2d> inSquarePred(final double r) {
