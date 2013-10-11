@@ -89,6 +89,7 @@ public class CanvasPoint extends CanvasObject {
 
     public void setHoverColor(Color hoverColor) {
         this.hoverColor = checkNotNull(hoverColor);
+        notifyListeners();
     }
 
     public Color getSelectedColor() {
@@ -97,6 +98,7 @@ public class CanvasPoint extends CanvasObject {
 
     public void setSelectedColor(Color selectedColor) {
         this.selectedColor = checkNotNull(selectedColor);
+        notifyListeners();
     }
     
     public Color getBorderColor() {
@@ -105,6 +107,7 @@ public class CanvasPoint extends CanvasObject {
 
     public void setBorderColor(Color borderColor) {
         this.borderColor = checkNotNull(borderColor);
+        notifyListeners();
     }
 
     public int getBorderSize() {

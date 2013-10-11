@@ -8,7 +8,7 @@ public class ObjectZComparator implements Comparator<CanvasObject> {
     
     @Override
     public int compare(CanvasObject a, CanvasObject b) {
-        int res = Double.compare(a.getZ(), b.getZ());
+        int res = Double.compare(b.getZ(), a.getZ());
         if (res != 0) {
             return res;
         } else {

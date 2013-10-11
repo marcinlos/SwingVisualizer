@@ -6,11 +6,11 @@ import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
 
-public class PointGeometry implements ObjectGeometry {
+public class PointController implements ObjectController {
     
     private final CanvasPoint point;
     
-    public PointGeometry(CanvasPoint point) {
+    public PointController(CanvasPoint point) {
         this.point = point;
     }
 

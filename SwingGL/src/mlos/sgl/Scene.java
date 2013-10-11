@@ -7,11 +7,14 @@ import java.awt.Component;
 
 import mlos.sgl.canvas.Canvas;
 import mlos.sgl.canvas.CanvasObject;
-import mlos.sgl.core.Transform;
+import mlos.sgl.canvas.CanvasPoint;
+import mlos.sgl.canvas.CanvasSegment;
+import mlos.sgl.core.Segment;
+import mlos.sgl.core.Vec2d;
 import mlos.sgl.decorators.CursorPositionPainter;
 import mlos.sgl.ui.CanvasController;
-import mlos.sgl.ui.DefaultObjectGeometryFactory;
-import mlos.sgl.ui.ObjectGeometryFactory;
+import mlos.sgl.ui.DefaultObjectControllerFactory;
+import mlos.sgl.ui.ObjectControllerFactory;
 import mlos.sgl.util.PropertyListener;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
@@ -62,15 +65,13 @@ public abstract class Scene {
         this.canvas = new Canvas();
         this.view = new CanvasView(createViewFactory());
         
-        view.apply(new Transform.Builder().r(0.3).create());
-
         this.painter = new CompositePainter()
             .add(view)
             .add(new CursorPositionPainter(properties));
         
         this.canvasPanel = new CanvasPanel(painter);
         
-        ObjectGeometryFactory geomFactory = createGeometryFactory();
+        ObjectControllerFactory geomFactory = createGeometryFactory();
         this.controller = new CanvasController(view, canvasPanel, properties, geomFactory);
         
         canvas.addListener(view);
@@ -81,13 +82,33 @@ public abstract class Scene {
     public void addObject(CanvasObject object) {
         canvas.add(object);
     }
-
+    
+    public CanvasPoint addPoint(Vec2d v) {
+        CanvasPoint p = new CanvasPoint(v);
+        addObject(p);
+        return p;
+    }
+    
+    public CanvasPoint addPoint(double x, double y) {
+        return addPoint(new Vec2d(x, y));
+    }
+    
+    public CanvasSegment addSegment(Segment seg) {
+        CanvasSegment s = new CanvasSegment(seg);
+        addObject(s);
+        return s;
+    }
+    
+    public CanvasObject addSegment(Vec2d a, Vec2d b) {
+        return addSegment(new Segment(a, b));
+    }
+    
     protected ObjectPainterFactory createViewFactory() {
         return new DefaultObjectPainterFactory();
     }
 
-    protected ObjectGeometryFactory createGeometryFactory() {
-        return new DefaultObjectGeometryFactory();
+    protected ObjectControllerFactory createGeometryFactory() {
+        return new DefaultObjectControllerFactory();
     }
 
     public String getName() {

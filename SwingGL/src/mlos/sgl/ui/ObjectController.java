@@ -4,7 +4,7 @@ import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
 
-public interface ObjectGeometry {
+public interface ObjectController {
     
     double distance(Vec2d p, Transform planeToScreen);
 

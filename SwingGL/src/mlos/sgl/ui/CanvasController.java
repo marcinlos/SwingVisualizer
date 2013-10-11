@@ -20,7 +20,7 @@ import mlos.sgl.view.CanvasView;
 
 public class CanvasController implements CanvasListener {
 
-    public static final int DEFAULT_TRESHOLD = 10;
+    public static final int DEFAULT_TRESHOLD = 5;
 
     private final class MotionListener implements MouseMotionListener {
         @Override
@@ -92,9 +92,9 @@ public class CanvasController implements CanvasListener {
     
     private final PropertyMap properties;
 
-    private ObjectGeometryFactory geometryFactory;
+    private ObjectControllerFactory geometryFactory;
 
-    private final Map<CanvasObject, ObjectGeometry> geometryMap = new HashMap<>();
+    private final Map<CanvasObject, ObjectController> geometryMap = new HashMap<>();
     
     
     private Vec2d dragBase;
@@ -102,7 +102,7 @@ public class CanvasController implements CanvasListener {
     private CanvasObject captured;
 
     public CanvasController(CanvasView view, CanvasPanel canvasPanel, 
-            PropertyMap properties, ObjectGeometryFactory geometryFactory) {
+            PropertyMap properties, ObjectControllerFactory geometryFactory) {
         this.view = checkNotNull(view);
         this.canvasPanel = checkNotNull(canvasPanel);
         this.properties = checkNotNull(properties);
@@ -114,7 +114,7 @@ public class CanvasController implements CanvasListener {
 
     @Override
     public void objectAdded(CanvasObject object) {
-        ObjectGeometry geometry = geometryFactory.createGeometry(object);
+        ObjectController geometry = geometryFactory.createGeometry(object);
         geometryMap.put(object, geometry);
     }
 
@@ -138,13 +138,12 @@ public class CanvasController implements CanvasListener {
         Transform planeToScreen = Transforms.compose(planeToNorm, normToScreen);
         
         CanvasObject closest = null;
-        double minDist = Double.MAX_VALUE;
-        for (ObjectGeometry geometry : geometryMap.values()) {
+        double minDist = DEFAULT_TRESHOLD;
+        for (ObjectController geometry : geometryMap.values()) {
             double d = geometry.distance(p, planeToScreen);
-            if (d < DEFAULT_TRESHOLD) {
-                if (d < minDist) {
-                    closest = geometry.getObject();
-                }
+            if (d < minDist) {
+                closest = geometry.getObject();
+                minDist = d;
             }
         }
         return closest;

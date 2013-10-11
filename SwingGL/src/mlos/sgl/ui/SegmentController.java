@@ -11,11 +11,11 @@ import mlos.sgl.core.Segment;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
 
-public class SegmentGeometry implements ObjectGeometry {
+public class SegmentController implements ObjectController {
     
     private final CanvasSegment segment;
     
-    public SegmentGeometry(CanvasSegment segment) {
+    public SegmentController(CanvasSegment segment) {
         this.segment = segment;
     }
 
