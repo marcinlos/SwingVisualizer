@@ -2,17 +2,21 @@ package mlos.sgl.ui;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mlos.sgl.core.Geometry.diff;
+import static mlos.sgl.core.Geometry.mul;
+import static mlos.sgl.core.Geometry.neg;
 
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.HashMap;
 import java.util.Map;
 
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
+import mlos.sgl.core.Geometry;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
@@ -78,6 +82,28 @@ public class CanvasController implements CanvasListener {
         @Override
         public void mouseExited(MouseEvent e) {
             properties.remove("cursor");
+        }
+        
+    }
+    
+    private final class WheelListener implements MouseWheelListener {
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            Vec2d screenPos = getPosition(e);
+            Vec2d normPos = view.normToScreen().invert(screenPos);
+            Vec2d planePos = view.planeToNorm().invert(normPos);
+            
+            double f = e.getPreciseWheelRotation();
+            double scale = Math.pow(0.95, f);
+            Transform planeToNorm = view.planeToNorm();
+            
+            Transform scaling = new Transform.Builder()
+                .t(neg(planePos))
+                .s(scale)
+                .t(planePos)
+                .create();
+            view.prepend(scaling);
         }
         
     }
@@ -157,7 +183,7 @@ public class CanvasController implements CanvasListener {
     }
     
     public MouseWheelListener getMouseWheelListener() {
-        return null;
+        return new WheelListener();
     }
     
     public KeyListener getKeyListener() {

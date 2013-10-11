@@ -126,6 +126,10 @@ public class Transform {
             return this;
         }
         
+        public Builder s(double scale) {
+            return s(scale, scale);
+        }
+        
         public Builder sX(double sx) {
             return s(sx, 1);
         }

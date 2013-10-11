@@ -57,6 +57,7 @@ public class CanvasView implements Painter, CanvasListener {
     
     public void setTransform(Transform transform) {
         this.planeToNorm = transform;
+        refresh();
     }
     
     public void setViewport(Rect rect) {
@@ -79,8 +80,12 @@ public class CanvasView implements Painter, CanvasListener {
         return panel.normToScreen();
     }
     
-    public void apply(Transform t) {
-        planeToNorm = Transforms.compose(planeToNorm, t);
+    public void append(Transform t) {
+        setTransform(Transforms.compose(planeToNorm, t));
+    }
+    
+    public void prepend(Transform t) {
+        setTransform(Transforms.compose(t, planeToNorm));
     }
     
     public Transform planeToScreen() {
