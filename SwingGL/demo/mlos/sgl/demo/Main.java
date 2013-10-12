@@ -40,6 +40,7 @@ public class Main extends Scene {
         for (Vec2d v : vs) {
             CanvasPoint p = new CanvasPoint(v);
             p.setColor(Color.cyan);
+            p.setSize(20);
             addObject(p);
         }
 

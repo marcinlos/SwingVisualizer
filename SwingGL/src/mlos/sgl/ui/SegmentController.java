@@ -5,6 +5,7 @@ import static mlos.sgl.core.Geometry.diff;
 import static mlos.sgl.core.Geometry.dist;
 import static mlos.sgl.core.Geometry.dot;
 import static mlos.sgl.core.Geometry.lerp;
+import static mlos.sgl.core.Geometry.move;
 import static mlos.sgl.core.Geometry.normSq;
 import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
@@ -14,6 +15,9 @@ import mlos.sgl.core.Vec2d;
 public class SegmentController implements ObjectController {
     
     private final CanvasSegment segment;
+    
+    private Segment beforeDrag;
+    private Vec2d dragBegin;
     
     public SegmentController(CanvasSegment segment) {
         this.segment = segment;
@@ -40,5 +44,25 @@ public class SegmentController implements ObjectController {
         Segment seg = segment.getSegment().apply(planeToScreen);
         return distance(seg, p);
     }
+    
+
+    @Override
+    public void dragBegin(Vec2d pos, Transform planeToScreen) {
+        this.dragBegin = planeToScreen.invert(pos);
+        this.beforeDrag = segment.getSegment();
+    }
+
+    @Override
+    public void drag(Vec2d pos, Transform planeToScreen) {
+        Vec2d planePos = planeToScreen.invert(pos);
+        Vec2d d = diff(planePos, dragBegin);
+        segment.setSegment(move(beforeDrag, d));
+    }
+
+    @Override
+    public void dragEnd(Vec2d pos, Transform planeToScreen) {
+        drag(pos, planeToScreen);
+    }
+
 
 }

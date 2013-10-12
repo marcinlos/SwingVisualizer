@@ -96,6 +96,14 @@ public class Geometry {
         return new Vec2d(x, y);
     }
     
+    public static Vec2d move(Vec2d v, Vec2d d) {
+        return sum(v, d);
+    }
+    
+    public static Segment move(Segment s, Vec2d d) {
+        return new Segment(move(s.a, d), move(s.b, d));
+    }
+    
     public static Vec2d lerp(double t, Segment s) {
         return lerp(t, s.a, s.b);
     }

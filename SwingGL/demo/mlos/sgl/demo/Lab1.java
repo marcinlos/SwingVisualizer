@@ -21,14 +21,14 @@ public class Lab1 extends Scene {
     public Lab1(String name, Iterable<Vec2d> points, Segment seg, double rx, double ry) {
         super(name);
 
-        //view().apply(new Transform.Builder().r(0.5).create());
         view().setViewport(Rect.aroundOrigin(rx, ry));
+//        view().append(Transforms.r(0.5));
         
         for (Vec2d v : points) {
             CanvasPoint p = new CanvasPoint(v);
             double d = orient2d(seg.a, seg.b, v);
             Color c = d < 0 ? Color.green : d > 0 ? Color.blue : Color.red;
-            p.setSize(d == 0 ? 15 : 3);
+            p.setSize(d == 0 ? 15 : 7);
             p.setBorderSize(0);
             p.setColor(c);
             addObject(p);

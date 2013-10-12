@@ -19,10 +19,10 @@ public class SegmentPainter implements ObjectPainter {
     }
 
     @Override
-    public void paint(Transform normToScreen, Graphics2D ctx) {
+    public void paint(Transform toScreen, Graphics2D ctx) {
         Segment seg = segment.getSegment();
-        Vec2d a = normToScreen.apply(seg.a);
-        Vec2d b = normToScreen.apply(seg.b);
+        Vec2d a = toScreen.apply(seg.a);
+        Vec2d b = toScreen.apply(seg.b);
         Color color = getColor();
         int thickness = segment.getThickness();
 

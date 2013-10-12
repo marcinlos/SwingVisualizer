@@ -1,7 +1,9 @@
 package mlos.sgl.decorators;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
@@ -17,18 +19,21 @@ public class CursorPositionPainter implements Painter {
     }
 
     @Override
-    public void paint(Transform normToScreen, Graphics2D ctx) {
+    public void paint(Transform toScreen, Graphics2D ctx) {
         Vec2d cursor = properties.get("cursor", Vec2d.class);
         if (cursor != null) {
-            String text = "Pos: " + normToScreen.invert(cursor);
+            String text = "Pos: " + toScreen.invert(cursor);
             ctx.setColor(Color.black);
             ctx.drawString(text, 8, 15);
 
-//            int size = 4;
-//            Stroke s = new BasicStroke(1);
-//            ctx.setStroke(s);
-//            ctx.drawLine(cursor.x - size, cursor.y, cursor.x + size, cursor.y);
-//            ctx.drawLine(cursor.x, cursor.y - size, cursor.x, cursor.y + size);
+            int size = 4;
+            Stroke s = new BasicStroke(1);
+            ctx.setStroke(s);
+            
+            int cx = (int) cursor.x;
+            int cy = (int) cursor.y;
+            ctx.drawLine(cx - size, cy, cx + size, cy);
+            ctx.drawLine(cx, cy - size, cx, cy + size);
         }
     }
 
