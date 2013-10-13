@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static mlos.sgl.core.Geometry.diff;
 import static mlos.sgl.core.Geometry.neg;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -12,7 +13,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
@@ -26,13 +29,24 @@ import mlos.sgl.view.CanvasView;
 public class CanvasController implements CanvasListener {
 
     public static final int DEFAULT_TRESHOLD = 5;
-
-    private final class MotionListener implements MouseMotionListener {
+    
+    private final class Handler implements InputHandler {
+        
         @Override
         public void mouseMoved(MouseEvent e) {
             Vec2d screenPos = getScreenPos(e);
             update(screenPos);
-            onMouseHover(screenPos);
+            
+            ObjectController hit = findHit(screenPos);
+            if (hovered != hit) {
+                if (hovered != null) {
+                    hovered.mouseExited(e);
+                }
+                if (hit != null) {
+                    hit.mouseEntered(e);
+                }
+                hovered = hit;
+            }
             prevPos = screenPos;
         }
 
@@ -45,26 +59,18 @@ public class CanvasController implements CanvasListener {
             Vec2d screenPos = getScreenPos(e);
             update(screenPos);
             
-            if (captured != null) {
-                ObjectController controller = controllerMap.get(captured);
-                Transform planeToScreen = view.planeToScreen();
-                if (!dragging) {
-                    controller.dragBegin(dragBeginPos, planeToScreen);
-                    dragging = true;
-                }
-                controller.drag(screenPos, planeToScreen);
+            Transform planeToScreen = view.planeToScreen();
+            if (drag.hasObject()) {
+                drag.update(screenPos, planeToScreen);
             } else {
-                Vec2d prevPlanePos = view.planeToScreen().invert(prevPos);
+                Vec2d prevPlanePos = planeToScreen.invert(prevPos);
                 Vec2d planePos = getPlanePos(e);
                 Vec2d d = diff(planePos, prevPlanePos);
                 view.prepend(Transforms.t(d));
             }
             prevPos = screenPos;
         }
-    }
     
-    private final class ButtonListener implements MouseListener {
-
         @Override
         public void mouseClicked(MouseEvent e) {
             
@@ -74,12 +80,23 @@ public class CanvasController implements CanvasListener {
         public void mousePressed(MouseEvent e) {
             Vec2d screenPos = getScreenPos(e);
             if (e.getButton() == MouseEvent.BUTTON3) {
-                CanvasObject hit = findHit(screenPos);
+                ObjectController hit = findHit(screenPos);
+                boolean expand = e.isShiftDown();
+
                 if (hit != null) {
-                    hit.setSelected(true);
+                    if (expand) {
+                        if (! selection.contains(hit)) {
+                            selection.add(hit, screenPos);
+                            drag.begin(hit, screenPos);
+                        } else {
+                            selection.remove(hit);
+                        }
+                    } else {
+                        selection.clear();
+                        selection.add(hit, screenPos);
+                        drag.begin(hit, screenPos);
+                    }
                     view.refresh();
-                    captured = hit;
-                    dragBeginPos = screenPos;
                 }
             }
             prevPos = screenPos;
@@ -88,15 +105,10 @@ public class CanvasController implements CanvasListener {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON3) {
-                if (captured != null) {
-                    if (dragging) {
-                        Vec2d screenPos = getScreenPos(e);
-                        ObjectController controller = controllerMap.get(captured);
-                        Transform planeToScreen = view.planeToScreen();
-                        controller.dragEnd(screenPos, planeToScreen);
-                        dragging = false;
-                    }
-                    captured = null;
+                if (drag.hasObject()) {
+                    Vec2d screenPos = getScreenPos(e);
+                    Transform planeToScreen = view.planeToScreen();
+                    drag.end(screenPos, planeToScreen);
                 }
             }
         }
@@ -111,9 +123,6 @@ public class CanvasController implements CanvasListener {
             properties.remove("cursor");
         }
         
-    }
-    
-    private final class WheelListener implements MouseWheelListener {
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
@@ -130,6 +139,134 @@ public class CanvasController implements CanvasListener {
             view.prepend(scaling);
         }
         
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            // TODO Auto-generated method stub
+            System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                selection.clear();
+                view.refresh();
+            }
+        }
+        
+    }
+    
+    
+    private class Selection {
+        
+        private final Set<ObjectController> selected = new HashSet<>();
+        
+        public void add(ObjectController object, Vec2d screenPos) {
+            selected.add(object);
+            object.selected(screenPos, view.planeToScreen());
+            handlers.push(object);
+        }
+        
+        public boolean contains(ObjectController object) {
+            return selected.contains(object);
+        }
+        
+        public void remove(ObjectController object) {
+            prepareForRemoval(object);
+            selected.remove(object);
+        }
+        
+        private void prepareForRemoval(ObjectController object) {
+            object.unselected();
+            handlers.remove(object);
+        }
+        
+        public void clear() {
+            for (ObjectController object : selected) {
+                prepareForRemoval(object);
+            }
+            selected.clear();
+        }
+    }
+    
+    private class Drag {
+        
+        private Vec2d startPos;
+        private ObjectController active;
+        private boolean draggingInProcess = false;
+        
+        public void begin(ObjectController object, Vec2d startPos) {
+            this.active = object;
+            this.startPos = startPos;
+            draggingInProcess = false;
+        }
+        
+        public boolean hasObject() {
+            return active != null;
+        }
+        
+        public void update(Vec2d screenPos, Transform planeToScreen) {
+            if (!draggingInProcess) {
+                active.dragBegin(startPos, planeToScreen);
+                draggingInProcess = true;
+            }
+            active.drag(screenPos, planeToScreen);
+        }
+        
+        public void end(Vec2d screenPos, Transform planeToScreen) {
+            if (draggingInProcess) {
+                active.dragEnd(screenPos, planeToScreen);
+                draggingInProcess = false;
+            }
+            active = null;
+        }
+        
+    }
+    
+    private final CanvasView view;
+    
+    private final Handler handler = new Handler();
+    private final HandlerChain handlers = new HandlerChain();
+    private final InputHandlerWrapper listener = new InputHandlerWrapper(handlers);
+    
+    private final PropertyMap properties;
+
+    private ObjectControllerFactory controllerFactory;
+
+//    private final Map<CanvasObject, ObjectController> controllerMap = new HashMap<>();
+    private final Set<ObjectController> objects = new HashSet<>();
+    
+    private Vec2d prevPos;
+    private ObjectController hovered;
+    
+    private final Selection selection = new Selection();
+    private final Drag drag = new Drag();
+    
+
+    public CanvasController(CanvasView view, PropertyMap properties, 
+            ObjectControllerFactory controllerFactory) {
+        this.view = checkNotNull(view);
+        this.properties = checkNotNull(properties);
+        this.controllerFactory = checkNotNull(controllerFactory);
+        
+        handlers.push(handler);
+    }
+
+    @Override
+    public void objectAdded(CanvasObject object) {
+        ObjectController controller = controllerFactory.createController(object);
+        objects.add(controller);
+//        controllerMap.put(object, controller);
+    }
+
+    @Override
+    public void objectRemoved(CanvasObject object) {
+//        controllerMap.remove(object);
     }
     
     private Vec2d getScreenPos(MouseEvent e) {
@@ -142,63 +279,24 @@ public class CanvasController implements CanvasListener {
         return view.planeToScreen().invert(screenPos);
     }
     
-    private final CanvasView view;
     
-    
-    private final PropertyMap properties;
-
-    private ObjectControllerFactory controllerFactory;
-
-    private final Map<CanvasObject, ObjectController> controllerMap = new HashMap<>();
-    
-    private Vec2d prevPos;
-    
-    private Vec2d dragBeginPos;
-    private CanvasObject captured;
-    private boolean dragging = false;
-
-    public CanvasController(CanvasView view, PropertyMap properties, 
-            ObjectControllerFactory controllerFactory) {
-        this.view = checkNotNull(view);
-        this.properties = checkNotNull(properties);
-        this.controllerFactory = checkNotNull(controllerFactory);
-    }
-
-    @Override
-    public void objectAdded(CanvasObject object) {
-        ObjectController controller = controllerFactory.createController(object);
-        controllerMap.put(object, controller);
-    }
-
-    @Override
-    public void objectRemoved(CanvasObject object) {
-        controllerMap.remove(object);
-    }
-    
-    
-    private void onMouseHover(Vec2d p) {
-        for (CanvasObject object : controllerMap.keySet()) {
-            object.setHover(false);
-        }
-        CanvasObject hit = findHit(p);
-        hit.setHover(true);
-    }
-    
-    public CanvasObject findHit(Vec2d p) {
+    public ObjectController findHit(Vec2d p) {
         Transform planeToScreen = view.planeToScreen();
         
-        CanvasObject closest = null;
+        ObjectController closest = null;
         double minDist = DEFAULT_TRESHOLD;
         Comparator<CanvasObject> cmp = ObjectZComparator.INSTANCE;
         
-        for (ObjectController geometry : controllerMap.values()) {
-            double d = geometry.distance(p, planeToScreen);
+        for (ObjectController controller : objects) {
+            double d = controller.distance(p, planeToScreen);
+            CanvasObject canvasObjet = controller.getObject();
             if (d < minDist) {
-                closest = geometry.getObject();
+                closest = controller;
                 minDist = d;
             } else if (d == minDist) {
-                if (closest == null || cmp.compare(closest, geometry.getObject()) < 0) {
-                    closest = geometry.getObject();    
+                if (closest == null || 
+                        cmp.compare(closest.getObject(), canvasObjet) < 0) {
+                    closest = controller;    
                 }
             }
         }
@@ -208,19 +306,19 @@ public class CanvasController implements CanvasListener {
     
     
     public MouseMotionListener getMouseMotionListener() {
-        return new MotionListener();
+        return listener;
     }
     
     public MouseListener getMouseListener() {
-        return new ButtonListener();
+        return listener;
     }
     
     public MouseWheelListener getMouseWheelListener() {
-        return new WheelListener();
+        return listener;
     }
     
     public KeyListener getKeyListener() {
-        return null;
+        return listener;
     }
 
 }

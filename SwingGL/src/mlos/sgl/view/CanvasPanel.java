@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.JPanel;
 
@@ -25,6 +27,23 @@ public class CanvasPanel extends JPanel {
      */
     public CanvasPanel() {
         setBackground(Color.white);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+        
+        addComponentListener(new ComponentAdapter() {
+            
+            @Override
+            public void componentShown(ComponentEvent e) {
+                requestFocusInWindow();
+                recomputeTransform();
+            }
+            
+            @Override
+            public void componentResized(ComponentEvent e) {
+                recomputeTransform();
+            }
+
+        });
     }
     
     /**
@@ -91,7 +110,6 @@ public class CanvasPanel extends JPanel {
     @Override
     protected final void paintComponent(Graphics g) {
         super.paintComponent(g);
-        recomputeTransform();
         if (painter != null) {
             Graphics2D graphics = (Graphics2D) g;
             painter.paint(normToScreen, graphics);

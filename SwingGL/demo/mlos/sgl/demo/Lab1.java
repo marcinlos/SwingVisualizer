@@ -27,7 +27,7 @@ public class Lab1 extends Scene {
         for (Vec2d v : points) {
             CanvasPoint p = new CanvasPoint(v);
             double d = orient2d(seg.a, seg.b, v);
-            Color c = d < 0 ? Color.green : d > 0 ? Color.blue : Color.red;
+            Color c = d > 0 ? Color.blue: d < 0 ? Color.green: Color.red;
             p.setSize(d == 0 ? 15 : 7);
             p.setBorderSize(0);
             p.setColor(c);

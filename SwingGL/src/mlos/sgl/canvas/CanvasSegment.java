@@ -11,9 +11,9 @@ public class CanvasSegment extends CanvasObject {
     
     public static final Color DEFAULT_COLOR = Color.black;
     
-    public static final Color DEFAULT_HOVER_COLOR = Color.blue;
+    public static final Color DEFAULT_HOVER_COLOR = Color.orange;
     
-    public static final Color DEFAULT_SELECTED_COLOR = Color.green;
+    public static final Color DEFAULT_SELECTED_COLOR = Color.magenta;
     
     
     public static final int DEFAULT_THICKNESS = 2;

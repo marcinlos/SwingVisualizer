@@ -59,8 +59,8 @@ public abstract class Scene {
         view.addPostPainter(new CursorPositionPainter(properties));
         
         
-        ObjectControllerFactory geomFactory = createGeometryFactory();
-        this.controller = new CanvasController(view, properties, geomFactory);
+        ObjectControllerFactory controllerFactory = createControllerFactory();
+        this.controller = new CanvasController(view, properties, controllerFactory);
         
         canvasPanel.addMouseListener(controller.getMouseListener());
         canvasPanel.addMouseMotionListener(controller.getMouseMotionListener());
@@ -100,7 +100,7 @@ public abstract class Scene {
         return new DefaultObjectPainterFactory();
     }
 
-    protected ObjectControllerFactory createGeometryFactory() {
+    protected ObjectControllerFactory createControllerFactory() {
         return new DefaultObjectControllerFactory();
     }
 

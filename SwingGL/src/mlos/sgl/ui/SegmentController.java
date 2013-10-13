@@ -7,12 +7,15 @@ import static mlos.sgl.core.Geometry.dot;
 import static mlos.sgl.core.Geometry.lerp;
 import static mlos.sgl.core.Geometry.move;
 import static mlos.sgl.core.Geometry.normSq;
+
+import java.awt.event.MouseEvent;
+
 import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
 
-public class SegmentController implements ObjectController {
+public class SegmentController extends InputAdapter implements ObjectController {
     
     private final CanvasSegment segment;
     
@@ -64,5 +67,25 @@ public class SegmentController implements ObjectController {
         drag(pos, planeToScreen);
     }
 
+    @Override
+    public void selected(Vec2d p, Transform planeToScreen) {
+        segment.setSelected(true);
+    }
+
+    @Override
+    public void unselected() {
+        segment.setSelected(false);
+    }
+
+    
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        segment.setHover(true);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        segment.setHover(false);
+    }
 
 }

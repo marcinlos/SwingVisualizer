@@ -11,9 +11,9 @@ public class CanvasPoint extends CanvasObject {
     
     public static final Color DEFAULT_COLOR = Color.red;
     
-    public static final Color DEFAULT_HOVER_COLOR = Color.blue;
+    public static final Color DEFAULT_HOVER_COLOR = Color.orange;
     
-    public static final Color DEFAULT_SELECTED_COLOR = Color.green;
+    public static final Color DEFAULT_SELECTED_COLOR = Color.magenta;
     
     public static final Color DEFAULT_BORDER_COLOR = Color.black;
 
