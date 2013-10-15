@@ -49,10 +49,10 @@ public class CanvasPoint extends CanvasObject {
     }
     
 
-    @Override
-    public void accept(CanvasVisitor visitor) {
-        visitor.visit(this);
-    }
+//    @Override
+//    public void accept(CanvasVisitor visitor) {
+//        visitor.visit(this);
+//    }
     
     public Vec2d getPoint() {
         return point;

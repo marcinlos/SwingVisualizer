@@ -12,12 +12,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
 import mlos.sgl.core.Transform;
@@ -26,11 +23,21 @@ import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasView;
 
-public class CanvasController implements CanvasListener {
+public class CanvasController {
 
     public static final int DEFAULT_TRESHOLD = 5;
     
     private final class Handler implements InputHandler {
+        
+        private Vec2d getScreenPos(MouseEvent e) {
+            java.awt.Point p = e.getPoint();
+            return new Vec2d(p.x, p.y);
+        }
+        
+        private Vec2d getPlanePos(MouseEvent e) {
+            Vec2d screenPos = getScreenPos(e);
+            return view.planeToScreen().invert(screenPos);
+        }
         
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -142,12 +149,12 @@ public class CanvasController implements CanvasListener {
 
         @Override
         public void keyTyped(KeyEvent e) {
+            
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            // TODO Auto-generated method stub
-            System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
+            
         }
 
         @Override
@@ -169,7 +176,7 @@ public class CanvasController implements CanvasListener {
         public void add(ObjectController object, Vec2d screenPos) {
             selected.add(object);
             object.selected(screenPos, view.planeToScreen());
-            handlers.push(object);
+            handlerStack.push(object);
         }
         
         public boolean contains(ObjectController object) {
@@ -183,7 +190,7 @@ public class CanvasController implements CanvasListener {
         
         private void prepareForRemoval(ObjectController object) {
             object.unselected();
-            handlers.remove(object);
+            handlerStack.remove(object);
         }
         
         public void clear() {
@@ -231,14 +238,11 @@ public class CanvasController implements CanvasListener {
     private final CanvasView view;
     
     private final Handler handler = new Handler();
-    private final HandlerChain handlers = new HandlerChain();
-    private final InputHandlerWrapper listener = new InputHandlerWrapper(handlers);
+    private final HandlerStack handlerStack;
+    private final InputHandlerWrapper listener;
     
     private final PropertyMap properties;
 
-    private ObjectControllerFactory controllerFactory;
-
-//    private final Map<CanvasObject, ObjectController> controllerMap = new HashMap<>();
     private final Set<ObjectController> objects = new HashSet<>();
     
     private Vec2d prevPos;
@@ -249,34 +253,22 @@ public class CanvasController implements CanvasListener {
     
 
     public CanvasController(CanvasView view, PropertyMap properties, 
-            ObjectControllerFactory controllerFactory) {
+            HandlerStack handlers) {
         this.view = checkNotNull(view);
         this.properties = checkNotNull(properties);
-        this.controllerFactory = checkNotNull(controllerFactory);
+        this.handlerStack = checkNotNull(handlers);
+        
+        this.listener = new InputHandlerWrapper(handlers);
         
         handlers.push(handler);
     }
-
-    @Override
-    public void objectAdded(CanvasObject object) {
-        ObjectController controller = controllerFactory.createController(object);
+    
+    public void add(ObjectController controller) {
         objects.add(controller);
-//        controllerMap.put(object, controller);
-    }
-
-    @Override
-    public void objectRemoved(CanvasObject object) {
-//        controllerMap.remove(object);
     }
     
-    private Vec2d getScreenPos(MouseEvent e) {
-        java.awt.Point p = e.getPoint();
-        return new Vec2d(p.x, p.y);
-    }
-    
-    private Vec2d getPlanePos(MouseEvent e) {
-        Vec2d screenPos = getScreenPos(e);
-        return view.planeToScreen().invert(screenPos);
+    public void remove(ObjectController controller) {
+        objects.remove(controller);
     }
     
     

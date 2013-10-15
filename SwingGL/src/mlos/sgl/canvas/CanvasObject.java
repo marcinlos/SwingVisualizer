@@ -7,7 +7,7 @@ import com.google.common.collect.Iterables;
 
 public abstract class CanvasObject {
     
-    public static final double DEFAULT_Z = 0.0f;
+    public static final double DEFAULT_Z = 0.5f;
     
     private final Set<CanvasObjectListener> listeners = new CopyOnWriteArraySet<>();
 
@@ -65,6 +65,6 @@ public abstract class CanvasObject {
         this.selected = selected;
     }
 
-    public abstract void accept(CanvasVisitor visitor);
+//    public abstract void accept(CanvasVisitor visitor);
     
 }

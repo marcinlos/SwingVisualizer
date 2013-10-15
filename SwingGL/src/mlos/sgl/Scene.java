@@ -13,12 +13,17 @@ import mlos.sgl.core.Vec2d;
 import mlos.sgl.decorators.CursorPositionPainter;
 import mlos.sgl.ui.CanvasController;
 import mlos.sgl.ui.DefaultObjectControllerFactory;
+import mlos.sgl.ui.HandlerStack;
+import mlos.sgl.ui.ObjectController;
 import mlos.sgl.ui.ObjectControllerFactory;
+import mlos.sgl.ui.ToolPanel;
+import mlos.sgl.ui.modes.RandomPoints;
 import mlos.sgl.util.PropertyListener;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.DefaultObjectPainterFactory;
+import mlos.sgl.view.ObjectPainter;
 import mlos.sgl.view.ObjectPainterFactory;
 
 public abstract class Scene {
@@ -42,9 +47,19 @@ public abstract class Scene {
     
     private final CanvasPanel canvasPanel;
     
+    private final ToolPanel sidePanel;
+    
     private final CanvasView view;
+    
+    private final HandlerStack handlerStack;
 
-    private final CanvasController controller;
+    private final CanvasController canvasController;
+    
+    
+    private final ObjectControllerFactory controllerFactory;
+    
+    private final ObjectPainterFactory painterFactory;
+    
 
     private final PropertyMap properties = new PropertyMap();
     
@@ -54,26 +69,38 @@ public abstract class Scene {
         this.name = checkNotNull(name);
         this.canvas = new Canvas();
         this.canvasPanel = new CanvasPanel();
-        this.view = new CanvasView(canvasPanel, createViewFactory());
+        this.handlerStack = new HandlerStack();
+        this.sidePanel = new ToolPanel(handlerStack);
+        this.view = new CanvasView(canvasPanel);
+        
+        this.controllerFactory = createControllerFactory();
+        this.painterFactory = createPainterFactory();
         
         view.addPostPainter(new CursorPositionPainter(properties));
         
+        this.canvasController = new CanvasController(view, properties, handlerStack);
         
-        ObjectControllerFactory controllerFactory = createControllerFactory();
-        this.controller = new CanvasController(view, properties, controllerFactory);
+        establishInputListeners();
         
-        canvasPanel.addMouseListener(controller.getMouseListener());
-        canvasPanel.addMouseMotionListener(controller.getMouseMotionListener());
-        canvasPanel.addMouseWheelListener(controller.getMouseWheelListener());
-        canvasPanel.addKeyListener(controller.getKeyListener());
-        
-        canvas.addListener(view);
-        canvas.addListener(controller);
         properties.addListener(new PanelRefresher());
+        
+        sidePanel.addMode(new RandomPoints(view, canvasController));
+    }
+
+    private void establishInputListeners() {
+        canvasPanel.addMouseListener(canvasController.getMouseListener());
+        canvasPanel.addMouseMotionListener(canvasController.getMouseMotionListener());
+        canvasPanel.addMouseWheelListener(canvasController.getMouseWheelListener());
+        canvasPanel.addKeyListener(canvasController.getKeyListener());
     }
 
     public void addObject(CanvasObject object) {
         canvas.add(object);
+        ObjectPainter painter = painterFactory.createPainter(object);
+        view.add(painter);
+        
+        ObjectController controller = controllerFactory.createController(object);
+        canvasController.add(controller);
     }
     
     public CanvasPoint addPoint(Vec2d v) {
@@ -96,13 +123,22 @@ public abstract class Scene {
         return addSegment(new Segment(a, b));
     }
     
-    protected ObjectPainterFactory createViewFactory() {
+    protected ObjectPainterFactory createPainterFactory() {
         return new DefaultObjectPainterFactory();
     }
 
     protected ObjectControllerFactory createControllerFactory() {
         return new DefaultObjectControllerFactory();
     }
+
+    public Component getCanvasGui() {
+        return canvasPanel;
+    }
+    
+    public Component getSideGui() {
+        return sidePanel;
+    }
+
 
     public String getName() {
         return name;
@@ -119,9 +155,4 @@ public abstract class Scene {
     protected void refresh() {
         view.refresh();
     }
-
-    protected Component getUI() {
-        return canvasPanel;
-    }
-
 }

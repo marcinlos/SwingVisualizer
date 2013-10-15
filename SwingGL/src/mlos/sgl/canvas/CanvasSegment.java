@@ -76,9 +76,9 @@ public class CanvasSegment extends CanvasObject {
         notifyListeners();
     }
 
-    @Override
-    public void accept(CanvasVisitor visitor) {
-        visitor.visit(this);
-    }
+//    @Override
+//    public void accept(CanvasVisitor visitor) {
+//        visitor.visit(this);
+//    }
 
 }

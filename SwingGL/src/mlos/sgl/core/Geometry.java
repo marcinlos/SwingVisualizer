@@ -111,6 +111,30 @@ public class Geometry {
     public static Vec2d toVec(Segment s) {
         return diff(s.b, s.a);
     }
+
+    public static Rect aabb(Vec2d... points) {
+        double left = Double.POSITIVE_INFINITY;
+        double right = Double.NEGATIVE_INFINITY;
+        double top = Double.NEGATIVE_INFINITY;
+        double bottom = Double.POSITIVE_INFINITY;
+        
+        for (Vec2d p : points) {
+            if (p.x < left) {
+                left = p.x;
+            }
+            if (p.x > right) {
+                right = p.x;
+            }
+            if (p.y < bottom) {
+                bottom = p.y;
+            }
+            if (p.y > top) {
+                top = p.y;
+            }
+        }
+        return Rect.bounds(left, bottom, right, top);
+    }
+    
     
     public static boolean inInterval(double t, double a, double b) {
         return a <= t && t <= b;
@@ -128,7 +152,6 @@ public class Geometry {
     public static boolean inSquare(double r, Vec2d p) {
         return maxNorm(p) <= r;
     }
-    
     
     
     

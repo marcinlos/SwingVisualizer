@@ -8,19 +8,16 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
 
-import mlos.sgl.canvas.CanvasListener;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
 import mlos.sgl.core.Rect;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Transforms;
 
-public class CanvasView implements Painter, CanvasListener {
+public class CanvasView implements Painter {
 
     private static class ZComparator implements Comparator<ObjectPainter> {
 
@@ -35,12 +32,8 @@ public class CanvasView implements Painter, CanvasListener {
 
     private static final ZComparator COMPARATOR = new ZComparator();
 
-    private final Map<CanvasObject, ObjectPainter> objectPaintersMap = new HashMap<>();
-
     private final Collection<ObjectPainter> objects = new TreeSet<>(COMPARATOR);
 
-    private ObjectPainterFactory painterFactory;
-    
     private final CanvasPanel panel;
     
     private final List<Painter> prePainters = new ArrayList<>();
@@ -48,10 +41,8 @@ public class CanvasView implements Painter, CanvasListener {
 
     private Transform planeToNorm = new Transform();
     
-    public CanvasView(CanvasPanel panel, ObjectPainterFactory viewFactory) {
+    public CanvasView(CanvasPanel panel) {
         this.panel = checkNotNull(panel);
-        this.painterFactory = checkNotNull(viewFactory);
-        
         panel.setPainter(this);
     }
     
@@ -97,27 +88,28 @@ public class CanvasView implements Painter, CanvasListener {
         panel.refresh();
     }
     
-    public CanvasView addPrePainter(Painter painter) {
+    public void addPrePainter(Painter painter) {
         prePainters.add(checkNotNull(painter));
-        return this;
     }
     
-    public CanvasView addPostPainter(Painter painter) {
+    public void removePrePainter(Painter painter) {
+        prePainters.remove(painter);
+    }
+    
+    public void addPostPainter(Painter painter) {
         postPainters.add(checkNotNull(painter));
-        return this;
+    }
+    
+    public void removePostPainter(Painter painter) {
+        postPainters.remove(painter);
     }
 
-    @Override
-    public void objectAdded(CanvasObject object) {
-        ObjectPainter view = painterFactory.createPainter(object);
-        objectPaintersMap.put(object, view);
-        objects.add(view);
+    public void add(ObjectPainter painter) {
+        objects.add(painter);
     }
-
-    @Override
-    public void objectRemoved(CanvasObject object) {
-        ObjectPainter view = objectPaintersMap.remove(object);
-        objects.remove(view);
+    
+    public void remove(ObjectPainter painter) {
+        objects.remove(painter);
     }
 
     @Override

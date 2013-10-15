@@ -110,6 +110,7 @@ public class CanvasPanel extends JPanel {
     @Override
     protected final void paintComponent(Graphics g) {
         super.paintComponent(g);
+        recomputeTransform();
         if (painter != null) {
             Graphics2D graphics = (Graphics2D) g;
             painter.paint(normToScreen, graphics);

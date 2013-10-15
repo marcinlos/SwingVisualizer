@@ -8,7 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class HandlerChain implements InputHandler {
+public class HandlerStack implements InputHandler {
 
     private final Deque<InputHandler> handlers = new ArrayDeque<>();
     
