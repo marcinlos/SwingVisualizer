@@ -8,6 +8,8 @@ import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -15,12 +17,18 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import com.google.common.collect.Iterables;
+
+import mlos.sgl.Scene;
+import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Geometry;
 import mlos.sgl.core.Rect;
 import mlos.sgl.core.Transform;
+import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.ui.CanvasController;
 import mlos.sgl.ui.InputHandler;
+import mlos.sgl.util.Randomizer;
 import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.Painter;
 
@@ -31,6 +39,8 @@ public class RandomPoints implements Mode, InputHandler {
     private final CanvasController controller;
 
     private JPanel optionsPanel;
+    
+    private final Scene scene;
 
     private Vec2d startPos;
     private Vec2d currentPos;
@@ -72,7 +82,8 @@ public class RandomPoints implements Mode, InputHandler {
         }
     };
 
-    public RandomPoints(CanvasView view, CanvasController controller) {
+    public RandomPoints(Scene scene, CanvasView view, CanvasController controller) {
+        this.scene = scene;
         this.view = view;
         this.controller = controller;
         setupUI();
@@ -86,6 +97,7 @@ public class RandomPoints implements Mode, InputHandler {
         JRadioButton radioCircle = new JRadioButton("circle");
         selectionTypes.add(radioRect);
         selectionTypes.add(radioCircle);
+        radioRect.setSelected(true);
 
         JCheckBox onBorder = new JCheckBox("border only");
 
@@ -138,14 +150,35 @@ public class RandomPoints implements Mode, InputHandler {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
-            Vec2d endPos = getPlanePos(e);
-            Vec2d diff = Geometry.diff(endPos, startPos);
-
+            Vec2d endScreen = getScreenPos(e);
+            Vec2d endNorm = view.normToScreen().invert(endScreen);
+            Vec2d startNorm = view.planeToNorm().apply(startPos);
+            
+            addRandomPoints(startNorm, endNorm);
+            
+            
             startPos = null;
             dragging = false;
             view.removePostPainter(selectionPainter);
             view.refresh();
             e.consume();
+        }
+    }
+
+    private void addRandomPoints(Vec2d startNorm, Vec2d endNorm) {
+        Rect bounds = Geometry.aabb(startNorm, endNorm);
+        int n = 100;
+        List<Vec2d> points = Randomizer.inRect(bounds).list(n);
+        
+        List<Vec2d> planePoints = new ArrayList<>(points.size());
+        Transform normToPlane = Transforms.invert(view.planeToNorm());
+        for (Vec2d p : points) {
+            planePoints.add(normToPlane.apply(p));
+        }
+        
+        for (Vec2d p : planePoints) {
+            CanvasPoint canvasPoint = new CanvasPoint(p);
+            scene.addObject(canvasPoint);
         }
     }
 

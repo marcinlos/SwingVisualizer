@@ -38,6 +38,7 @@ public class ToolPanel extends JPanel {
             optionsPanel.removeAll();
             optionsPanel.add(mode.getOptionPanel());
             optionsPanel.revalidate();
+            optionsPanel.repaint();
         }
 
     }

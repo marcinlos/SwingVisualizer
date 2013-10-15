@@ -50,7 +50,8 @@ public class MainWindow extends JFrame {
                 Scene scene = scenes.get(n);
                 sidePanel.removeAll();
                 sidePanel.add(scene.getSideGui());
-                sidePanel.invalidate();
+                sidePanel.revalidate();
+                sidePanel.repaint();
             }
         });
         

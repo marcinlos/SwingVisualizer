@@ -84,7 +84,7 @@ public abstract class Scene {
         
         properties.addListener(new PanelRefresher());
         
-        sidePanel.addMode(new RandomPoints(view, canvasController));
+        sidePanel.addMode(new RandomPoints(this, view, canvasController));
     }
 
     private void establishInputListeners() {

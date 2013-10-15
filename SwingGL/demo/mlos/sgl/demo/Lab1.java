@@ -7,7 +7,6 @@ import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Rect;
 import mlos.sgl.core.Segment;
-import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.Randomizer;
 
@@ -23,7 +22,7 @@ public class Lab1 extends Scene {
         super(name);
 
         view().setViewport(Rect.aroundOrigin(rx, ry));
-        view().append(Transforms.r(0.5));
+//        view().append(Transforms.r(0.5));
         
         for (Vec2d v : points) {
             CanvasPoint p = new CanvasPoint(v);
@@ -46,8 +45,8 @@ public class Lab1 extends Scene {
         Segment line = new Segment(a, b);
         
         Scene[] scenes = {
-            new Lab1("100", Randomizer.inSquare(100).list(1000), s, 120, 120),
-            new Lab1("100000000000000", Randomizer.inSquare(1e14).list(1000), s, 1.2e14, 1.2e14),
+            new Lab1("1e2", Randomizer.inSquare(100).list(1000), s, 120, 120),
+            new Lab1("1e14", Randomizer.inSquare(1e14).list(1000), s, 1.2e14, 1.2e14),
             new Lab1("circle", Randomizer.onCircle(100).list(1000), s, 120, 120),
             new Lab1("line", Randomizer.onSegment(line).list(1000), s, 1000, 70)
         };
