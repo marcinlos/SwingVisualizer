@@ -6,6 +6,7 @@ public final class Vec2d implements Transformable<Vec2d> {
     
     public final double x;
     public final double y;
+    public static final Vec2d ZERO = new Vec2d();
 
     public Vec2d() {
         this(0, 0);

@@ -18,9 +18,12 @@ public class Canvas {
         }
     }
     
-    public void remove(CanvasObject object) {
-        objects.remove(object);
-        signalRemoval(object);
+    public boolean remove(CanvasObject object) {
+        boolean wasPresent = objects.remove(object);
+        if (wasPresent) {
+            signalRemoval(object);
+        }
+        return wasPresent;
     }
 
     private void signalRemoval(CanvasObject object) {

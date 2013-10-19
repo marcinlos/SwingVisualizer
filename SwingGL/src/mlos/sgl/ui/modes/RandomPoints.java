@@ -17,8 +17,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import com.google.common.collect.Iterables;
-
 import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.core.Geometry;
@@ -167,7 +165,7 @@ public class RandomPoints implements Mode, InputHandler {
 
     private void addRandomPoints(Vec2d startNorm, Vec2d endNorm) {
         Rect bounds = Geometry.aabb(startNorm, endNorm);
-        int n = 100;
+        int n = 20;
         List<Vec2d> points = Randomizer.inRect(bounds).list(n);
         
         List<Vec2d> planePoints = new ArrayList<>(points.size());
@@ -226,7 +224,7 @@ public class RandomPoints implements Mode, InputHandler {
     @Override
     public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
-
+        System.out.println(e.isConsumed());
     }
 
     @Override

@@ -37,7 +37,10 @@ public class CanvasPoint extends CanvasObject {
     private Color borderColor = DEFAULT_BORDER_COLOR; 
 
     private int borderSize = DEFAULT_BORDER_SIZE;
-    
+
+    public CanvasPoint() {
+        this(Vec2d.ZERO);
+    }
 
     public CanvasPoint(Vec2d point) {
         this(point, DEFAULT_Z);
@@ -58,63 +61,63 @@ public class CanvasPoint extends CanvasObject {
         return point;
     }
     
-    public void setPoint(Vec2d point) {
+    public synchronized void setPoint(Vec2d point) {
         this.point = checkNotNull(point);
         notifyListeners();
     }
     
     
-    public int getSize() {
+    public synchronized int getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public synchronized void setSize(int size) {
         checkArgument(size > 0, "Vec2d size must be positive");
         this.size = size;
         notifyListeners();
     }
     
-    public Color getColor() {
+    public synchronized Color getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public synchronized void setColor(Color color) {
         this.color = checkNotNull(color);
         notifyListeners();
     }
     
-    public Color getHoverColor() {
+    public synchronized Color getHoverColor() {
         return hoverColor;
     }
 
-    public void setHoverColor(Color hoverColor) {
+    public synchronized void setHoverColor(Color hoverColor) {
         this.hoverColor = checkNotNull(hoverColor);
         notifyListeners();
     }
 
-    public Color getSelectedColor() {
+    public synchronized Color getSelectedColor() {
         return selectedColor;
     }
 
-    public void setSelectedColor(Color selectedColor) {
+    public synchronized void setSelectedColor(Color selectedColor) {
         this.selectedColor = checkNotNull(selectedColor);
         notifyListeners();
     }
     
-    public Color getBorderColor() {
+    public synchronized Color getBorderColor() {
         return borderColor;
     }
 
-    public void setBorderColor(Color borderColor) {
+    public synchronized void setBorderColor(Color borderColor) {
         this.borderColor = checkNotNull(borderColor);
         notifyListeners();
     }
 
-    public int getBorderSize() {
+    public synchronized int getBorderSize() {
         return borderSize;
     }
 
-    public void setBorderSize(int borderSize) {
+    public synchronized void setBorderSize(int borderSize) {
         checkArgument(borderSize >= 0, "Border size must be non-negative");
         this.borderSize = borderSize;
     }

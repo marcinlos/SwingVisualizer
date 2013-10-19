@@ -8,8 +8,6 @@ public class Geometry {
         // non-instantiable
     }
 
-    public static final Vec2d ZERO = new Vec2d();
-
     public static Vec2d sum(Vec2d a, Vec2d b) {
         return new Vec2d(a.x + b.x, a.y + b.y);
     }
@@ -96,6 +94,20 @@ public class Geometry {
         return new Vec2d(x, y);
     }
     
+    public static Vec2d lerpPoly(double t, Vec2d... points) {
+        if (t == points.length - 1) {
+            return points[points.length - 1];
+        } else if (t < points.length - 1) {
+            int n = (int) t;
+            Vec2d a = points[n];
+            Vec2d b = points[n + 1];
+            double t2 = t - n;
+            return lerp(t2, a, b);
+        } else {
+            throw new IllegalArgumentException("Parameter too large");
+        }
+    }
+    
     public static Vec2d move(Vec2d v, Vec2d d) {
         return sum(v, d);
     }
@@ -106,6 +118,24 @@ public class Geometry {
     
     public static Vec2d lerp(double t, Segment s) {
         return lerp(t, s.a, s.b);
+    }
+    
+    public static double orient2d(Vec2d a, Vec2d b, Vec2d c) {
+        return a.x * b.y - a.y * b.x 
+                - a.x * c.y + a.y * c.x 
+                + b.x * c.y - b.y * c.x;
+    }
+    
+    public static boolean colinear(Vec2d a, Vec2d b, Vec2d c) {
+        return orient2d(a, b, c) == 0;
+    }
+    
+    public static boolean ccw(Vec2d a, Vec2d b, Vec2d c) {
+        return orient2d(a, b, c) > 0;
+    }
+    
+    public static boolean cw(Vec2d a, Vec2d b, Vec2d c) {
+        return orient2d(a, b, c) < 0;
     }
     
     public static Vec2d toVec(Segment s) {

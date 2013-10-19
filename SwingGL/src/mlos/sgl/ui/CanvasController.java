@@ -11,16 +11,20 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
+import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.util.PropertyMap;
+import mlos.sgl.view.CanvasPanel;
 import mlos.sgl.view.CanvasView;
 
 public class CanvasController {
@@ -122,7 +126,7 @@ public class CanvasController {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            
+            panel.requestFocusInWindow();
         }
 
         @Override
@@ -154,16 +158,25 @@ public class CanvasController {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            
+            int c = e.getKeyCode();
+            if (c == KeyEvent.VK_ESCAPE) {
+                if (e.isControlDown()) {
+                    handlerStack.pop();
+                } else {
+                    selection.clear();
+                    view.refresh();
+                }
+            } else if (c == KeyEvent.VK_X) {
+                Collection<ObjectController> all = selection.getObjects();
+                for (ObjectController controller : all) {
+                    scene.removeObject(controller.getObject());
+                }
+            }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            System.out.println(KeyEvent.getKeyText(e.getKeyCode()));
-            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                selection.clear();
-                view.refresh();
-            }
+
         }
         
     }
@@ -198,6 +211,10 @@ public class CanvasController {
                 prepareForRemoval(object);
             }
             selected.clear();
+        }
+        
+        public Collection<ObjectController> getObjects() {
+            return Collections.unmodifiableSet(selected);
         }
     }
     
@@ -235,7 +252,9 @@ public class CanvasController {
         
     }
     
+    private final Scene scene;
     private final CanvasView view;
+    private final CanvasPanel panel;
     
     private final Handler handler = new Handler();
     private final HandlerStack handlerStack;
@@ -252,27 +271,28 @@ public class CanvasController {
     private final Drag drag = new Drag();
     
 
-    public CanvasController(CanvasView view, PropertyMap properties, 
-            HandlerStack handlers) {
-        this.view = checkNotNull(view);
-        this.properties = checkNotNull(properties);
-        this.handlerStack = checkNotNull(handlers);
+    public CanvasController(Scene scene) {
+        this.scene = checkNotNull(scene);
+        this.view = scene.getView();
+        this.panel = scene.getPanel();
+        this.properties = scene.getProperties();
+        this.handlerStack = scene.getHandlerStack();
         
-        this.listener = new InputHandlerWrapper(handlers);
+        this.listener = new InputHandlerWrapper(handlerStack);
         
-        handlers.push(handler);
+        handlerStack.push(handler);
     }
     
-    public void add(ObjectController controller) {
+    public synchronized void add(ObjectController controller) {
         objects.add(controller);
     }
     
-    public void remove(ObjectController controller) {
+    public synchronized void remove(ObjectController controller) {
         objects.remove(controller);
     }
     
     
-    public ObjectController findHit(Vec2d p) {
+    public synchronized ObjectController findHit(Vec2d p) {
         Transform planeToScreen = view.planeToScreen();
         
         ObjectController closest = null;

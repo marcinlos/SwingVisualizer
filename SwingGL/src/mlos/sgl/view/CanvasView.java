@@ -5,11 +5,11 @@ import static mlos.sgl.core.Geometry.neg;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.ObjectZComparator;
@@ -36,8 +36,8 @@ public class CanvasView implements Painter {
 
     private final CanvasPanel panel;
     
-    private final List<Painter> prePainters = new ArrayList<>();
-    private final List<Painter> postPainters = new ArrayList<>();
+    private final List<Painter> prePainters = new CopyOnWriteArrayList<>();
+    private final List<Painter> postPainters = new CopyOnWriteArrayList<>();
 
     private Transform planeToNorm = new Transform();
     
@@ -46,7 +46,7 @@ public class CanvasView implements Painter {
         panel.setPainter(this);
     }
     
-    public void setTransform(Transform transform) {
+    public synchronized void setTransform(Transform transform) {
         this.planeToNorm = transform;
         refresh();
     }
@@ -90,30 +90,36 @@ public class CanvasView implements Painter {
     
     public void addPrePainter(Painter painter) {
         prePainters.add(checkNotNull(painter));
+        refresh();
     }
     
     public void removePrePainter(Painter painter) {
         prePainters.remove(painter);
+        refresh();
     }
     
     public void addPostPainter(Painter painter) {
         postPainters.add(checkNotNull(painter));
+        refresh();
     }
     
     public void removePostPainter(Painter painter) {
         postPainters.remove(painter);
+        refresh();
     }
 
-    public void add(ObjectPainter painter) {
+    public synchronized void add(ObjectPainter painter) {
         objects.add(painter);
+        refresh();
     }
     
-    public void remove(ObjectPainter painter) {
+    public synchronized void remove(ObjectPainter painter) {
         objects.remove(painter);
+        refresh();
     }
 
     @Override
-    public void paint(Transform toScreen, Graphics2D ctx) {
+    public synchronized void paint(Transform toScreen, Graphics2D ctx) {
         ctx.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 

@@ -3,9 +3,12 @@ package mlos.sgl.canvas;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Stroke;
 
 import mlos.sgl.core.Segment;
+import mlos.sgl.core.Vec2d;
 
 public class CanvasSegment extends CanvasObject {
     
@@ -14,7 +17,6 @@ public class CanvasSegment extends CanvasObject {
     public static final Color DEFAULT_HOVER_COLOR = Color.orange;
     
     public static final Color DEFAULT_SELECTED_COLOR = Color.magenta;
-    
     
     public static final int DEFAULT_THICKNESS = 2;
     
@@ -27,7 +29,13 @@ public class CanvasSegment extends CanvasObject {
     private Color selectedColor = DEFAULT_SELECTED_COLOR;
 
     private int thickness = DEFAULT_THICKNESS;
-
+    
+    private boolean dashed = false;
+    
+    public CanvasSegment() {
+        this(new Segment(Vec2d.ZERO, Vec2d.ZERO));
+    }
+    
     public CanvasSegment(Segment segment) {
         this.segment = checkNotNull(segment);
     }
@@ -36,43 +44,52 @@ public class CanvasSegment extends CanvasObject {
         return segment;
     }
     
-    public void setSegment(Segment segment) {
+    public synchronized void setSegment(Segment segment) {
         this.segment = checkNotNull(segment);
         notifyListeners();
     }
     
-    public Color getColor() {
+    public synchronized Color getColor() {
         return color;
     }
     
-    public void setColor(Color color) {
+    public synchronized void setColor(Color color) {
         this.color = checkNotNull(color);
         notifyListeners();
     }
     
-    public Color getHoverColor() {
+    public synchronized Color getHoverColor() {
         return hoverColor;
     }
 
-    public void setHoverColor(Color hoverColor) {
+    public synchronized void setHoverColor(Color hoverColor) {
         this.hoverColor = checkNotNull(hoverColor);
     }
 
-    public Color getSelectedColor() {
+    public synchronized Color getSelectedColor() {
         return selectedColor;
     }
 
-    public void setSelectedColor(Color selectedColor) {
+    public synchronized void setSelectedColor(Color selectedColor) {
         this.selectedColor = checkNotNull(selectedColor);
     }
 
-    public int getThickness() {
+    public synchronized int getThickness() {
         return thickness;
     }
     
-    public void setThickness(int thickness) {
+    public synchronized void setThickness(int thickness) {
         checkArgument(thickness > 0, "Line thickness must be positive");
         this.thickness = thickness;
+        notifyListeners();
+    }
+    
+    public synchronized boolean isDashed() {
+        return dashed;
+    }
+    
+    public synchronized void setDashed(boolean dashed) {
+        this.dashed = dashed;
         notifyListeners();
     }
 

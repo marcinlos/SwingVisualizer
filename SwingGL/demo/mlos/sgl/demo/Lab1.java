@@ -1,5 +1,7 @@
 package mlos.sgl.demo;
 
+import static mlos.sgl.core.Geometry.orient2d;
+
 import java.awt.Color;
 
 import mlos.sgl.App;
@@ -12,16 +14,11 @@ import mlos.sgl.util.Randomizer;
 
 public class Lab1 extends Scene {
     
-    private static double orient2d(Vec2d a, Vec2d b, Vec2d c) {
-        return a.x * b.y - a.y * b.x 
-                - b.x * c.y + b.y * c.x 
-                + a.x * c.y - a.y * c.x;
-    }
 
     public Lab1(String name, Iterable<Vec2d> points, Segment seg, double rx, double ry) {
         super(name);
 
-        view().setViewport(Rect.aroundOrigin(rx, ry));
+        view.setViewport(Rect.aroundOrigin(rx, ry));
 //        view().append(Transforms.r(0.5));
         
         for (Vec2d v : points) {

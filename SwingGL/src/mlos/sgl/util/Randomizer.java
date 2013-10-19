@@ -1,6 +1,7 @@
 package mlos.sgl.util;
 
 import static mlos.sgl.core.Geometry.lerp;
+import static mlos.sgl.core.Geometry.lerpPoly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,17 @@ public final class Randomizer {
         Rect rect = Rect.aroundOrigin(r, r);
         return inRect(rect);
     }
+    
+    public static Generator<Vec2d> onPoly(final Vec2d... points) {
+        Source<Vec2d> source = new RandomSource<Vec2d>() {
+            @Override
+            public Vec2d next() {
+                double t = rand.nextDouble() * (points.length - 1);
+                return lerpPoly(t, points);
+            }
+        };
+        return new Generator<>(source);
+    }
 
     public static Generator<Vec2d> onCircle(final double r) {
         Source<Vec2d> source = new RandomSource<Vec2d>() {
@@ -129,6 +141,10 @@ public final class Randomizer {
             }
         };
         return new Generator<>(source);
+    }
+    
+    public static Generator<Vec2d> onSegment(Vec2d a, Vec2d b) {
+        return onSegment(new Segment(a, b));
     }
 
 }

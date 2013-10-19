@@ -3,9 +3,12 @@ package mlos.sgl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.awt.Component;
+import java.util.HashMap;
+import java.util.Map;
 
 import mlos.sgl.canvas.Canvas;
 import mlos.sgl.canvas.CanvasObject;
+import mlos.sgl.canvas.CanvasObjectListener;
 import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
@@ -28,40 +31,50 @@ import mlos.sgl.view.ObjectPainterFactory;
 
 public abstract class Scene {
     
-    private final class PanelRefresher implements PropertyListener {
+    private final class Refresher implements PropertyListener, CanvasObjectListener {
         
         @Override
         public void removed(String name) {
-            canvasPanel.refresh();
+            view.refresh();
         }
 
         @Override
         public void changed(String name, Object newValue) {
-            canvasPanel.refresh();
+            view.refresh();
+        }
+
+        @Override
+        public void updated(CanvasObject object) {
+            view.refresh();
         }
     }
 
     private String name;
 
-    private final Canvas canvas;
+    protected final Canvas canvas;
     
-    private final CanvasPanel canvasPanel;
+    protected final CanvasPanel canvasPanel;
     
-    private final ToolPanel sidePanel;
+    protected final ToolPanel sidePanel;
     
-    private final CanvasView view;
+    protected final CanvasView view;
     
-    private final HandlerStack handlerStack;
+    protected final HandlerStack handlerStack;
 
-    private final CanvasController canvasController;
+    protected final CanvasController canvasController;
     
     
     private final ObjectControllerFactory controllerFactory;
     
     private final ObjectPainterFactory painterFactory;
     
+    protected final Map<CanvasObject, ObjectPainter> painters = new HashMap<>();
+    protected final Map<CanvasObject, ObjectController> controllers = new HashMap<>();
+    
 
-    private final PropertyMap properties = new PropertyMap();
+    protected final PropertyMap properties = new PropertyMap();
+
+    private final Refresher refresher;
     
 
     public Scene(String name) {
@@ -78,11 +91,12 @@ public abstract class Scene {
         
         view.addPostPainter(new CursorPositionPainter(properties));
         
-        this.canvasController = new CanvasController(view, properties, handlerStack);
+        this.canvasController = new CanvasController(this);
         
         establishInputListeners();
         
-        properties.addListener(new PanelRefresher());
+        refresher = new Refresher();
+        properties.addListener(refresher);
         
         sidePanel.addMode(new RandomPoints(this, view, canvasController));
     }
@@ -94,13 +108,16 @@ public abstract class Scene {
         canvasPanel.addKeyListener(canvasController.getKeyListener());
     }
 
-    public void addObject(CanvasObject object) {
+    public synchronized void addObject(CanvasObject object) {
         canvas.add(object);
         ObjectPainter painter = painterFactory.createPainter(object);
         view.add(painter);
+        painters.put(object, painter);
+        object.addListener(refresher);
         
         ObjectController controller = controllerFactory.createController(object);
         canvasController.add(controller);
+        controllers.put(object, controller);
     }
     
     public CanvasPoint addPoint(Vec2d v) {
@@ -121,6 +138,18 @@ public abstract class Scene {
     
     public CanvasObject addSegment(Vec2d a, Vec2d b) {
         return addSegment(new Segment(a, b));
+    }
+    
+    public synchronized void removeObject(CanvasObject object) {
+        if (canvas.remove(object)) {
+
+            ObjectPainter painter = painters.remove(object);
+            view.remove(painter);
+            
+            ObjectController controller = controllers.remove(object);
+            canvasController.remove(controller);
+            view.refresh();
+        }
     }
     
     protected ObjectPainterFactory createPainterFactory() {
@@ -144,12 +173,28 @@ public abstract class Scene {
         return name;
     }
 
-    protected Canvas canvas() {
+    public Canvas getCanvas() {
         return canvas;
     }
     
-    protected CanvasView view() {
+    public CanvasController getCanvasController() {
+        return canvasController;
+    }
+    
+    public HandlerStack getHandlerStack() {
+        return handlerStack;
+    }
+    
+    public CanvasView getView() {
         return view;
+    }
+    
+    public PropertyMap getProperties() {
+        return properties;
+    }
+    
+    public CanvasPanel getPanel() {
+        return canvasPanel;
     }
 
     protected void refresh() {
