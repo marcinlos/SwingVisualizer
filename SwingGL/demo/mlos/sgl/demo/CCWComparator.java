@@ -25,12 +25,12 @@ public final class CCWComparator implements Comparator<Vec2d> {
             return 0;
         } else {
             double r = orient2d(origin, o2, o1);
-//            if (r == 0) {
-            if (Math.abs(r) < 1e-10) {
-                System.out.printf("No, stalo sie: %s vs %s\n", o1, o2);
+            if (r == 0) {
+//            if (Math.abs(r) < 1e-10) {
+//                System.out.printf("No, stalo sie: %s vs %s\n", o1, o2);
                 double d1 = distSq(origin, o1);
                 double d2 = distSq(origin, o2);
-                System.out.printf("d1=%f, d2=%f\n", d1, d2);
+//                System.out.printf("d1=%f, d2=%f\n", d1, d2);
                 return Double.compare(d1, d2);
             }
             return signum(r);

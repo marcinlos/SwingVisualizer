@@ -5,10 +5,12 @@ import static mlos.sgl.core.Geometry.neg;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import mlos.sgl.canvas.CanvasObject;
@@ -32,7 +34,7 @@ public class CanvasView implements Painter {
 
     private static final ZComparator COMPARATOR = new ZComparator();
 
-    private final Collection<ObjectPainter> objects = new TreeSet<>(COMPARATOR);
+    private final Collection<ObjectPainter> objects = new HashSet<>();
 
     private final CanvasPanel panel;
     
@@ -90,32 +92,26 @@ public class CanvasView implements Painter {
     
     public void addPrePainter(Painter painter) {
         prePainters.add(checkNotNull(painter));
-        refresh();
     }
     
     public void removePrePainter(Painter painter) {
         prePainters.remove(painter);
-        refresh();
     }
     
     public void addPostPainter(Painter painter) {
         postPainters.add(checkNotNull(painter));
-        refresh();
     }
     
     public void removePostPainter(Painter painter) {
         postPainters.remove(painter);
-        refresh();
     }
 
-    public synchronized void add(ObjectPainter painter) {
-        objects.add(painter);
-        refresh();
+    public synchronized boolean add(ObjectPainter painter) {
+        return objects.add(painter);
     }
     
-    public synchronized void remove(ObjectPainter painter) {
-        objects.remove(painter);
-        refresh();
+    public synchronized boolean remove(ObjectPainter painter) {
+        return objects.remove(painter);
     }
 
     @Override
@@ -129,7 +125,10 @@ public class CanvasView implements Painter {
             p.paint(t, ctx);
         }
         
-        for (ObjectPainter object : objects) {
+        final List<ObjectPainter> zsorted = new ArrayList<>(objects);
+        Collections.sort(zsorted, COMPARATOR);
+        
+        for (ObjectPainter object : zsorted) {
             object.paint(t, ctx);
         }
         

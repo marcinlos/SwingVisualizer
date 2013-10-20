@@ -34,7 +34,7 @@ public abstract class CanvasObject {
         Iterables.addAll(listeners, iter);
     }
 
-    protected void notifyListeners() {
+    public void signalUpdate() {
         for (CanvasObjectListener listener : listeners) {
             listener.updated(this);
         }
@@ -42,7 +42,7 @@ public abstract class CanvasObject {
     
     public void setZ(double z) {
         this.z = z;
-        notifyListeners();
+        signalUpdate();
     }
     
     public double getZ() {
@@ -55,6 +55,7 @@ public abstract class CanvasObject {
     
     public void setHover(boolean hover) {
         this.hover = hover;
+        signalUpdate();
     }
     
     public boolean isSelected() {
@@ -63,6 +64,7 @@ public abstract class CanvasObject {
     
     public void setSelected(boolean selected) {
         this.selected = selected;
+        signalUpdate();
     }
 
 //    public abstract void accept(CanvasVisitor visitor);

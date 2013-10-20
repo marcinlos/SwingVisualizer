@@ -64,8 +64,6 @@ public class ConvexHull extends Scene {
                     }
                 }
             }
-
-
         });
     }
     
@@ -134,11 +132,10 @@ public class ConvexHull extends Scene {
     private void run(final HullAlgorithm algorithm) {
         Set<CanvasObject> objects = canvas.getObjects();
         final Map<Vec2d, CanvasPoint> points = extractPoints(objects);
+
         exec.execute(new Runnable() {
-            
             @Override
             public void run() {
-                // TODO Auto-generated method stub
                 Iterable<Vec2d> hull = algorithm.compute(points.keySet());
                 displayHull(points, hull);
                 
@@ -169,12 +166,17 @@ public class ConvexHull extends Scene {
     private static Scene createScene4() {
         Rect r = Rect.bounds(0, 0, 10, 10);
         
+        Vec2d lb = r.leftBottom();
+        Vec2d rb = r.rightBottom();
+        Vec2d rt = r.rightTop();
+        Vec2d lt = r.leftTop();
+        
         Iterable<Vec2d> points4 = Iterables.concat(
-            Randomizer.onSegment(r.leftBottom(), r.leftTop()).list(25),
-            Randomizer.onSegment(r.leftBottom(), r.rightBottom()).list(25),
-            Randomizer.onSegment(r.leftBottom(), r.rightTop()).list(20),
-            Randomizer.onSegment(r.leftTop(), r.rightBottom()).list(20),
-            ImmutableList.of(r.leftBottom(), r.leftTop(), r.rightBottom(), r.rightTop())
+            Randomizer.onSegment(lb, lt).list(25),
+            Randomizer.onSegment(lb, rb).list(25),
+            Randomizer.onSegment(lb, rt).list(20),
+            Randomizer.onSegment(lt, rb).list(20),
+            ImmutableList.of(lb, lt, rb, rt)
         );
         Scene s4 = new ConvexHull("square+diag", points4, 12, 12);
         s4.getView().setViewport(Rect.bounds(-2, -2, 12, 12));

@@ -51,19 +51,13 @@ public class CanvasPoint extends CanvasObject {
         setPoint(point);
     }
     
-
-//    @Override
-//    public void accept(CanvasVisitor visitor) {
-//        visitor.visit(this);
-//    }
-    
     public Vec2d getPoint() {
         return point;
     }
     
     public synchronized void setPoint(Vec2d point) {
         this.point = checkNotNull(point);
-        notifyListeners();
+        signalUpdate();
     }
     
     
@@ -74,7 +68,7 @@ public class CanvasPoint extends CanvasObject {
     public synchronized void setSize(int size) {
         checkArgument(size > 0, "Vec2d size must be positive");
         this.size = size;
-        notifyListeners();
+        signalUpdate();
     }
     
     public synchronized Color getColor() {
@@ -83,7 +77,7 @@ public class CanvasPoint extends CanvasObject {
 
     public synchronized void setColor(Color color) {
         this.color = checkNotNull(color);
-        notifyListeners();
+        signalUpdate();
     }
     
     public synchronized Color getHoverColor() {
@@ -92,7 +86,7 @@ public class CanvasPoint extends CanvasObject {
 
     public synchronized void setHoverColor(Color hoverColor) {
         this.hoverColor = checkNotNull(hoverColor);
-        notifyListeners();
+        signalUpdate();
     }
 
     public synchronized Color getSelectedColor() {
@@ -101,7 +95,7 @@ public class CanvasPoint extends CanvasObject {
 
     public synchronized void setSelectedColor(Color selectedColor) {
         this.selectedColor = checkNotNull(selectedColor);
-        notifyListeners();
+        signalUpdate();
     }
     
     public synchronized Color getBorderColor() {
@@ -110,7 +104,7 @@ public class CanvasPoint extends CanvasObject {
 
     public synchronized void setBorderColor(Color borderColor) {
         this.borderColor = checkNotNull(borderColor);
-        notifyListeners();
+        signalUpdate();
     }
 
     public synchronized int getBorderSize() {
@@ -120,6 +114,7 @@ public class CanvasPoint extends CanvasObject {
     public synchronized void setBorderSize(int borderSize) {
         checkArgument(borderSize >= 0, "Border size must be non-negative");
         this.borderSize = borderSize;
+        signalUpdate();
     }
 
 }

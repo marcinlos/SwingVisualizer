@@ -11,8 +11,15 @@ public class Canvas {
 
     private final Set<CanvasListener> listeners = new CopyOnWriteArraySet<>();
     
-    public void add(CanvasObject object) {
-        objects.add(object);
+    public boolean add(CanvasObject object) {
+        boolean added = objects.add(object);
+        if (added) {
+            signalAddition(object);
+        }
+        return added;
+    }
+
+    private void signalAddition(CanvasObject object) {
         for (CanvasListener listener : listeners) {
             listener.objectAdded(object);
         }

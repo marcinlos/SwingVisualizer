@@ -26,6 +26,7 @@ public class CanvasPanel extends JPanel {
      * Creates new canvas panel.
      */
     public CanvasPanel() {
+        setDoubleBuffered(true);
         setBackground(Color.white);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);

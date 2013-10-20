@@ -3,9 +3,7 @@ package mlos.sgl.canvas;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Stroke;
 
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Vec2d;
@@ -46,7 +44,7 @@ public class CanvasSegment extends CanvasObject {
     
     public synchronized void setSegment(Segment segment) {
         this.segment = checkNotNull(segment);
-        notifyListeners();
+        signalUpdate();
     }
     
     public synchronized Color getColor() {
@@ -55,7 +53,7 @@ public class CanvasSegment extends CanvasObject {
     
     public synchronized void setColor(Color color) {
         this.color = checkNotNull(color);
-        notifyListeners();
+        signalUpdate();
     }
     
     public synchronized Color getHoverColor() {
@@ -64,6 +62,7 @@ public class CanvasSegment extends CanvasObject {
 
     public synchronized void setHoverColor(Color hoverColor) {
         this.hoverColor = checkNotNull(hoverColor);
+        signalUpdate();
     }
 
     public synchronized Color getSelectedColor() {
@@ -72,6 +71,7 @@ public class CanvasSegment extends CanvasObject {
 
     public synchronized void setSelectedColor(Color selectedColor) {
         this.selectedColor = checkNotNull(selectedColor);
+        signalUpdate();
     }
 
     public synchronized int getThickness() {
@@ -81,7 +81,7 @@ public class CanvasSegment extends CanvasObject {
     public synchronized void setThickness(int thickness) {
         checkArgument(thickness > 0, "Line thickness must be positive");
         this.thickness = thickness;
-        notifyListeners();
+        signalUpdate();
     }
     
     public synchronized boolean isDashed() {
@@ -90,12 +90,7 @@ public class CanvasSegment extends CanvasObject {
     
     public synchronized void setDashed(boolean dashed) {
         this.dashed = dashed;
-        notifyListeners();
+        signalUpdate();
     }
-
-//    @Override
-//    public void accept(CanvasVisitor visitor) {
-//        visitor.visit(this);
-//    }
 
 }

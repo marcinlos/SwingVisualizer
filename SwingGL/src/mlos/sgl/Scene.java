@@ -108,16 +108,20 @@ public abstract class Scene {
         canvasPanel.addKeyListener(canvasController.getKeyListener());
     }
 
-    public synchronized void addObject(CanvasObject object) {
-        canvas.add(object);
-        ObjectPainter painter = painterFactory.createPainter(object);
-        view.add(painter);
-        painters.put(object, painter);
-        object.addListener(refresher);
-        
-        ObjectController controller = controllerFactory.createController(object);
-        canvasController.add(controller);
-        controllers.put(object, controller);
+    public synchronized boolean addObject(CanvasObject object) {
+        System.out.println("Adding " + object);
+        boolean added = canvas.add(object);
+        if (added) {
+            ObjectPainter painter = painterFactory.createPainter(object);
+            view.add(painter);
+            painters.put(object, painter);
+            object.addListener(refresher);
+            
+            ObjectController controller = controllerFactory.createController(object);
+            canvasController.add(controller);
+            controllers.put(object, controller);
+        }
+        return added;
     }
     
     public CanvasPoint addPoint(Vec2d v) {
