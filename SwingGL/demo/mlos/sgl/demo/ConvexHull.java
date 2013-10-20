@@ -31,25 +31,24 @@ import mlos.sgl.ui.InputAdapter;
 import mlos.sgl.util.Randomizer;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 public class ConvexHull extends Scene {
-    
+
     private Iterable<Vec2d> hull;
-    
+
     private final Executor exec = Executors.newSingleThreadExecutor();
 
     public ConvexHull(String name, Iterable<Vec2d> points, double rx, double ry) {
         super(name);
         view.setViewport(Rect.aroundOrigin(rx, ry));
-        
+
         for (Vec2d v : points) {
             CanvasPoint p = new CanvasPoint(v);
             p.setSize(6);
             p.setBorderSize(0);
             addObject(p);
         }
-        
+
         handlerStack.pushBack(new InputAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -66,7 +65,7 @@ public class ConvexHull extends Scene {
             }
         });
     }
-    
+
     private void saveHullToFile() {
         JFileChooser fileChooser = new JFileChooser();
         int val = fileChooser.showSaveDialog(canvasPanel);
@@ -74,18 +73,18 @@ public class ConvexHull extends Scene {
             try {
                 saveHull(fileChooser.getSelectedFile());
             } catch (IOException e1) {
-                JOptionPane.showMessageDialog(null, 
-                        "Cannot write to file", "Error", 
+                JOptionPane.showMessageDialog(null,
+                        "Cannot write to file", "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
         }
     }
-    
+
     private void saveHull(File selectedFile) throws IOException {
         Printer printer = new Printer(new FileOutputStream(selectedFile));
         printer.write(Formats.COORDS_SPACE_SEPARATED, hull);
     }
-    
+
     private void printPolygon(Iterable<Vec2d> points) {
         Iterator<Vec2d> it = points.iterator();
         Vec2d p = it.next();
@@ -103,21 +102,25 @@ public class ConvexHull extends Scene {
     private interface HullAlgorithm {
         Collection<Vec2d> compute(Collection<Vec2d> points);
     }
-    
+
     private final HullAlgorithm graham = new HullAlgorithm() {
         @Override
         public Collection<Vec2d> compute(Collection<Vec2d> points) {
-            return new Graham(ConvexHull.this, points).compute();
+            Graham alg = new Graham(points);
+            alg.addListener(new GrahamVisualizer(ConvexHull.this));
+            return alg.compute();
         }
     };
-    
+
     private final HullAlgorithm jarvis = new HullAlgorithm() {
         @Override
         public Collection<Vec2d> compute(Collection<Vec2d> points) {
-            return new Jarvis(points).compute();
+            Jarvis alg = new Jarvis(points);
+            alg.setListener(new JarvisVisualization(ConvexHull.this));
+            return alg.compute();
         }
     };
-    
+
     private Map<Vec2d, CanvasPoint> extractPoints(Set<CanvasObject> objects) {
         Map<Vec2d, CanvasPoint> points = new HashMap<>();
         for (CanvasObject object : objects) {
@@ -128,7 +131,7 @@ public class ConvexHull extends Scene {
         }
         return points;
     }
-    
+
     private void run(final HullAlgorithm algorithm) {
         Set<CanvasObject> objects = canvas.getObjects();
         final Map<Vec2d, CanvasPoint> points = extractPoints(objects);
@@ -138,12 +141,13 @@ public class ConvexHull extends Scene {
             public void run() {
                 Iterable<Vec2d> hull = algorithm.compute(points.keySet());
                 displayHull(points, hull);
-                
+
             }
         });
     }
-    
-    private void displayHull(Map<Vec2d, CanvasPoint> points, Iterable<Vec2d> hull) {
+
+    private void displayHull(Map<Vec2d, CanvasPoint> points,
+            Iterable<Vec2d> hull) {
         for (Vec2d p : hull) {
             CanvasPoint point = points.get(p);
             point.setColor(Color.blue);
@@ -151,33 +155,37 @@ public class ConvexHull extends Scene {
         printPolygon(hull);
         refresh();
     }
-    
+
     public static void main(String[] args) {
-        Scene s1 = new ConvexHull("1e2", Randomizer.inSquare(100).list(100), 120, 120);
-        Scene s2 = new ConvexHull("circle", Randomizer.onCircle(10).list(100), 12, 12);
-        
+        Scene s1 = new ConvexHull("1e2", Randomizer.inSquare(100).list(100),
+                120, 120);
+        Scene s2 = new ConvexHull("circle", Randomizer.onCircle(10).list(100),
+                12, 12);
+
         Scene s3 = createScene3();
         Scene s4 = createScene4();
-        
+
         Scene[] scenes = { s1, s2, s3, s4 };
         App.create(scenes);
     }
 
     private static Scene createScene4() {
         Rect r = Rect.bounds(0, 0, 10, 10);
-        
+
         Vec2d lb = r.leftBottom();
         Vec2d rb = r.rightBottom();
         Vec2d rt = r.rightTop();
         Vec2d lt = r.leftTop();
+
         
-        Iterable<Vec2d> points4 = Iterables.concat(
-            Randomizer.onSegment(lb, lt).list(25),
-            Randomizer.onSegment(lb, rb).list(25),
-            Randomizer.onSegment(lb, rt).list(20),
-            Randomizer.onSegment(lt, rb).list(20),
-            ImmutableList.of(lb, lt, rb, rt)
-        );
+        Iterable<Vec2d> points4 = ImmutableList.<Vec2d>builder()
+                .addAll(Randomizer.onSegment(lb, lt).list(25))
+                .addAll(Randomizer.onSegment(lb, rb).list(25))
+                .addAll(Randomizer.onSegment(lb, rt).list(20))
+                .addAll(Randomizer.onSegment(lt, rb).list(20))
+                .add(lb, lt, rb, rt)
+                .build();
+        
         Scene s4 = new ConvexHull("square+diag", points4, 12, 12);
         s4.getView().setViewport(Rect.bounds(-2, -2, 12, 12));
         return s4;
@@ -189,7 +197,7 @@ public class ConvexHull extends Scene {
             new Vec2d(-10, -10),
             new Vec2d(10, -10),
             new Vec2d(10, 10),
-            
+
             new Vec2d(-10, 10),
         };
         List<Vec2d> points3 = Randomizer.onPoly(points).list(100);
