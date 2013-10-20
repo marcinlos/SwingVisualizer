@@ -14,7 +14,7 @@ public class SegmentPainter implements ObjectPainter {
 
     private final CanvasSegment segment;
     
-    private static final float[] DASH = { 3.0f, 3.0f };
+    private static final float[] DASH = { 3.0f, 6.0f };
 
     public SegmentPainter(CanvasSegment segment) {
         this.segment = segment;

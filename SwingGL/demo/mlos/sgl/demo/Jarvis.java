@@ -17,6 +17,14 @@ public class Jarvis extends ConvexHullAlgorithm {
         
         void beforeIter();
         
+        void firstCandidate(Vec2d v);
+        
+        void newCandidate(Vec2d v);
+        
+        void wasWorse();
+        
+        void wasBetter();
+        
         void foundNextPoint(Vec2d v);
         
         void afterIter();
@@ -65,10 +73,15 @@ public class Jarvis extends ConvexHullAlgorithm {
         do {
             listener.beforeIter();
             int k = (i + 1) % n;
+            listener.firstCandidate(V[k]);
             for (int c = 2; c < n; ++ c) {
                 int j = (i + c) % n;
+                listener.newCandidate(V[j]);
                 if (cwOrOnRay(V[i], V[k], V[j])) {
                     k = j;
+                    listener.wasBetter();
+                } else {
+                    listener.wasWorse();
                 }
             }
             hull.add(V[k]);
