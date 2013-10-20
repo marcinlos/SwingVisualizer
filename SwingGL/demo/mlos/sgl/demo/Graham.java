@@ -89,10 +89,9 @@ public class Graham extends ConvexHullAlgorithm {
         Arrays.sort(V, 1, n, cmp);
 
         int j = removeRedundant(base);
-        int i = 3;
         initStack();
         
-        while (i <= j) {
+        for (int i = 3; i <= j; ) {
             listener.beforeIter();
             listener.nextPoint(V[i]);
             

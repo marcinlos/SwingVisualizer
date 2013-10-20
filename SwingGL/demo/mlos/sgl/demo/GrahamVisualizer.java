@@ -1,14 +1,10 @@
 package mlos.sgl.demo;
 
 import java.awt.Color;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.SwingUtilities;
 
 import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasObject;
@@ -17,9 +13,7 @@ import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Vec2d;
 
-class GrahamVisualizer implements Graham.EventsListener {
-
-    private final Scene scene;
+class GrahamVisualizer extends AbstractVisualizer implements Graham.EventsListener {
 
     private final Deque<CanvasObject> graphics = new ArrayDeque<>();
     private final Deque<Vec2d> points = new ArrayDeque<>();
@@ -30,7 +24,7 @@ class GrahamVisualizer implements Graham.EventsListener {
     private boolean afterPop = false;
 
     public GrahamVisualizer(Scene scene) {
-        this.scene = scene;
+        super(scene);
 
         pendingSegment.setDashed(true);
     }
@@ -143,16 +137,7 @@ class GrahamVisualizer implements Graham.EventsListener {
         }
     }
 
-    private void delay(long ms) {
-        long actual = (long) (.1 * ms);
-        try {
-            TimeUnit.MILLISECONDS.sleep(actual);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    Deque<CanvasObject> create() {
+    private Deque<CanvasObject> create() {
         Deque<CanvasObject> objects = new ArrayDeque<>();
         Iterator<Vec2d> it = points.iterator();
 
@@ -194,14 +179,6 @@ class GrahamVisualizer implements Graham.EventsListener {
                 scene.getView().refresh();
             }
         });
-    }
-
-    private void sync(Runnable action) {
-        try {
-            SwingUtilities.invokeAndWait(action);
-        } catch (InvocationTargetException | InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
 }
