@@ -124,9 +124,12 @@ public class Geometry {
     
     public static double orient2d(Vec2d a, Vec2d b, Vec2d c) {
         return exactOrient2d(a, b, c);
-//        return a.x * b.y - a.y * b.x 
-//                - a.x * c.y + a.y * c.x 
-//                + b.x * c.y - b.y * c.x;
+    }
+    
+    public static double fastOrient2d(Vec2d a, Vec2d b, Vec2d c) {
+      return a.x * b.y - a.y * b.x 
+              - a.x * c.y + a.y * c.x 
+              + b.x * c.y - b.y * c.x;
     }
     
     public static double exactOrient2d(Vec2d a, Vec2d b, Vec2d c) {
