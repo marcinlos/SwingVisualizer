@@ -29,6 +29,7 @@ public class ConvexHullVisualizer extends AbstractVisualizer {
         focus.setBorderSize(1);
         focus.setSize(18);
         focus.setZ(0.2);
+        showFocusPoint();
         focus.signalUpdate();
         delay(200);
         focus.setColor(Color.blue);
@@ -80,7 +81,7 @@ public class ConvexHullVisualizer extends AbstractVisualizer {
     }
     
 
-    protected void draw() {
+    protected void redraw() {
         sync(new Runnable() {
 
             @Override
@@ -91,22 +92,31 @@ public class ConvexHullVisualizer extends AbstractVisualizer {
                     graphics.addAll(create());
                     addAll();
                 }
-                scene.getView().refresh();
+                refresh();
             }
+
         });
     }
     
-
     public void finished() {
         sync(new Runnable() {
 
             @Override
             public void run() {
                 removeAll();
-                scene.removeObject(focus);
-                scene.getView().refresh();
+                hideFocusPoint();
+                refresh();
             }
+
         });
+    }
+
+    protected void hideFocusPoint() {
+        scene.removeObject(focus);
+    }
+
+    protected void showFocusPoint() {
+        scene.addObject(focus);
     }
 
 }

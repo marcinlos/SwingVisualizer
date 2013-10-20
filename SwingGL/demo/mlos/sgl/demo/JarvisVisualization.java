@@ -8,36 +8,28 @@ public class JarvisVisualization extends ConvexHullVisualizer implements
 
     public JarvisVisualization(Scene scene) {
         super(scene);
+        setSpeed(5);
     }
 
     @Override
     public void foundBase(Vec2d v) {
-        scene.addObject(focus);
+        points.push(v);
         signalPoint(v);
     }
 
     @Override
     public void beforeIter() {
-        // TODO Auto-generated method stub
-        
+        delay(1000);
     }
 
     @Override
     public void foundNextPoint(Vec2d v) {
-        // TODO Auto-generated method stub
-        
+        points.push(v);
     }
 
     @Override
     public void afterIter() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void finished() {
-        // TODO Auto-generated method stub
-        
+        redraw();
     }
 
 }

@@ -25,8 +25,14 @@ public class Jarvis extends ConvexHullAlgorithm {
         
     }
     
+    private EventsListener listener;
+    
     public Jarvis(Collection<Vec2d> objects) {
         super(objects);    
+    }
+    
+    public void setListener(EventsListener listener) {
+        this.listener = listener;
     }
     
     private boolean betterBase(Vec2d a, Vec2d b) {
@@ -43,9 +49,9 @@ public class Jarvis extends ConvexHullAlgorithm {
         return idx;
     }
     
-    private boolean ccwOrOnRay(Vec2d a, Vec2d b, Vec2d p) {
+    private boolean cwOrOnRay(Vec2d a, Vec2d b, Vec2d p) {
         double r = orient2d(a, b, p);
-        return r > 0 || r == 0 && distSq(a, b) < distSq(a, p);
+        return r < 0 || r == 0 && distSq(a, b) < distSq(a, p);
     }
     
     public Collection<Vec2d> compute() {
@@ -53,20 +59,25 @@ public class Jarvis extends ConvexHullAlgorithm {
         
         List<Vec2d> hull = new ArrayList<>();
         hull.add(V[first]);
+        listener.foundBase(V[first]);
 
         int i = first;
         do {
+            listener.beforeIter();
             int k = (i + 1) % n;
             for (int c = 2; c < n; ++ c) {
                 int j = (i + c) % n;
-                if (ccwOrOnRay(V[i], V[k], V[j])) {
+                if (cwOrOnRay(V[i], V[k], V[j])) {
                     k = j;
                 }
             }
             hull.add(V[k]);
             i = k;
+            listener.foundNextPoint(V[k]);
+            listener.afterIter();
         } while (i != first);
         
+        listener.finished();
         return hull;
     }
 

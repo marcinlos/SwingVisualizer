@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 
-import mlos.sgl.Scene;
 import mlos.sgl.core.Vec2d;
 
 public class Graham extends ConvexHullAlgorithm {
@@ -39,9 +38,8 @@ public class Graham extends ConvexHullAlgorithm {
 
     private final Deque<Vec2d> stack = new ArrayDeque<>();
 
-    public Graham(Scene scene, Collection<Vec2d> objects) {
+    public Graham(Collection<Vec2d> objects) {
         super(objects); 
-        addListener(new GrahamVisualizer(scene));
     }
     
     public void addListener(EventsListener listener) {

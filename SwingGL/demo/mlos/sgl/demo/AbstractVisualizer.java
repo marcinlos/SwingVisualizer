@@ -43,5 +43,10 @@ public class AbstractVisualizer {
             e.printStackTrace(System.err);
         }
     }
+
+
+    protected void refresh() {
+        scene.getView().refresh();
+    }
     
 }

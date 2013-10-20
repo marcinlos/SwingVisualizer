@@ -8,7 +8,8 @@ import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Vec2d;
 
-class GrahamVisualizer extends ConvexHullVisualizer implements Graham.EventsListener {
+class GrahamVisualizer extends ConvexHullVisualizer implements
+        Graham.EventsListener {
 
     private final CanvasSegment pendingSegment = new CanvasSegment();
 
@@ -22,7 +23,6 @@ class GrahamVisualizer extends ConvexHullVisualizer implements Graham.EventsList
 
     @Override
     public void foundBase(Vec2d v) {
-        scene.addObject(focus);
         signalPoint(v);
     }
 
@@ -34,15 +34,15 @@ class GrahamVisualizer extends ConvexHullVisualizer implements Graham.EventsList
     @Override
     public void initStack(Vec2d p0, Vec2d p1, Vec2d p2) {
         Collections.addAll(points, p2, p1, p0);
-        draw();
+        redraw();
         delay(1000);
     }
 
     @Override
     public void nextPoint(Vec2d p) {
-        scene.addObject(focus);
+        showFocusPoint();
         if (!afterPop) {
-             signalPoint(p);
+            signalPoint(p);
         }
 
         Segment seg = new Segment(points.peek(), p);
@@ -72,7 +72,7 @@ class GrahamVisualizer extends ConvexHullVisualizer implements Graham.EventsList
     public void pop() {
         points.pop();
         afterPop = true;
-        
+
         pendingSegment.setColor(Color.red);
         afterPointDecision();
     }
@@ -80,11 +80,12 @@ class GrahamVisualizer extends ConvexHullVisualizer implements Graham.EventsList
     private void afterPointDecision() {
         delay(500);
         scene.removeObject(pendingSegment);
+        refresh();
     }
 
     @Override
     public void afterIter() {
-        draw();
+        redraw();
     }
 
 }
