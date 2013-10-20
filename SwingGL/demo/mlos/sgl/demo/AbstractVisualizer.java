@@ -19,7 +19,7 @@ public class AbstractVisualizer {
 
 
     protected void delay(long ms) {
-        long actual = (long) (speedFactor * ms);
+        long actual = (long) (ms / speedFactor);
         try {
             TimeUnit.MILLISECONDS.sleep(actual);
         } catch (InterruptedException e) {

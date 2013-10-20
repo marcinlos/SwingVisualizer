@@ -109,7 +109,6 @@ public abstract class Scene {
     }
 
     public synchronized boolean addObject(CanvasObject object) {
-        System.out.println("Adding " + object);
         boolean added = canvas.add(object);
         if (added) {
             ObjectPainter painter = painterFactory.createPainter(object);

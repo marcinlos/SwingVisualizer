@@ -3,7 +3,7 @@ package mlos.sgl.demo;
 import mlos.sgl.Scene;
 import mlos.sgl.core.Vec2d;
 
-public class JarvisVisualization extends AbstractVisualizer implements
+public class JarvisVisualization extends ConvexHullVisualizer implements
         Jarvis.EventsListener {
 
     public JarvisVisualization(Scene scene) {
@@ -12,8 +12,8 @@ public class JarvisVisualization extends AbstractVisualizer implements
 
     @Override
     public void foundBase(Vec2d v) {
-        // TODO Auto-generated method stub
-        
+        scene.addObject(focus);
+        signalPoint(v);
     }
 
     @Override
