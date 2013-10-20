@@ -1,9 +1,11 @@
 package mlos.sgl.core;
 
+import java.util.Comparator;
+
 import com.google.common.base.Predicate;
 
 public class Geometry {
-
+    
     private Geometry() {
         // non-instantiable
     }
@@ -121,9 +123,14 @@ public class Geometry {
     }
     
     public static double orient2d(Vec2d a, Vec2d b, Vec2d c) {
-        return a.x * b.y - a.y * b.x 
-                - a.x * c.y + a.y * c.x 
-                + b.x * c.y - b.y * c.x;
+        return exactOrient2d(a, b, c);
+//        return a.x * b.y - a.y * b.x 
+//                - a.x * c.y + a.y * c.x 
+//                + b.x * c.y - b.y * c.x;
+    }
+    
+    public static double exactOrient2d(Vec2d a, Vec2d b, Vec2d c) {
+        return Schewchuck.schewchuckOrient2d(a.x, a.y, b.x, b.y, c.x, c.y); 
     }
     
     public static boolean colinear(Vec2d a, Vec2d b, Vec2d c) {
@@ -136,6 +143,18 @@ public class Geometry {
     
     public static boolean cw(Vec2d a, Vec2d b, Vec2d c) {
         return orient2d(a, b, c) < 0;
+    }
+    
+    public int removeColinear(Vec2d[] v) {
+        int j = 1;
+        for (int i = 2; i < v.length; ++ i) {
+            if (orient2d(v[j - 1], v[j], v[i]) == 0) {
+                v[j] = v[i];
+            } else {
+                v[++ j] = v[i];
+            }
+        }
+        return j;
     }
     
     public static Vec2d toVec(Segment s) {
@@ -183,7 +202,27 @@ public class Geometry {
         return maxNorm(p) <= r;
     }
     
+    public static final Comparator<Vec2d> LEXICOGRAPHIC = new Comparator<Vec2d>() {
+        @Override
+        public int compare(Vec2d o1, Vec2d o2) {
+            if (o1.x != o2.x) {
+                return Double.compare(o1.x, o2.x);
+            } else {
+                return Double.compare(o1.y, o2.y);
+            }
+        }
+    };
     
+    public static final Comparator<Vec2d> YX_LEXICOGRAPHIC = new Comparator<Vec2d>() {
+        @Override
+        public int compare(Vec2d o1, Vec2d o2) {
+            if (o1.y != o2.y) {
+                return Double.compare(o1.y, o2.y);
+            } else {
+                return Double.compare(o1.x, o2.x);
+            }
+        }
+    };
     
     public static Predicate<Vec2d> inRectPred(final Rect rect) {
         return new Predicate<Vec2d>() {
