@@ -140,6 +140,12 @@ public class Geometry {
         return Schewchuck.schewchuckOrient2d(a.x, a.y, b.x, b.y, c.x, c.y); 
     }
     
+    public static Orientation orientation(Vec2d a, Vec2d b, Vec2d c) {
+        double r = orient2d(a, b, c);
+        return r == 0 ? Orientation.COLINEAR : 
+            r > 0 ? Orientation.CCW : Orientation.CW;
+    }
+    
     public static boolean colinear(Vec2d a, Vec2d b, Vec2d c) {
         return orient2d(a, b, c) == 0;
     }
@@ -150,6 +156,14 @@ public class Geometry {
     
     public static boolean cw(Vec2d a, Vec2d b, Vec2d c) {
         return orient2d(a, b, c) < 0;
+    }
+    
+    public static boolean properIntersect(Segment p, Segment q) {
+        Orientation pqa = orientation(p.a, p.b, q.a);
+        Orientation pqb = orientation(p.a, p.b, q.b);
+        Orientation qpa = orientation(q.a, q.b, p.a);
+        Orientation qpb = orientation(q.a, q.b, p.b);
+        return pqa != pqb && qpa != qpb;
     }
     
     public int removeColinear(Vec2d[] v) {
