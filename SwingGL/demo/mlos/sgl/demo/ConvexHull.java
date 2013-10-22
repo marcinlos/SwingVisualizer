@@ -24,6 +24,8 @@ import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Rect;
 import mlos.sgl.core.Segment;
+import mlos.sgl.core.Transform;
+import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.io.Formats;
 import mlos.sgl.io.Printer;
@@ -116,7 +118,7 @@ public class ConvexHull extends Scene {
         @Override
         public Collection<Vec2d> compute(Collection<Vec2d> points) {
             Jarvis alg = new Jarvis(points);
-            alg.setListener(new JarvisVisualization(ConvexHull.this));
+            alg.setListener(new JarvisVisualizer(ConvexHull.this));
             return alg.compute();
         }
     };
@@ -151,12 +153,14 @@ public class ConvexHull extends Scene {
         for (Vec2d p : hull) {
             CanvasPoint point = points.get(p);
             point.setColor(Color.blue);
+            point.setSize(9);
         }
         printPolygon(hull);
         refresh();
     }
 
     public static void main(String[] args) {
+        measureTimes();
         Scene s1 = new ConvexHull("1e2", Randomizer.inSquare(100).list(100),
                 120, 120);
         Scene s2 = new ConvexHull("circle", Randomizer.onCircle(10).list(100),
@@ -164,34 +168,86 @@ public class ConvexHull extends Scene {
 
         Scene s3 = createScene3();
         Scene s4 = createScene4();
+        Scene s5 = createScene5();
 
-        Scene[] scenes = { s1, s2, s3, s4 };
+        Scene[] scenes = { s1, s2, s3, s4, s5 };
         App.create(scenes);
+    }
+    
+    public static void measureTimes() {
+        Collection<Vec2d> set1 = Randomizer.inSquare(100).list(1000);
+        Collection<Vec2d> set2 = Randomizer.onCircle(10).list(100);
+        Collection<Vec2d> set3 = genPointSet3();
+        Collection<Vec2d> set4 = genPointSet4();
+        
+        for (Collection<Vec2d> set : ImmutableList.of(set1, set2, set3, set4)) {
+            
+            {
+                Graham g = new Graham(set);
+                long before = System.nanoTime();
+                g.compute();
+                long dt = System.nanoTime() - before;
+                System.out.println("Graham: " + dt);
+            }
+            {
+                Jarvis j = new Jarvis(set);
+                long before = System.nanoTime();
+                j.compute();
+                long dt = System.nanoTime() - before;
+                System.out.println("Jarvis: " + dt);
+            }
+        }
     }
 
     private static Scene createScene4() {
-        Rect r = Rect.bounds(0, 0, 10, 10);
+        Iterable<Vec2d> points4 = genPointSet4();
+
+        Scene s4 = new ConvexHull("square+diag", points4, 12, 12);
+        s4.getView().setViewport(Rect.bounds(-2, -2, 12, 12));
+        
+        return s4;
+    }
+
+    private static List<Vec2d> genPointSet4() {
+        Rect r = Rect.bounds(0, 0, 100, 100);
 
         Vec2d lb = r.leftBottom();
         Vec2d rb = r.rightBottom();
         Vec2d rt = r.rightTop();
         Vec2d lt = r.leftTop();
 
-        
-        Iterable<Vec2d> points4 = ImmutableList.<Vec2d>builder()
+        List<Vec2d> points4 = ImmutableList.<Vec2d> builder()
                 .addAll(Randomizer.onSegment(lb, lt).list(25))
                 .addAll(Randomizer.onSegment(lb, rb).list(25))
                 .addAll(Randomizer.onSegment(lb, rt).list(20))
                 .addAll(Randomizer.onSegment(lt, rb).list(20))
                 .add(lb, lt, rb, rt)
                 .build();
-        
-        Scene s4 = new ConvexHull("square+diag", points4, 12, 12);
-        s4.getView().setViewport(Rect.bounds(-2, -2, 12, 12));
-        return s4;
+        return points4;
+    }
+    
+    private static Scene createScene5() {
+        Transform t = Transforms.r(0.1);
+        Vec2d[] points = {
+            t.apply(new Vec2d(-7, 10)),
+            t.apply(new Vec2d(-10, -10)),
+            t.apply(new Vec2d(10, -10)),
+            t.apply(new Vec2d(7, 10)),
+
+            t.apply(new Vec2d(-7, 10)),
+        };
+        List<Vec2d> points3 = Randomizer.onPoly(points).list(100);
+        Scene s3 = new ConvexHull("rotated_square", points3, 12, 12);
+        return s3;
     }
 
     private static Scene createScene3() {
+        List<Vec2d> points3 = genPointSet3();
+        Scene s3 = new ConvexHull("square", points3, 12, 12);
+        return s3;
+    }
+
+    private static List<Vec2d> genPointSet3() {
         Vec2d[] points = {
             new Vec2d(-10, 10),
             new Vec2d(-10, -10),
@@ -201,8 +257,7 @@ public class ConvexHull extends Scene {
             new Vec2d(-10, 10),
         };
         List<Vec2d> points3 = Randomizer.onPoly(points).list(100);
-        Scene s3 = new ConvexHull("square", points3, 12, 12);
-        return s3;
+        return points3;
     }
 
 }

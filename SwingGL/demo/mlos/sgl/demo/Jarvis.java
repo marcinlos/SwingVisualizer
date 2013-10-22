@@ -33,7 +33,37 @@ public class Jarvis extends ConvexHullAlgorithm {
         
     }
     
-    private EventsListener listener;
+    private static final EventsListener NOOP = new EventsListener() {
+        
+        @Override
+        public void wasWorse() { }
+        
+        @Override
+        public void wasBetter() { }
+        
+        @Override
+        public void newCandidate(Vec2d v) { }
+        
+        @Override
+        public void foundNextPoint(Vec2d v) { }
+        
+        @Override
+        public void foundBase(Vec2d v) { }
+        
+        @Override
+        public void firstCandidate(Vec2d v) { }
+        
+        @Override
+        public void finished() { }
+        
+        @Override
+        public void beforeIter() { }
+        
+        @Override
+        public void afterIter() { }
+    };
+    
+    private EventsListener listener = NOOP;
     
     public Jarvis(Collection<Vec2d> objects) {
         super(objects);    

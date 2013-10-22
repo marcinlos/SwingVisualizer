@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -64,8 +64,9 @@ public class ToolPanel extends JPanel {
         setPreferredSize(new Dimension(200, 0));
         
         itemsPanel = new JPanel();
+        itemsPanel.setLayout(new BoxLayout(itemsPanel, BoxLayout.PAGE_AXIS));
         itemsPanel.setBorder(createBorder());
-        fillItemsPanel();
+
         add(itemsPanel, BorderLayout.PAGE_START);
         
         optionsPanel = new JPanel(new BorderLayout());
@@ -78,11 +79,6 @@ public class ToolPanel extends JPanel {
         Border inside = BorderFactory.createEmptyBorder(3, 3, 1, 1);
         return BorderFactory.createCompoundBorder(inside, outside);
     }
-    
-    private void fillItemsPanel() {
-        itemsPanel.setLayout(new FlowLayout());
-    }
-    
     
     public void addMode(Mode mode) {
         modes.add(mode);

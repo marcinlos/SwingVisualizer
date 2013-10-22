@@ -21,6 +21,7 @@ import mlos.sgl.ui.ObjectController;
 import mlos.sgl.ui.ObjectControllerFactory;
 import mlos.sgl.ui.ToolPanel;
 import mlos.sgl.ui.modes.RandomPoints;
+import mlos.sgl.ui.modes.SegmentCreation;
 import mlos.sgl.util.PropertyListener;
 import mlos.sgl.util.PropertyMap;
 import mlos.sgl.view.CanvasPanel;
@@ -99,6 +100,7 @@ public abstract class Scene {
         properties.addListener(refresher);
         
         sidePanel.addMode(new RandomPoints(this, view, canvasController));
+        sidePanel.addMode(new SegmentCreation(this, view));
     }
 
     private void establishInputListeners() {

@@ -6,6 +6,11 @@ double orient2dslow(double*, double*, double*);
 void exactinit();
 
 
+JNIEXPORT void JNICALL Java_mlos_sgl_core_Schewchuck_init(JNIEnv* env, jclass clazz) 
+{
+    exactinit();
+}
+
 JNIEXPORT jdouble JNICALL Java_mlos_sgl_core_Schewchuck_schewchuckOrient2d(
         JNIEnv* env, 
         jclass clazz, 

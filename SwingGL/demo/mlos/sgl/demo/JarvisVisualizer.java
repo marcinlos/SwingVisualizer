@@ -8,7 +8,7 @@ import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Vec2d;
 
-public class JarvisVisualization extends ConvexHullVisualizer implements
+public class JarvisVisualizer extends ConvexHullVisualizer implements
         Jarvis.EventsListener {
     
     private final CanvasSegment toBestCandidate = new CanvasSegment();
@@ -16,7 +16,7 @@ public class JarvisVisualization extends ConvexHullVisualizer implements
     
     private final CanvasPoint bestCandidateMark = new CanvasPoint();
 
-    public JarvisVisualization(Scene scene) {
+    public JarvisVisualizer(Scene scene) {
         super(scene);
         toBestCandidate.setDashed(true);
         toNewCandidate.setDashed(true);
@@ -33,7 +33,7 @@ public class JarvisVisualization extends ConvexHullVisualizer implements
         points.push(v);
         signalPoint(v);
     }
-
+    
     @Override
     public void beforeIter() {
         delay(1000);

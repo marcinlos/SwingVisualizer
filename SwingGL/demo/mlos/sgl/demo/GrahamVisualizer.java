@@ -17,7 +17,7 @@ class GrahamVisualizer extends ConvexHullVisualizer implements
 
     public GrahamVisualizer(Scene scene) {
         super(scene);
-        setSpeed(10);
+        setSpeed(1);
         pendingSegment.setDashed(true);
     }
 
@@ -52,7 +52,7 @@ class GrahamVisualizer extends ConvexHullVisualizer implements
         scene.addObject(pendingSegment);
         delay(300);
     }
-
+    
     @Override
     public void beforeIter() {
         if (!afterPop) {

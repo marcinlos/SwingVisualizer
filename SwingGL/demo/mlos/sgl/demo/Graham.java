@@ -34,7 +34,37 @@ public class Graham extends ConvexHullAlgorithm {
         
     }
     
-    private EventsListener listener;
+    private static final EventsListener NOOP = new EventsListener() {
+        
+        @Override
+        public void sorted(Vec2d[] points, int n) { }
+        
+        @Override
+        public void push(Vec2d p) { }
+        
+        @Override
+        public void pop() { }
+        
+        @Override
+        public void nextPoint(Vec2d p) { }
+        
+        @Override
+        public void initStack(Vec2d p0, Vec2d p1, Vec2d p2) { }
+        
+        @Override
+        public void foundBase(Vec2d v) { }
+        
+        @Override
+        public void finished() { }
+        
+        @Override
+        public void beforeIter() { }
+        
+        @Override
+        public void afterIter() { }
+    };
+    
+    private EventsListener listener = NOOP;
 
     private final Deque<Vec2d> stack = new ArrayDeque<>();
 
@@ -86,7 +116,7 @@ public class Graham extends ConvexHullAlgorithm {
         CCWComparator cmp = new CCWComparator(base);
         Arrays.sort(V, 1, n, cmp);
 
-        int j = removeRedundant(base);
+        int j = removeRedundant();
         initStack();
         
         for (int i = 3; i <= j; ) {
@@ -107,14 +137,13 @@ public class Graham extends ConvexHullAlgorithm {
         return stack;
     }
 
-    private int removeRedundant(Vec2d base) {
+    private int removeRedundant() {
         int j = 1;
         for (int i = 2; i < n; ++ i) {
-            if (orient2d(base, V[j], V[i]) == 0) {
-                V[j] = V[i];
-            } else {
-                V[++j] = V[i];
+            if (orient2d(V[0], V[j], V[i]) != 0) {
+                ++ j;
             }
+            V[j] = V[i];
         }
         return j;
     }

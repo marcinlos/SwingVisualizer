@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     mlos_sgl_core_Schewchuck
+ * Method:    init
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_mlos_sgl_core_Schewchuck_init
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     mlos_sgl_core_Schewchuck
  * Method:    schewchuckOrient2d
  * Signature: (DDDDDD)D
  */

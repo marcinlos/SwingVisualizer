@@ -99,8 +99,7 @@ public class RandomPoints implements Mode, InputHandler {
 
         JCheckBox onBorder = new JCheckBox("border only");
 
-        optionsPanel
-                .setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+        optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
         optionsPanel.add(radioRect);
         optionsPanel.add(radioCircle);
         optionsPanel.add(onBorder);
@@ -132,10 +131,7 @@ public class RandomPoints implements Mode, InputHandler {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseClicked(MouseEvent e) {  }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -181,10 +177,7 @@ public class RandomPoints implements Mode, InputHandler {
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseMoved(MouseEvent e) { }
 
     @Override
     public void mouseDragged(MouseEvent e) {
@@ -198,39 +191,21 @@ public class RandomPoints implements Mode, InputHandler {
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseEntered(MouseEvent e) { }
 
     @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseExited(MouseEvent e) { }
 
     @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseWheelMoved(MouseWheelEvent e) { }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void keyTyped(KeyEvent e) { }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-        // TODO Auto-generated method stub
-        System.out.println(e.isConsumed());
-    }
+    public void keyPressed(KeyEvent e) { }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void keyReleased(KeyEvent e) { }
 
 }

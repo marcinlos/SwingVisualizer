@@ -123,7 +123,7 @@ public class Geometry {
     }
     
     public static double orient2d(Vec2d a, Vec2d b, Vec2d c) {
-        return exactOrient2d(a, b, c);
+        return fastOrient2d_v2(a, b, c);
     }
     
     public static double fastOrient2d(Vec2d a, Vec2d b, Vec2d c) {
@@ -131,6 +131,10 @@ public class Geometry {
               - a.x * c.y + a.y * c.x 
               + b.x * c.y - b.y * c.x;
     }
+    
+    public static double fastOrient2d_v2(Vec2d a, Vec2d b, Vec2d c) {
+        return (a.x - c.x) * (b.y - c.y) - (a.y - c.y)* (b.x - c.x)  ;
+      }
     
     public static double exactOrient2d(Vec2d a, Vec2d b, Vec2d c) {
         return Schewchuck.schewchuckOrient2d(a.x, a.y, b.x, b.y, c.x, c.y); 
