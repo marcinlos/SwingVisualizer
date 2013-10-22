@@ -38,7 +38,7 @@ public class CanvasSegment extends CanvasObject {
         this.segment = checkNotNull(segment);
     }
     
-    public Segment getSegment() {
+    public synchronized Segment getSegment() {
         return segment;
     }
     

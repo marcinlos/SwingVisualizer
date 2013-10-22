@@ -123,13 +123,23 @@ public class SegmentCreation implements Mode, InputHandler {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (!dragging) {
-            dragging = true;
-            view.addPostPainter(selectionPainter);
+        if (leftButtonDown(e)) {
+            if (!dragging) {
+                dragging = true;
+                view.addPostPainter(selectionPainter);
+            }
+            currentPos = getPlanePos(e);
+            view.refresh();
+            e.consume();
         }
-        currentPos = getPlanePos(e);
-        view.refresh();
-        e.consume();        
+    }
+
+    private boolean leftButtonDown(MouseEvent e) {
+        return (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0;
+    }
+    
+    private boolean rightButtonDown(MouseEvent e) {
+        return (e.getModifiersEx() & MouseEvent.BUTTON2_DOWN_MASK) != 0;
     }
 
     @Override

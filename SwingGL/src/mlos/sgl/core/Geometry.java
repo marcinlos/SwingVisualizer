@@ -166,6 +166,19 @@ public class Geometry {
         return pqa != pqb && qpa != qpb;
     }
     
+    public static double intersectionParam(Segment p, Segment q) {
+        Vec2d pp = toVec(p);
+        Vec2d qq = toVec(q);
+        double nom = orient2d(p.a, q.a, q.b);
+        double denom = pp.x * qq.y - pp.y * qq.x;
+        return nom / denom;
+    }
+    
+    public static Vec2d intersectionPoint(Segment p, Segment q) {
+        double t = intersectionParam(p, q);
+        return lerp(t, p);
+    }
+    
     public int removeColinear(Vec2d[] v) {
         int j = 1;
         for (int i = 2; i < v.length; ++ i) {

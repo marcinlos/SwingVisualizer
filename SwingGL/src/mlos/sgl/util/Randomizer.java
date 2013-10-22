@@ -60,7 +60,7 @@ public final class Randomizer {
 
     public static class Generator<T> {
 
-        private Source<T> source;
+        protected final Source<T> source;
 
         private Generator(Source<T> source) {
             this.source = source;
@@ -84,8 +84,26 @@ public final class Randomizer {
         }
 
     }
+    
+    public static class PointGenerator extends Generator<Vec2d> {
+        
+        private PointGenerator(Source<Vec2d> source) {
+            super(source);
+        }
+        
+        public Generator<Segment> segments() {
+            Source<Segment> source = new Source<Segment>() {
+                @Override
+                public Segment next() {
+                    return new Segment(one(), one());
+                }
+            };
+            return new Generator<>(source);
+        }
 
-    public static Generator<Vec2d> inRect(final Rect rect) {
+    }
+
+    public static PointGenerator inRect(final Rect rect) {
         Source<Vec2d> source = new RandomSource<Vec2d>() {
 
             @Override
@@ -98,15 +116,15 @@ public final class Randomizer {
                 return new Vec2d(x, y);
             }
         };
-        return new Generator<>(source);
+        return new PointGenerator(source);
     }
 
-    public static Generator<Vec2d> inSquare(double r) {
+    public static PointGenerator inSquare(double r) {
         Rect rect = Rect.aroundOrigin(r, r);
         return inRect(rect);
     }
     
-    public static Generator<Vec2d> onPoly(final Vec2d... points) {
+    public static PointGenerator onPoly(final Vec2d... points) {
         Source<Vec2d> source = new RandomSource<Vec2d>() {
             @Override
             public Vec2d next() {
@@ -114,10 +132,10 @@ public final class Randomizer {
                 return lerpPoly(t, points);
             }
         };
-        return new Generator<>(source);
+        return new PointGenerator(source);
     }
 
-    public static Generator<Vec2d> onCircle(final double r) {
+    public static PointGenerator onCircle(final double r) {
         Source<Vec2d> source = new RandomSource<Vec2d>() {
 
             @Override
@@ -128,10 +146,10 @@ public final class Randomizer {
                 return new Vec2d(x, y);
             }
         };
-        return new Generator<>(source);
+        return new PointGenerator(source);
     }
 
-    public static Generator<Vec2d> onSegment(final Segment seg) {
+    public static PointGenerator onSegment(final Segment seg) {
         Source<Vec2d> source = new RandomSource<Vec2d>() {
 
             @Override
@@ -140,10 +158,10 @@ public final class Randomizer {
                 return lerp(t, seg);
             }
         };
-        return new Generator<>(source);
+        return new PointGenerator(source);
     }
     
-    public static Generator<Vec2d> onSegment(Vec2d a, Vec2d b) {
+    public static PointGenerator onSegment(Vec2d a, Vec2d b) {
         return onSegment(new Segment(a, b));
     }
 
