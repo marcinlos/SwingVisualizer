@@ -126,6 +126,14 @@ public class Geometry {
         return fastOrient2d_v2(a, b, c);
     }
     
+    public static Segment swapEndpoints(Segment s) {
+        return new Segment(s.b, s.a);
+    }
+    
+    public static Segment leftToRight(Segment s) {
+        return s.a.x <= s.b.x ? s : swapEndpoints(s);
+    }
+    
     public static double fastOrient2d(Vec2d a, Vec2d b, Vec2d c) {
       return a.x * b.y - a.y * b.x 
               - a.x * c.y + a.y * c.x 

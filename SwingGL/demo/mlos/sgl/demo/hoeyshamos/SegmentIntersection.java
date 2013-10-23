@@ -1,5 +1,7 @@
 package mlos.sgl.demo.hoeyshamos;
 
+import static mlos.sgl.core.Geometry.leftToRight;
+
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +15,7 @@ import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Rect;
 import mlos.sgl.core.Segment;
+import mlos.sgl.core.Vec2d;
 import mlos.sgl.ui.InputAdapter;
 import mlos.sgl.util.Randomizer;
 
@@ -47,7 +50,7 @@ public class SegmentIntersection extends Scene {
         for (CanvasObject object : canvas.getObjects()) {
             if (object instanceof CanvasSegment) {
                 CanvasSegment cs = (CanvasSegment) object;
-                segments.add(cs.getSegment());
+                segments.add(leftToRight(cs.getSegment()));
             }
         }
         return segments;
@@ -64,6 +67,20 @@ public class SegmentIntersection extends Scene {
             }
         });
     }
+    
+    private static SegmentIntersection createWithEqualBegins() {
+        int n = 100;
+        List<Vec2d> as = Randomizer.onSegment(new Vec2d(0, 0), new Vec2d(0, 1)).list(n);
+        List<Vec2d> bs = Randomizer.onSegment(new Vec2d(1, 0), new Vec2d(1, 1)).list(n);
+        Collection<Segment> all = new ArrayList<>();
+        
+        for (int i = 0; i < n; ++ i) {
+            all.add(new Segment(as.get(i), bs.get(i)));
+        }
+        SegmentIntersection scene = new SegmentIntersection("equal start", all, 1.1, 1.1);
+        scene.getView().setViewport(Rect.bounds(-0.1, -0.1, 1.2, 1.2));
+        return scene;
+    }
 
     public static void main(String[] args) {
         ImmutableList<Segment> emptyList = ImmutableList.of();
@@ -78,7 +95,9 @@ public class SegmentIntersection extends Scene {
         SegmentIntersection rand = new SegmentIntersection("In rect", randList, 12, 12);
         rand.getView().setViewport(Rect.aroundOrigin(12));
         
-        App.create(empty, rand);
+        SegmentIntersection begins = createWithEqualBegins();
+        
+        App.create(empty, rand, begins);
     }
     
 }

@@ -2,10 +2,13 @@ package mlos.sgl.demo.hoeyshamos;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static mlos.sgl.core.Geometry.intersectionPoint;
+
+import java.util.Objects;
+
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Vec2d;
 
-public class Event {
+public class Event implements Comparable<Event> {
     
     public final EventType type;
     
@@ -33,7 +36,10 @@ public class Event {
     }
     
     public static Event intersection(Segment p, Segment q) {
-        Vec2d v = intersectionPoint(p, q);
+        boolean ordered = p.a.x < q.a.x;
+        Segment pp = ordered ? p : q;
+        Segment qq = ordered ? q : p;
+        Vec2d v = intersectionPoint(pp, qq);
         return new Event(EventType.INTERSECTION, v, p, q);
     }
     
@@ -47,6 +53,34 @@ public class Event {
 
     public boolean isIntersection() {
         return type == EventType.INTERSECTION;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Event) {
+            Event other = (Event) o;
+            return type.equals(other.type) 
+                    && point.equals(other.point)
+                    && p.equals(other.p) 
+                    && q.equals(other.q);
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("Event[%s]: at %s (segments: %s, %s)", type, point, p, q);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, point, p, q);
+    }
+
+    @Override
+    public int compareTo(Event o) {
+        return Double.compare(point.x, o.point.x);
     }
     
 }
