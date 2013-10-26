@@ -148,12 +148,11 @@ public class Drawer {
         gfx.fillPolygon(p.xs, p.ys, p.n);
         return this;
     }
-    
-    public Drawer rect(Vec2d leftTop, Vec2d rightBottom) {
-        
-        return this;
-    }
-    
+
+//    public Drawer rect(Vec2d leftTop, Vec2d rightBottom) {
+//        
+//        return this;
+//    }
     
     public void restore() {
         if (oldColor != null) {
