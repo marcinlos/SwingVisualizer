@@ -1,4 +1,4 @@
-package mlos.sgl.demo;
+package mlos.sgl.demo.hull;
 
 import java.awt.Color;
 

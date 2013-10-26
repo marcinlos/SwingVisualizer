@@ -1,4 +1,4 @@
-package mlos.sgl.demo;
+package mlos.sgl.demo.hull;
 
 import static mlos.sgl.core.Geometry.distSq;
 import static mlos.sgl.core.Geometry.orient2d;

@@ -1,4 +1,4 @@
-package mlos.sgl.demo;
+package mlos.sgl.demo.hull;
 
 import java.awt.Color;
 import java.util.ArrayDeque;
@@ -11,6 +11,7 @@ import mlos.sgl.canvas.CanvasPoint;
 import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Vec2d;
+import mlos.sgl.demo.AbstractVisualizer;
 
 public class ConvexHullVisualizer extends AbstractVisualizer {
 
