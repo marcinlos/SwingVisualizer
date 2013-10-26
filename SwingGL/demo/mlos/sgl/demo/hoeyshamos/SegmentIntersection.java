@@ -69,7 +69,7 @@ public class SegmentIntersection extends Scene {
     }
     
     private static SegmentIntersection createWithEqualBegins() {
-        int n = 100;
+        int n = 20;
         List<Vec2d> as = Randomizer.onSegment(new Vec2d(0, 0), new Vec2d(0, 1)).list(n);
         List<Vec2d> bs = Randomizer.onSegment(new Vec2d(1, 0), new Vec2d(1, 1)).list(n);
         Collection<Segment> all = new ArrayList<>();

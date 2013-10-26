@@ -1,13 +1,9 @@
 package mlos.sgl.ui.modes;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,25 +21,18 @@ import mlos.sgl.core.Transform;
 import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.ui.CanvasController;
-import mlos.sgl.ui.InputHandler;
 import mlos.sgl.util.Randomizer;
 import mlos.sgl.view.CanvasView;
+import mlos.sgl.view.Drawer;
 import mlos.sgl.view.Painter;
 
-public class RandomPoints implements Mode, InputHandler {
-
-    private final CanvasView view;
-
-    private final CanvasController controller;
+public class RandomPoints extends AbstractMode {
 
     private JPanel optionsPanel;
-    
-    private final Scene scene;
 
     private Vec2d startPos;
     private Vec2d currentPos;
     private boolean dragging = false;
-
 
     private final Painter selectionPainter = new Painter() {
 
@@ -65,25 +54,20 @@ public class RandomPoints implements Mode, InputHandler {
             int w = right - left;
             int h = bottom - top;
             
-            ctx.setColor(new Color(0.9f, 0.1f, 0.1f, 0.4f));
+            Drawer d = new Drawer(ctx);
+            d.color(0.9f, 0.1f, 0.1f, 0.4f);
+            
             ctx.fillRect(left, top, w, h);
-
-            ctx.setColor(Color.black);
-            Stroke old = ctx.getStroke();
             
-            BasicStroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, 
-                    BasicStroke.JOIN_BEVEL, 1, new float[]{3f, 5f}, 0);
-            
-            ctx.setStroke(dashed);
+            d.color(Color.black).dashed(1, 3f, 5f);
             ctx.drawRect(left - 1, top - 1, w + 1, h + 1);
-            ctx.setStroke(old);
+            
+            d.restore();
         }
     };
 
     public RandomPoints(Scene scene, CanvasView view, CanvasController controller) {
-        this.scene = scene;
-        this.view = view;
-        this.controller = controller;
+        super("Random points", scene, view);
         setupUI();
     }
 
@@ -106,32 +90,9 @@ public class RandomPoints implements Mode, InputHandler {
     }
 
     @Override
-    public String getName() {
-        return "Random";
-    }
-
-    @Override
-    public InputHandler getHandler() {
-        return this;
-    }
-
-    @Override
     public Component getOptionPanel() {
         return optionsPanel;
     }
-
-    private Vec2d getScreenPos(MouseEvent e) {
-        java.awt.Point p = e.getPoint();
-        return new Vec2d(p.x, p.y);
-    }
-
-    private Vec2d getPlanePos(MouseEvent e) {
-        Vec2d screenPos = getScreenPos(e);
-        return view.planeToScreen().invert(screenPos);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {  }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -149,7 +110,6 @@ public class RandomPoints implements Mode, InputHandler {
             Vec2d startNorm = view.planeToNorm().apply(startPos);
             
             addRandomPoints(startNorm, endNorm);
-            
             
             startPos = null;
             dragging = false;
@@ -177,9 +137,6 @@ public class RandomPoints implements Mode, InputHandler {
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) { }
-
-    @Override
     public void mouseDragged(MouseEvent e) {
         if (!dragging) {
             dragging = true;
@@ -189,23 +146,5 @@ public class RandomPoints implements Mode, InputHandler {
         view.refresh();
         e.consume();
     }
-
-    @Override
-    public void mouseEntered(MouseEvent e) { }
-
-    @Override
-    public void mouseExited(MouseEvent e) { }
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) { }
-
-    @Override
-    public void keyTyped(KeyEvent e) { }
-
-    @Override
-    public void keyPressed(KeyEvent e) { }
-
-    @Override
-    public void keyReleased(KeyEvent e) { }
 
 }
