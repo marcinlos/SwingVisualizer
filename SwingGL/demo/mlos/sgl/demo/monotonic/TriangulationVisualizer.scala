@@ -1,19 +1,21 @@
 package mlos.sgl.demo.monotonic
 
 import java.awt.Color
-
 import scala.collection.JavaConversions._
 import scala.collection.mutable.Stack
-
 import mlos.sgl.Scene
 import mlos.sgl.canvas.CanvasPoint
 import mlos.sgl.canvas.CanvasSegment
 import mlos.sgl.core.Segment
 import mlos.sgl.core.Vec2d
 import mlos.sgl.demo.AbstractVisualizer
+import scala.collection.immutable.Traversable
+import scala.collection.JavaConversions
 
 class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
-  with TriangulateJ.EventListener {
+  with TriangulateJ.EventListener with Triangulate#EventListener {
+  
+  setSpeed(2)
 
   val focus: CanvasPoint = new CanvasPoint
 
@@ -22,18 +24,18 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
 
   val stack = new Stack[CanvasPoint]
 
-  protected def signalPoint(p: Vec2d, c: Color) {
+  def signalPoint(p: Vec2d, c: Color) {
     focus setPoint p
     focus setColor c
     focus setBorderColor Color.black
     focus setBorderSize 1
     focus setSize 18
     focus setZ 0.2
-    showFocusPoint
-    focus signalUpdate ()
+    showFocusPoint()
+    focus signalUpdate()
     delay(200)
     focus setSize 12
-    focus signalUpdate ()
+    focus signalUpdate()
   }
 
   def addPoint(v: Vec2d, c: Color, z: Double = 0.4) {
@@ -62,12 +64,19 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   type JavaList[T] = java.util.List[T]
 
   override def foundLeft(vs: JavaList[Vec2d]) {
-    signalAll(vs, Color.cyan)
+    signalAll(vs.to[Traversable], Color.cyan)
   }
 
   override def foundRight(vs: JavaList[Vec2d]) {
-    signalAll(vs, Color.magenta)
+    signalAll(vs.to[Traversable], Color.magenta)
   }
+  
+  override def foundLeft(vs: Traversable[Vec2d]) {
+    signalAll(vs, Color.cyan)
+  }
+  override def foundRight(vs: Traversable[Vec2d]) {
+    signalAll(vs, Color.magenta)
+  } 
 
   override def start() = delay(1500)
 
@@ -94,7 +103,7 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
 
   override def addSegment(a: Vec2d, b: Vec2d) {
-    def col = Color.red
+    val col = Color.red
     val s = new CanvasSegment(new Segment(a, b))
     s setThickness 2
     s setColor col

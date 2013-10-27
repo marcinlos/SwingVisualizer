@@ -1,10 +1,11 @@
 package mlos.sgl.demo.monotonic
 
-import mlos.sgl.demo.AbstractVisualizer
+import java.awt.Color
+
 import mlos.sgl.Scene
 import mlos.sgl.canvas.CanvasPoint
 import mlos.sgl.core.Vec2d
-import java.awt.Color
+import mlos.sgl.demo.AbstractVisualizer
 
 class ClassificationVisualizer(s: Scene) extends AbstractVisualizer(s)
   with ClassifyVertices.EventListener {

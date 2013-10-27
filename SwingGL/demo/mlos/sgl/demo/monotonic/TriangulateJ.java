@@ -17,25 +17,15 @@ import mlos.sgl.core.Vec2d;
 public class TriangulateJ {
     
     public interface EventListener {
-        
         void foundInit(Vec2d v);
-        
         void foundFinal(Vec2d v);
-        
         void foundLeft(List<Vec2d> vs);
-        
         void foundRight(List<Vec2d> vs);
-        
         void start();
-        
         void next(Vec2d v);
-        
         void push(Vec2d v);
-        
         void pop();
-        
         void addSegment(Vec2d a, Vec2d b);
-        
     }
     
     private enum Side {
