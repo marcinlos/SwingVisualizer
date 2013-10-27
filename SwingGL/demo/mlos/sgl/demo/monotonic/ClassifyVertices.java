@@ -14,7 +14,7 @@ public class ClassifyVertices {
         
         void start();
         
-        void examinig(Vec2d v, Vec2d prev, Vec2d next);
+        void examining(Vec2d v, Vec2d prev, Vec2d next);
         
         void classified(Vec2d v, VertexType type);
         
@@ -63,7 +63,7 @@ public class ClassifyVertices {
             Vec2d prev = vertices.get(prev(i));
             Vec2d next = vertices.get(next(i));
             
-            listener.examinig(v, prev, next);
+            listener.examining(v, prev, next);
             
             VertexType type = classify(v, prev, next);
             types.add(type);

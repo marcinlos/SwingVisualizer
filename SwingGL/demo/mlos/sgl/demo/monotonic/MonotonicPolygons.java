@@ -44,7 +44,6 @@ public class MonotonicPolygons extends Scene {
             public void keyPressed(KeyEvent e) {
                 int c = e.getKeyCode();
                 if (c == KeyEvent.VK_F5) {
-                    System.out.println("Dua");
                     for (Polygon poly : extractPolys()) {
                         exec.execute(new PolyProcessor(poly));
                     }
