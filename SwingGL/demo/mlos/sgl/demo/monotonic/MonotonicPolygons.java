@@ -17,22 +17,38 @@ public class MonotonicPolygons extends Scene {
 
     private final Executor exec = Executors.newSingleThreadExecutor();
 
-    private final class PolyProcessor implements Runnable {
-
+    private final class ClassificationProcess implements Runnable {
+        
         private final Polygon poly;
 
-        public PolyProcessor(Polygon poly) {
+        public ClassificationProcess(Polygon poly) {
             this.poly = poly;
         }
 
         @Override
         public void run() {
+            MonotonicPolygons scene = MonotonicPolygons.this;
             ClassifyVertices classifier = new ClassifyVertices(poly.vs);
-            ClassificationVisualizer visualizer = new ClassificationVisualizer(
-                    MonotonicPolygons.this);
-            classifier.setListener(visualizer);
-            
+            classifier.setListener(new ClassificationVisualizer(scene));
             classifier.classify();
+        }
+        
+    }
+    
+    private final class TriangulationProcess implements Runnable {
+
+        private final Polygon poly;
+
+        public TriangulationProcess(Polygon poly) {
+            this.poly = poly;
+        }
+
+        @Override
+        public void run() {
+            MonotonicPolygons scene = MonotonicPolygons.this;
+            TriangulateJ triangulate = new TriangulateJ(poly);
+            triangulate.setListener(new TriangulationVisualizer(scene));
+            triangulate.run();
         }
     }
 
@@ -45,7 +61,11 @@ public class MonotonicPolygons extends Scene {
                 int c = e.getKeyCode();
                 if (c == KeyEvent.VK_F5) {
                     for (Polygon poly : extractPolys()) {
-                        exec.execute(new PolyProcessor(poly));
+                        exec.execute(new ClassificationProcess(poly));
+                    }
+                } else if (c == KeyEvent.VK_F6) {
+                    for (Polygon poly : extractPolys()) {
+                        exec.execute(new TriangulationProcess(poly));
                     }
                 }
             }
