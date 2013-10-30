@@ -9,7 +9,7 @@ import mlos.sgl.Scene;
 
 public class AbstractVisualizer {
     
-    protected final Scene scene;
+    public final Scene scene;
     private double speedFactor = 1.0;
 
 
@@ -18,7 +18,7 @@ public class AbstractVisualizer {
     }
 
 
-    protected void delay(long ms) {
+    public void delay(long ms) {
         long actual = (long) (ms / speedFactor);
         try {
             TimeUnit.MILLISECONDS.sleep(actual);

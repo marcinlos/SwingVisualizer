@@ -18,7 +18,7 @@ public class MonotonicPolygons extends Scene {
     private final Executor exec = Executors.newSingleThreadExecutor();
 
     private final class ClassificationProcess implements Runnable {
-        
+
         private final Polygon poly;
 
         public ClassificationProcess(Polygon poly) {
@@ -30,11 +30,14 @@ public class MonotonicPolygons extends Scene {
             MonotonicPolygons scene = MonotonicPolygons.this;
             ClassifyVertices classifier = new ClassifyVertices(poly.vs);
             classifier.setListener(new ClassificationVisualizer(scene));
-            classifier.classify();
+            List<VertexType> types = classifier.classify();
+            
+            Splitter s = Splitter.make(poly, types, new SplitVisualizer(scene));
+            s.run();
         }
-        
+
     }
-    
+
     private final class TriangulationProcessJ implements Runnable {
 
         private final Polygon poly;
@@ -51,7 +54,7 @@ public class MonotonicPolygons extends Scene {
             triangulate.run();
         }
     }
-    
+
     private final class TriangulationProcess implements Runnable {
 
         private final Polygon poly;
@@ -63,7 +66,7 @@ public class MonotonicPolygons extends Scene {
         @Override
         public void run() {
             MonotonicPolygons scene = MonotonicPolygons.this;
-            Triangulate triangulate = new Triangulate(poly, 
+            Triangulate triangulate = new Triangulate(poly,
                     new TriangulationVisualizer(scene));
             triangulate.run();
         }

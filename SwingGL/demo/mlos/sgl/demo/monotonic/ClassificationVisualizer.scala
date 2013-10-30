@@ -9,6 +9,8 @@ import mlos.sgl.demo.AbstractVisualizer
 
 class ClassificationVisualizer(s: Scene) extends AbstractVisualizer(s)
   with ClassifyVertices.EventListener {
+  
+  setSpeed(30)
 
   val focus: CanvasPoint = new CanvasPoint
 

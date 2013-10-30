@@ -34,13 +34,8 @@ class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
   type Vertex = Tuple2[Vec2d, Side]
 
   class VertexWithSide(val v: Vec2d, val side: Side)
-    extends Ordered[VertexWithSide] {
 
-    override def compare(other: VertexWithSide) = v.y.compareTo(other.v.y)
-
-  }
-
-  private val queue = new PriorityQueue[VertexWithSide]
+  private val queue = new PriorityQueue[VertexWithSide]()(Ordering.by { _.v.y })
   private val stack = new Stack[VertexWithSide]
 
   private def N = poly.vertexCount

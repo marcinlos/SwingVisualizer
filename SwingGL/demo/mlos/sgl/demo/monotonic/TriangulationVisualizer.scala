@@ -13,30 +13,13 @@ import scala.collection.immutable.Traversable
 import scala.collection.JavaConversions
 
 class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
-  with TriangulateJ.EventListener with Triangulate#EventListener {
+  with TriangulateJ.EventListener 
+  with Triangulate#EventListener 
+  with CanSignalPoint {
   
   setSpeed(2)
 
-  val focus: CanvasPoint = new CanvasPoint
-
-  def showFocusPoint() = scene addObject focus
-  def hideFocusPoint() = scene removeObject focus
-
   val stack = new Stack[CanvasPoint]
-
-  def signalPoint(p: Vec2d, c: Color) {
-    focus setPoint p
-    focus setColor c
-    focus setBorderColor Color.black
-    focus setBorderSize 1
-    focus setSize 18
-    focus setZ 0.2
-    showFocusPoint()
-    focus signalUpdate()
-    delay(200)
-    focus setSize 12
-    focus signalUpdate()
-  }
 
   def addPoint(v: Vec2d, c: Color, z: Double = 0.4) {
     val p = new CanvasPoint(v, z)
