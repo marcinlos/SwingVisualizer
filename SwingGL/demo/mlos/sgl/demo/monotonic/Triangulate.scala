@@ -35,21 +35,24 @@ class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
 
   class VertexWithSide(val v: Vec2d, val side: Side)
 
-  private val queue = new PriorityQueue[VertexWithSide]()(Ordering.by { _.v.y })
+  private def toOrd(v: Vec2d) = (v.y, -v.x)
+  private val order = Ordering.by { (p: VertexWithSide) => toOrd(p.v) }
+  private val queue = new PriorityQueue[VertexWithSide]()(order)
   private val stack = new Stack[VertexWithSide]
 
   private def N = poly.vertexCount
 
   private def extremeIndices: Tuple2[Int, Int] = {
-    val bottom = (0 until N) minBy (poly.v(_).y)
-    val top = (0 until N) maxBy (poly.v(_).y)
+    val order = (k: Int) => toOrd(poly.v(k))
+    val bottom = (0 until N) minBy (order)
+    val top = (0 until N) maxBy (order)
     return (top, bottom)
   }
 
   def findSides(top: Int, bottom: Int): Tuple2[Seq[Vec2d], Seq[Vec2d]] = {
     def fromTop(x: Int) = (x + top) % N
     def itemFromTop(x: Int) = poly.v(fromTop(x))
-    
+
     val (lefts, rest) = (1 until N) span (fromTop(_) != bottom)
     val rights = rest.drop(1)
 
@@ -109,7 +112,15 @@ class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
     while (!queue.isEmpty) {
       val n = takeNext()
       if (n.side != stack.top.side) {
-        sideChange(n)
+        val top = stack.top
+        while (!stack.isEmpty) {
+          if (stack.size > 1) {
+            listener.addSegment(n.v, stack.top.v)
+          }
+          pop()
+        }
+        push(top)
+        push(n)
       } else {
         var stop = false
         while (!stop && stack.size > 1) {
@@ -124,18 +135,6 @@ class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
         push(n)
       }
     }
-  }
-
-  private def sideChange(n: VertexWithSide) {
-    val top = stack.top
-    while (!stack.isEmpty) {
-      if (stack.size > 1) {
-        listener.addSegment(n.v, stack.top.v)
-      }
-      pop()
-    }
-    push(top)
-    push(n)
   }
 
 }

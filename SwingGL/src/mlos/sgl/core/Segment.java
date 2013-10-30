@@ -2,6 +2,8 @@ package mlos.sgl.core;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Objects;
+
 public class Segment implements Transformable<Segment> {
     
     public final Vec2d a;
@@ -10,6 +12,11 @@ public class Segment implements Transformable<Segment> {
     public Segment(Vec2d a, Vec2d b) {
         this.a = checkNotNull(a);
         this.b = checkNotNull(b);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b);
     }
     
     @Override

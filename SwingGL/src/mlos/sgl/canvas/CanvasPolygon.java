@@ -1,5 +1,6 @@
 package mlos.sgl.canvas;
 
+import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,10 @@ import com.google.common.collect.Lists;
 public class CanvasPolygon extends CanvasObject {
     
     private final List<Vec2d> points;
+    
+    private boolean opaque;
+    
+    private Color fillColor = new Color(0, 1, 0, 0.1f);
     
     public CanvasPolygon() {
         this(Collections.<Vec2d>emptyList());
@@ -28,6 +33,22 @@ public class CanvasPolygon extends CanvasObject {
     public synchronized void setPoints(Iterable<Vec2d> points) {
         this.points.clear();
         Iterables.addAll(this.points, points);
+    }
+    
+    public synchronized boolean isOpaque() {
+        return opaque;
+    }
+    
+    public synchronized void setOpaque(boolean opaque) {
+        this.opaque = opaque;
+    }
+    
+    public synchronized Color getFillColor() {
+        return fillColor;
+    }
+    
+    public synchronized void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
     }
 
 }

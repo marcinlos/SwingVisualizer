@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import com.google.common.collect.ImmutableList;
+
 import mlos.sgl.App;
 import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasObject;
 import mlos.sgl.canvas.CanvasPolygon;
 import mlos.sgl.core.Polygon;
+import mlos.sgl.core.Vec2d;
 import mlos.sgl.ui.InputAdapter;
 
 public class MonotonicPolygons extends Scene {
@@ -94,6 +97,18 @@ public class MonotonicPolygons extends Scene {
                 }
             }
         });
+        
+//        List<Vec2d> points = ImmutableList.<Vec2d>builder()
+//                .add(new Vec2d(1, 1))
+//                .add(new Vec2d(0, 1))
+//                .add(new Vec2d(-1, 1))
+//                .add(new Vec2d(-1, 0))
+//                .add(new Vec2d(-1, -1))
+//                .add(new Vec2d(0, -1))
+//                .add(new Vec2d(1, -1))
+//                .add(new Vec2d(1, 0))
+//                .build();
+//        addObject(new CanvasPolygon(points));
     }
 
     private List<Polygon> extractPolys() {
@@ -102,6 +117,7 @@ public class MonotonicPolygons extends Scene {
         for (CanvasObject object : canvas.getObjects()) {
             if (object instanceof CanvasPolygon) {
                 CanvasPolygon poly = (CanvasPolygon) object;
+                poly.setOpaque(true);
                 polys.add(new Polygon(poly.getPoints()));
             }
         }

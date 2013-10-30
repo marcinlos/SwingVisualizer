@@ -72,7 +72,7 @@ public class Drawer {
     }
     
     public Drawer dashed(float width, float... dash) {
-        Stroke s = new BasicStroke(1, BasicStroke.CAP_BUTT, 
+        Stroke s = new BasicStroke(width, BasicStroke.CAP_BUTT, 
                 BasicStroke.JOIN_BEVEL, 1, dash, 0);
         return stroke(s);
     }

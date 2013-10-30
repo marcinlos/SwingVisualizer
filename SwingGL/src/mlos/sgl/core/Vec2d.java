@@ -1,5 +1,8 @@
 package mlos.sgl.core;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import java.util.Objects;
 
 public final class Vec2d implements Transformable<Vec2d> {
@@ -15,6 +18,12 @@ public final class Vec2d implements Transformable<Vec2d> {
     public Vec2d(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+    
+    public static Vec2d polar(double r, double theta) {
+        double x = r * cos(theta);
+        double y = r * sin(theta);
+        return new Vec2d(x, y);
     }
     
     @Override

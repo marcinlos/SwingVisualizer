@@ -21,7 +21,7 @@ public class SegmentPainter implements ObjectPainter {
         
         int width = segment.getThickness();
         if (segment.isDashed()) {
-            d.dashed(width, 3, 6);
+            d.dashed(width, 3, 4);
         } else {
             d.solid(width);
         }
