@@ -13,7 +13,6 @@ import scala.collection.immutable.Traversable
 import scala.collection.JavaConversions
 
 class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
-  with TriangulateJ.EventListener 
   with Triangulate#EventListener 
   with CanSignalPoint {
   
@@ -44,16 +43,6 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
     }
   }
 
-  type JavaList[T] = java.util.List[T]
-
-  override def foundLeft(vs: JavaList[Vec2d]) {
-    signalAll(vs.to[Traversable], Color.cyan)
-  }
-
-  override def foundRight(vs: JavaList[Vec2d]) {
-    signalAll(vs.to[Traversable], Color.magenta)
-  }
-  
   override def foundLeft(vs: Traversable[Vec2d]) {
     signalAll(vs, Color.cyan)
   }
