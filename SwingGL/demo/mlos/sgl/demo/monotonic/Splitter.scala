@@ -25,13 +25,13 @@ object Splitter {
 }
 
 class Splitter(
-  val poly: Polygon,
-  val types: Seq[VertexType],
-  val listener: Splitter#EventListener) {
+  poly: Polygon,
+  types: Seq[VertexType],
+  listener: Splitter#EventListener) {
 
   type EventListener = SplitterListener
 
-  def addSegment(p: Vertex, q: Vertex) = listener.segment(p.v, q.v)
+  def connect(p: Vertex, q: Vertex) = listener.segment(p.v, q.v)
 
   class Vertex(val v: Vec2d, val t: VertexType, val left: Edge, val right: Edge) {
     def x = v.x
@@ -48,10 +48,12 @@ class Splitter(
     }
   }
 
+  private val vs: IndexedSeq[Vec2d] = Array(poly.vs: _*)
+  private def N = vs.length
+
   def buildEventQueue: PriorityQueue[Vertex] = {
     val order = Ordering.by { (p: Vertex) => (p.v.y, -p.v.x) }
     val events = new PriorityQueue[Vertex]()(order)
-    val N = poly.vertexCount
 
     var first = new Edge(null, null)
     var prev = first
@@ -59,13 +61,13 @@ class Splitter(
 
     for (k <- 0 until N - 1) yield {
       val next = new Edge(null, null)
-      v = new Vertex(poly.v(k), types(k), next, prev)
+      v = new Vertex(vs(k), types(k), next, prev)
       events enqueue v
       prev.q = v
       next.p = v
       prev = next
     }
-    v = new Vertex(poly.v(N - 1), types(N - 1), first, prev)
+    v = new Vertex(vs(N - 1), types(N - 1), first, prev)
     prev.q = v
     first.p = v
     events enqueue v
@@ -91,14 +93,16 @@ class Splitter(
 
   def leftOf(v: Vertex) = active.to(new Edge(v, v)).last
 
-  def addEdge(e: Edge) {
+  def addActiveEdgee(e: Edge) {
     active add e
     listener addActive (e.p.v, e.q.v)
   }
 
-  def removeEdge(e: Edge) {
+  def removeActiveEdge(e: Edge) {
     if (active remove e) {
       listener removeActive (e.p.v, e.q.v)
+    } else {
+      println("fuck")
     }
   }
 
@@ -113,74 +117,68 @@ class Splitter(
     line = y
     listener moveLine y
   }
-  
+
   def run() {
     listener.start(events.head.v.y)
+
+    def onInitial(v: Vertex) = {
+      addActiveEdgee(v.left)
+      v.left.aux = v
+    }
+
+    def onFinal(v: Vertex) = {
+      if (v.right.aux.t == VertexType.JOIN) {
+        connect(v, v.right.aux)
+      }
+      removeActiveEdge(v.right)
+    }
+
+    def onSplit(v: Vertex) = {
+      val ev = leftOf(v)
+      connect(v, ev.aux)
+      ev.aux = v
+      onInitial(v)
+    }
+
+    def updateLeft(v: Vertex) {
+      val ev = leftOf(v)
+      if (ev.aux.t == VertexType.JOIN) {
+        connect(v, ev.aux)
+      }
+      ev.aux = v
+    }
+
+    def onJoin(v: Vertex) {
+      onFinal(v)
+      updateLeft(v)
+    }
 
     while (!events.isEmpty) {
       val v = nextEvent()
 
       v.t match {
-        case VertexType.INITIAL =>
-          addEdge(v.left)
-          v.left.aux = v
-
-        case VertexType.FINAL =>
-          if (v.right.aux.t == VertexType.JOIN) {
-            addSegment(v, v.right.aux)
-          }
-          removeEdge(v.right)
-
-        case VertexType.SPLIT =>
-          val ev = leftOf(v)
-          addSegment(v, ev.aux)
-          ev.aux = v
-          v.left.aux = v
-          addEdge(v.left)
-
-        case VertexType.JOIN =>
-          if (v.right.aux.t == VertexType.JOIN) {
-            addSegment(v, v.right.aux)
-          }
-          removeEdge(v.right)
-          val ev = leftOf(v)
-          if (ev.aux.t == VertexType.JOIN) {
-            addSegment(v, ev.aux)
-          }
-          ev.aux = v
+        case VertexType.INITIAL => onInitial(v)
+        case VertexType.FINAL   => onFinal(v)
+        case VertexType.SPLIT   => onSplit(v)
+        case VertexType.JOIN    => onJoin(v)
 
         case VertexType.NORMAL =>
           if (v.y < v.prev.y) {
-            val eg = v.right
-            val ed = v.left
-            if (eg.aux.t == VertexType.JOIN) {
-              addSegment(v, eg.aux)
-            }
-            removeEdge(eg)
-            ed.aux = v
-            addEdge(ed)
-          } else if (v.y == v.prev.y) {
-            if (v.y > v.next.y) { // :(((((
-              addEdge(v.left)
-              removeEdge(v.right)
-              v.left.aux = v
-            } else if (v.y < v.next.y) {
-              val ev = leftOf(v)
-              if (ev.aux.t == VertexType.JOIN) {
-                addSegment(v, ev.aux)
-              }
-              ev.aux = v
-            }
+            onFinal(v)
+            onInitial(v)
+          } else if (v.y > v.prev.y) {
+            updateLeft(v)
           } else {
-            val ev = leftOf(v)
-            if (ev.aux.t == VertexType.JOIN) {
-              addSegment(v, ev.aux)
+            if (v.y > v.next.y) { // :(((((
+              onInitial(v)
+              removeActiveEdge(v.right)
+            } else if (v.y < v.next.y) {
+              updateLeft(v)
             }
-            ev.aux = v
           }
       }
     }
-    listener finished()
+    listener finished ()
   }
 
 }

@@ -11,14 +11,26 @@ import mlos.sgl.core.Vec2d
 import mlos.sgl.demo.AbstractVisualizer
 import scala.collection.immutable.Traversable
 import scala.collection.JavaConversions
+import mlos.sgl.canvas.CanvasPolygon
+import mlos.sgl.demo.HasHorizontalSweepLine
 
 class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   with Triangulate#EventListener 
-  with CanSignalPoint {
+  with CanSignalPoint
+  with HasHorizontalSweepLine {
   
   setSpeed(2)
 
   val stack = new Stack[CanvasPoint]
+  
+  val colors = Array(Color.yellow, Color.green, Color.blue)
+  var i = 0
+  
+  def nextColor(): Color = {
+    val c = colors(i)
+    i = (i + 1) % colors.length
+    return c
+  }
 
   def addPoint(v: Vec2d, c: Color, z: Double = 0.4) {
     val p = new CanvasPoint(v, z)
@@ -51,7 +63,10 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
     signalAll(vs, Color.magenta)
   } 
 
-  override def start() = delay(1500)
+  override def start() {
+    showSweepLine()
+    delay(1500)
+  }
 
   override def push(v: Vec2d) {
     signalPoint(v, Color.red)
@@ -72,6 +87,7 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
 
   override def next(v: Vec2d) {
     signalPoint(v, Color.blue)
+    moveLine(v.y)
     delay(500)
   }
 
@@ -86,12 +102,19 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
     delay(1000)
   }
   
+  override def addTriangle(a: Vec2d, b: Vec2d, c: Vec2d) {
+    val poly = new CanvasPolygon(List(a, b, c))
+    poly setFillColor nextColor
+    scene addObject poly
+  }
+  
   override def finished() {
     for (p <- stack) {
       scene removeObject p
     }
     stack.clear()
     hideFocusPoint()
+    hideSweepLine()
   }
 
 }

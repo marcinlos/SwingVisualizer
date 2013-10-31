@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import scala.collection.JavaConversions;
 import mlos.sgl.App;
 import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasObject;

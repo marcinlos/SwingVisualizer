@@ -23,7 +23,7 @@ class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
   
   val helpers = new HashMap[Segment, (CanvasSegment, CanvasPoint)]
   
-  setSpeed(10)
+  setSpeed(2)
   
   override def start(y: Double) {
     moveLine(y)
@@ -66,6 +66,7 @@ class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
     val cs = new CanvasSegment(s)
     cs setColor Color.green
     cs setZ 0.2
+    hideFocusSegment()
     scene addObject cs
     active put (s, cs)
     delay(1000)
@@ -81,7 +82,7 @@ class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
       case Some((seg, pt)) =>
         scene removeObject seg
         scene removeObject pt
-      case None =>
+      case None => println("kuuurwa")
     }
     delay(1000)
   }
@@ -123,6 +124,7 @@ class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
     }
     helpers clear()
     hideSweepLine()
+    refresh()
   }
 
 }

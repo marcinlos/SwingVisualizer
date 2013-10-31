@@ -8,10 +8,14 @@ import scala.collection.mutable.Stack
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable
 import mlos.sgl.core.Geometry.{ ccw, cw }
+import scala.collection.mutable.Queue
+import scala.collection.mutable.LinkedList
+import scala.collection.JavaConversions._
+import scala.collection.immutable.Nil
 
 object Side extends Enumeration {
   type Side = Value
-  val Left, Right = Value
+  val Top, Left, Right, Bottom = Value
 }
 
 trait TriangulationListener {
@@ -24,48 +28,49 @@ trait TriangulationListener {
   def push(v: Vec2d)
   def pop()
   def addSegment(a: Vec2d, b: Vec2d)
+  def addTriangle(a: Vec2d, b: Vec2d, c: Vec2d)
   def finished()
 }
 
-class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
+class Triangulate(poly: Polygon, listener: Triangulate#EventListener) {
 
   import Side._
 
   type EventListener = TriangulationListener
-  type Vertex = Tuple2[Vec2d, Side]
 
-  class VertexWithSide(val v: Vec2d, val side: Side)
+  class Vertex(val v: Vec2d, val side: Side)
 
   private def toOrd(v: Vec2d) = (v.y, -v.x)
-  private val order = Ordering.by { (p: VertexWithSide) => toOrd(p.v) }
-  private val queue = new PriorityQueue[VertexWithSide]()(order)
-  private val stack = new Stack[VertexWithSide]
+  private val order = Ordering.by { (p: Vertex) => toOrd(p.v) }
+  private val queue = new Queue[Vertex]
+  private val stack = new Stack[Vertex]
 
-  private def N = poly.vertexCount
+  private val vs: IndexedSeq[Vec2d] = Array(poly.vs: _*)
+  private def N = vs.length
 
   private def extremeIndices: Tuple2[Int, Int] = {
-    val order = (k: Int) => toOrd(poly.v(k))
+    val order = (k: Int) => toOrd(vs(k))
     val bottom = (0 until N) minBy (order)
     val top = (0 until N) maxBy (order)
     return (top, bottom)
   }
 
-  def findSides(top: Int, bottom: Int): Tuple2[Seq[Vec2d], Seq[Vec2d]] = {
+  def findSides(top: Int, bottom: Int): Tuple2[List[Vec2d], List[Vec2d]] = {
     def fromTop(x: Int) = (x + top) % N
-    def itemFromTop(x: Int) = poly.v(fromTop(x))
+    def itemFromTop(x: Int) = vs(fromTop(x))
 
     val (lefts, rest) = (1 until N) span (fromTop(_) != bottom)
     val rights = rest.drop(1)
 
-    return (lefts map itemFromTop, rights map itemFromTop)
+    return (lefts.map(itemFromTop).toList, rights.map(itemFromTop).toList)
   }
 
-  private def pop() {
+  private def pop(): Vertex = {
     listener.pop()
-    stack.pop
+    stack.pop()
   }
 
-  private def push(p: VertexWithSide) {
+  private def push(p: Vertex) {
     listener.push(p.v)
     stack.push(p)
   }
@@ -75,7 +80,7 @@ class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
     case Right => cw(prev, top, next)
   }
 
-  private def takeNext(): VertexWithSide = {
+  private def takeNext(): Vertex = {
     val p = queue.dequeue()
     listener.next(p.v)
     return p
@@ -85,53 +90,70 @@ class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
 
   private def fillQueue() {
     val (top, bottom) = extremeIndices
-    val initVertex = poly.v(top)
-    val finalVertex = poly.v(bottom)
+    val initVertex = vs(top)
+    val finalVertex = vs(bottom)
 
     listener.foundInit(initVertex)
     listener.foundFinal(finalVertex)
 
-    queue enqueue new VertexWithSide(initVertex, null)
-    queue enqueue new VertexWithSide(finalVertex, null)
-
     val (lefts, rights) = findSides(top, bottom)
-    listener.foundLeft(lefts.to[immutable.Seq])
-    listener.foundRight(rights.to[immutable.Seq])
+    listener.foundLeft(lefts)
+    listener.foundRight(rights)
 
-    queue ++= lefts map { new VertexWithSide(_, Left) }
-    queue ++= rights map { new VertexWithSide(_, Right) }
+    queue enqueue new Vertex(initVertex, Top)
+
+    def merge(left: List[Vertex], right: List[Vertex]): List[Vertex] = {
+      (left, right) match {
+        case (xs, Nil) => xs
+        case (Nil, ys) => ys
+        case (x :: xs, y :: ys) =>
+          if (x.v.y >= y.v.y) x :: merge(xs, right)
+          else y :: merge(left, ys)
+      }
+    }
+    val lvs = lefts map { new Vertex(_, Left) }
+    val rvs = rights reverseMap { new Vertex(_, Right) }
+    queue ++= merge(lvs, rvs)
+    queue enqueue new Vertex(finalVertex, Bottom)
   }
 
   def run() {
     fillQueue()
     listener.start()
 
-    for (_ <- 1 to 2) {
-      push(queue.dequeue())
+    push(takeNext())
+    push(takeNext())
+
+    def drainStack(v: Vec2d) {
+      while (!stack.isEmpty) {
+        val top = pop()
+        if (!stack.isEmpty)
+          listener.addSegment(v, top.v)
+      }
+    }
+
+    def reduceChain(n: Vertex) {
+      val (prev, top) = topTwo
+      if (inside(prev.v, top.v, n.v, n.side)) {
+        listener.addSegment(n.v, prev.v)
+        pop()
+        if (stack.size > 1)
+          reduceChain(n)
+      }
     }
 
     while (!queue.isEmpty) {
       val n = takeNext()
-      if (n.side != stack.top.side) {
-        val top = stack.top
-        while (!stack.isEmpty) {
-          if (stack.size > 1) {
-            listener.addSegment(n.v, stack.top.v)
-          }
-          pop()
-        }
-        push(top)
-        push(n)
+      if (n.side == Bottom) {
+        stack.pop()
+        drainStack(n.v)
       } else {
-        var stop = false
-        while (!stop && stack.size > 1) {
-          val (prev, top) = topTwo
-          if (inside(prev.v, top.v, n.v, n.side)) {
-            listener.addSegment(n.v, prev.v)
-            pop()
-          } else {
-            stop = true
-          }
+        if (n.side == stack.top.side) {
+          reduceChain(n)
+        } else {
+          val top = stack.top
+          drainStack(n.v)
+          push(top)
         }
         push(n)
       }
