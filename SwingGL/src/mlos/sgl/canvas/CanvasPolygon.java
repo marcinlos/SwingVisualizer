@@ -1,5 +1,7 @@
 package mlos.sgl.canvas;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +17,8 @@ public class CanvasPolygon extends CanvasObject {
     private final List<Vec2d> points;
     
     private boolean opaque;
+    
+    private int thickness = CanvasSegment.DEFAULT_THICKNESS;
     
     private Color fillColor = new Color(0, 1, 0, 0.1f);
     
@@ -49,6 +53,17 @@ public class CanvasPolygon extends CanvasObject {
     
     public synchronized void setFillColor(Color fillColor) {
         this.fillColor = fillColor;
+    }
+    
+
+    public synchronized int getThickness() {
+        return thickness;
+    }
+    
+    public synchronized void setThickness(int thickness) {
+        checkArgument(thickness > 0, "Line thickness must be positive");
+        this.thickness = thickness;
+        signalUpdate();
     }
 
 }

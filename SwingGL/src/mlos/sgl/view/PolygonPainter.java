@@ -17,7 +17,7 @@ public class PolygonPainter implements ObjectPainter {
 
     @Override
     public void paint(Transform toScreen, Graphics2D ctx) {
-        Drawer d = new Drawer(ctx, toScreen).solid(2);
+        Drawer d = new Drawer(ctx, toScreen).solid(polygon.getThickness());
         if (polygon.isOpaque()) {
             d.color(polygon.getFillColor())
                 .fillPolygon(polygon.getPoints());

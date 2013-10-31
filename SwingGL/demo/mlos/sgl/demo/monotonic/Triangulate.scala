@@ -121,38 +121,48 @@ class Triangulate(poly: Polygon, listener: Triangulate#EventListener) {
     fillQueue()
     listener.start()
 
-    push(takeNext())
-    push(takeNext())
-
-    def drainStack(v: Vec2d) {
+    def drainStack(n: Vertex) {
       while (!stack.isEmpty) {
-        val top = pop()
-        if (!stack.isEmpty)
-          listener.addSegment(v, top.v)
+        if (stack.size > 1)
+          cut(n)
+        pop()
       }
     }
 
     def reduceChain(n: Vertex) {
       val (prev, top) = topTwo
       if (inside(prev.v, top.v, n.v, n.side)) {
-        listener.addSegment(n.v, prev.v)
+        cut(n)
         pop()
         if (stack.size > 1)
           reduceChain(n)
       }
     }
 
+    def cut(n: Vertex) {
+      val (p, top) = topTwo
+//      val prev = if (top.side == n.side) p else top 
+//      listener.addSegment(n.v, prev.v)
+      if (top.side == Left)
+        listener.addTriangle(p.v, top.v, n.v)
+      else
+        listener.addTriangle(top.v, p.v, n.v)
+    }
+
+    push(takeNext())
+    push(takeNext())
+
     while (!queue.isEmpty) {
       val n = takeNext()
       if (n.side == Bottom) {
-        stack.pop()
-        drainStack(n.v)
+//        stack.pop()
+        drainStack(n)
       } else {
         if (n.side == stack.top.side) {
           reduceChain(n)
         } else {
           val top = stack.top
-          drainStack(n.v)
+          drainStack(n)
           push(top)
         }
         push(n)

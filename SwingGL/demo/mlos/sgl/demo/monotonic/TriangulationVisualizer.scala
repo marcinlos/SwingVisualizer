@@ -2,17 +2,20 @@ package mlos.sgl.demo.monotonic
 
 import java.awt.Color
 import scala.collection.JavaConversions._
+import scala.collection.JavaConversions
+import scala.collection.immutable.Traversable
 import scala.collection.mutable.Stack
 import mlos.sgl.Scene
 import mlos.sgl.canvas.CanvasPoint
+import mlos.sgl.canvas.CanvasPolygon
 import mlos.sgl.canvas.CanvasSegment
 import mlos.sgl.core.Segment
 import mlos.sgl.core.Vec2d
 import mlos.sgl.demo.AbstractVisualizer
-import scala.collection.immutable.Traversable
-import scala.collection.JavaConversions
-import mlos.sgl.canvas.CanvasPolygon
 import mlos.sgl.demo.HasHorizontalSweepLine
+import mlos.sgl.util.{ Color => HSV }
+import scala.collection.immutable.Range
+import scala.util.Random
 
 class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   with Triangulate#EventListener 
@@ -23,13 +26,9 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
 
   val stack = new Stack[CanvasPoint]
   
-  val colors = Array(Color.yellow, Color.green, Color.blue)
-  var i = 0
-  
   def nextColor(): Color = {
-    val c = colors(i)
-    i = (i + 1) % colors.length
-    return c
+    val h = Random.nextDouble * 2 * math.Pi
+    return HSV.hsv2rgb(h, 1, 1, 0.7)
   }
 
   def addPoint(v: Vec2d, c: Color, z: Double = 0.4) {
@@ -105,6 +104,8 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   override def addTriangle(a: Vec2d, b: Vec2d, c: Vec2d) {
     val poly = new CanvasPolygon(List(a, b, c))
     poly setFillColor nextColor
+    poly setOpaque true
+    poly setThickness 1
     scene addObject poly
   }
   
