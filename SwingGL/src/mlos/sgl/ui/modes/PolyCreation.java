@@ -81,8 +81,10 @@ public class PolyCreation extends AbstractMode {
             }
         } else if (button == MouseEvent.BUTTON3) {
             if (duringCreation) {
-                CanvasPolygon poly = new CanvasPolygon(points);
-                scene.addObject(poly);
+                if (points.size() > 2) {
+                    CanvasPolygon poly = new CanvasPolygon(points);
+                    scene.addObject(poly);
+                }
                 points.clear();
                 duringCreation = false;
                 
