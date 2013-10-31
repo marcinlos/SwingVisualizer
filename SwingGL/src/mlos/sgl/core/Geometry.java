@@ -226,6 +226,22 @@ public class Geometry {
         return Rect.bounds(left, bottom, right, top);
     }
     
+    private static double calcParam(double a, double b, double x, double def) {
+        return a == b ? def : (x - a) / (b - a);
+    }
+    
+    public static Segment clipLine(Vec2d a, Vec2d b, Rect bounds) {
+        double inf = Double.POSITIVE_INFINITY;
+        double thmin = calcParam(a.x, b.x, bounds.left(), -inf);
+        double thmax = calcParam(a.x, b.x, bounds.right(), inf);
+        double tvmin = calcParam(a.y, b.y, bounds.bottom(), -inf);
+        double tvmax = calcParam(a.y, b.y, bounds.top(), inf);
+        
+        double tmin = Math.max(thmin, tvmin);
+        double tmax = Math.min(thmax, tvmax);
+        return new Segment(lerp(tmin, a, b), lerp(tmax, a, b));
+    }
+    
     
     public static boolean inInterval(double t, double a, double b) {
         return a <= t && t <= b;

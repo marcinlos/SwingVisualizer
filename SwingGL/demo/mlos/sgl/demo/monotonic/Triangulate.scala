@@ -24,6 +24,7 @@ trait TriangulationListener {
   def push(v: Vec2d)
   def pop()
   def addSegment(a: Vec2d, b: Vec2d)
+  def finished()
 }
 
 class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
@@ -135,6 +136,7 @@ class Triangulate(val poly: Polygon, val listener: Triangulate#EventListener) {
         push(n)
       }
     }
+    listener.finished()
   }
 
 }

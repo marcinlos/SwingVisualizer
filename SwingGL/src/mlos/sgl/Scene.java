@@ -116,13 +116,17 @@ public abstract class Scene {
         boolean added = canvas.add(object);
         if (added) {
             ObjectPainter painter = painterFactory.createPainter(object);
-            view.add(painter);
-            painters.put(object, painter);
-            object.addListener(refresher);
+            if (view != null) {
+                view.add(painter);
+                painters.put(object, painter);
+                object.addListener(refresher);
+            }
             
             ObjectController controller = controllerFactory.createController(object);
-            canvasController.add(controller);
-            controllers.put(object, controller);
+            if (controller != null) {
+                canvasController.add(controller);
+                controllers.put(object, controller);
+            }
         }
         return added;
     }

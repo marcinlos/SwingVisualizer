@@ -46,6 +46,7 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   override def foundLeft(vs: Traversable[Vec2d]) {
     signalAll(vs, Color.cyan)
   }
+  
   override def foundRight(vs: Traversable[Vec2d]) {
     signalAll(vs, Color.magenta)
   } 
@@ -63,7 +64,7 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
 
   override def pop() {
-    val p = stack.pop
+    val p = stack.pop()
     scene removeObject p
     refresh()
     delay(1000)
@@ -83,6 +84,14 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
     scene addObject s
     refresh()
     delay(1000)
+  }
+  
+  override def finished() {
+    for (p <- stack) {
+      scene removeObject p
+    }
+    stack.clear()
+    hideFocusPoint()
   }
 
 }

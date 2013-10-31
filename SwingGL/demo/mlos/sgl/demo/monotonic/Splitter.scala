@@ -49,7 +49,8 @@ class Splitter(
   }
 
   def buildEventQueue: PriorityQueue[Vertex] = {
-    val events = new PriorityQueue[Vertex]()(Ordering.by { (p: Vertex) => (p.v.y, -p.v.x) })
+    val order = Ordering.by { (p: Vertex) => (p.v.y, -p.v.x) }
+    val events = new PriorityQueue[Vertex]()(order)
     val N = poly.vertexCount
 
     var first = new Edge(null, null)
@@ -103,6 +104,7 @@ class Splitter(
 
   def nextEvent(): Vertex = {
     val p = events.dequeue()
+    moveLine(p.v.y)
     listener next p.v
     return p
   }
@@ -111,13 +113,12 @@ class Splitter(
     line = y
     listener moveLine y
   }
-
+  
   def run() {
     listener.start(events.head.v.y)
 
     while (!events.isEmpty) {
       val v = nextEvent()
-      moveLine(v.y)
 
       v.t match {
         case VertexType.INITIAL =>
@@ -179,7 +180,7 @@ class Splitter(
           }
       }
     }
-    listener.finished()
+    listener finished()
   }
 
 }

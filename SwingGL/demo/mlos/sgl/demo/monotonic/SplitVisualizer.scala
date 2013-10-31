@@ -10,24 +10,24 @@ import mlos.sgl.core.Vec2d
 import mlos.sgl.demo.AbstractVisualizer
 import mlos.sgl.canvas.CanvasPoint
 import mlos.sgl.core.Geometry
+import mlos.sgl.demo.HasHorizontalSweepLine
 
 class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
   with Splitter#EventListener
   with CanSignalPoint
-  with CanSignalSegment {
+  with CanSignalSegment
+  with HasHorizontalSweepLine {
 
-  val line = new CanvasSegment
   val segments = new ArrayBuffer[CanvasSegment]
   val active = new HashMap[Segment, CanvasSegment]
   
   val helpers = new HashMap[Segment, (CanvasSegment, CanvasPoint)]
   
-  line setDashed true
-  line setThickness 1
+  setSpeed(10)
   
   override def start(y: Double) {
     moveLine(y)
-    scene addObject line
+    showSweepLine()
   }
   
   def cut(p: Vec2d, q: Vec2d, y: Double): Vec2d = {
@@ -56,13 +56,7 @@ class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
   
   override def moveLine(y: Double) {
-//    for ((s, (seg, pt)) <- helpers) {
-//      val v = cut(s.a, s.b, y)
-//      seg setSegment new Segment(v, pt.getPoint)
-//    }
-    val x = 1e1
-    val s = new Segment(new Vec2d(-x, y), new Vec2d(x, y))
-    line setSegment s
+    super.moveLine(y)
     delay(500)
   }
   
@@ -122,11 +116,13 @@ class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
   
   override def finished() {
-//    delay(1000)
-//    for (s <- segments) {
-//      scene removeObject s
-//    }
-//    segments clear()
+    delay(1000)
+    for ((_, (seg, pt)) <- helpers) {
+      scene removeObject seg
+      scene removeObject pt
+    }
+    helpers clear()
+    hideSweepLine()
   }
 
 }
