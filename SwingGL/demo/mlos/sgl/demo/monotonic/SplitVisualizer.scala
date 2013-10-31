@@ -88,6 +88,8 @@ class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
   
   def changeHelper(p: Vec2d, q: Vec2d, aux: Vec2d) {
+    if (aux == null)
+      return
     signalPoint(aux, Color.magenta)
     val pt = new CanvasPoint(aux)
     pt setColor Color.magenta

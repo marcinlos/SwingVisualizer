@@ -33,7 +33,7 @@ class Splitter(
 
   def connect(p: Vertex, q: Vertex) = listener.segment(p.v, q.v)
 
-  class Vertex(val v: Vec2d, val t: VertexType, val left: Edge, val right: Edge) {
+  class Vertex(val v: Vec2d, val t: VertexType, val left: Edge, val right: Edge, val ord: Int) {
     def x = v.x
     def y = v.y
     def next = left.q
@@ -44,7 +44,8 @@ class Splitter(
     def aux = helper
     def aux_=(v: Vertex) {
       helper = v
-      listener.changeHelper(p.v, q.v, v.v)
+      val pos = if (v != null) v.v else null
+      listener.changeHelper(p.v, q.v, pos)
     }
   }
 
@@ -52,7 +53,9 @@ class Splitter(
   private def N = vs.length
 
   def buildEventQueue: PriorityQueue[Vertex] = {
-    val order = Ordering.by { (p: Vertex) => (p.v.y, -p.v.x) }
+    val order = Ordering.by { (p: Vertex) => (p.v.y, -p.ord) }
+    val m = vs.maxBy((v: Vec2d) => (v.y, v.x))
+    val maxIdx = vs.indexOf(m)
     val events = new PriorityQueue[Vertex]()(order)
 
     var first = new Edge(null, null)
@@ -60,14 +63,16 @@ class Splitter(
     var v: Vertex = null;
 
     for (k <- 0 until N - 1) yield {
+      val idx = (maxIdx + k) % N
       val next = new Edge(null, null)
-      v = new Vertex(vs(k), types(k), next, prev)
+      v = new Vertex(vs(idx), types(idx), next, prev, k)
       events enqueue v
       prev.q = v
       next.p = v
       prev = next
     }
-    v = new Vertex(vs(N - 1), types(N - 1), first, prev)
+    val lastIdx = (maxIdx + N - 1) % N
+    v = new Vertex(vs(lastIdx), types(lastIdx), first, prev, N - 1)
     prev.q = v
     first.p = v
     events enqueue v
@@ -99,6 +104,7 @@ class Splitter(
   }
 
   def removeActiveEdge(e: Edge) {
+    e.aux = null
     if (active remove e) {
       listener removeActive (e.p.v, e.q.v)
     } else {
@@ -158,23 +164,40 @@ class Splitter(
 
       v.t match {
         case VertexType.INITIAL => onInitial(v)
-        case VertexType.FINAL   => onFinal(v)
-        case VertexType.SPLIT   => onSplit(v)
-        case VertexType.JOIN    => onJoin(v)
+        case VertexType.FINAL => onFinal(v)
+        case VertexType.SPLIT => onSplit(v)
+        case VertexType.JOIN => onJoin(v)
 
         case VertexType.NORMAL =>
-          if (v.y < v.prev.y) {
+          if (v.prev.y > v.y && v.y > v.next.y) {
             onFinal(v)
             onInitial(v)
-          } else if (v.y > v.prev.y) {
+          } else if (v.prev.y < v.y && v.y < v.next.y) {
             updateLeft(v)
           } else {
-            if (v.y > v.next.y) { // :(((((
-              onInitial(v)
-              removeActiveEdge(v.right)
-            } else if (v.y < v.next.y) {
-              updateLeft(v)
+            if (v.y == v.prev.y) {
+
+            } else if (v.y == v.next.y) {
+              
+            } else {
+              
             }
+//            if (v.y > v.next.y) { // :(((((
+//              if (v.right.aux != null) {
+//                onInitial(v)
+//                onFinal(v) //removeActiveEdge(v.right)
+//              }
+//            } else if (v.y < v.next.y) {
+//              if (v.right.aux != null) {
+//                onFinal(v)
+//              } else {
+//                updateLeft(v)
+//                //              onFinal(v)
+//              }
+//            } else {
+//              onFinal(v)
+//              onInitial(v)
+//            }
           }
       }
     }
