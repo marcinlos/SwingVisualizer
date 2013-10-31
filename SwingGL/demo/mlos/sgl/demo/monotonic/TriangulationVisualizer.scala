@@ -16,6 +16,7 @@ import mlos.sgl.demo.HasHorizontalSweepLine
 import mlos.sgl.util.{ Color => HSV }
 import scala.collection.immutable.Range
 import scala.util.Random
+import mlos.sgl.demo.CanSignalPoint
 
 class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   with Triangulate#EventListener 

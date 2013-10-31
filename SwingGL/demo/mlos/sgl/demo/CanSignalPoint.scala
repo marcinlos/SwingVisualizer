@@ -1,9 +1,9 @@
-package mlos.sgl.demo.monotonic
+package mlos.sgl.demo
 
-import mlos.sgl.demo.AbstractVisualizer
-import mlos.sgl.core.Vec2d
-import mlos.sgl.canvas.CanvasPoint
 import java.awt.Color
+
+import mlos.sgl.canvas.CanvasPoint
+import mlos.sgl.core.Vec2d
 
 trait CanSignalPoint extends AbstractVisualizer {
 

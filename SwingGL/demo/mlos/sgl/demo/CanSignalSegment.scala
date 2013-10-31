@@ -1,11 +1,10 @@
-package mlos.sgl.demo.monotonic
+package mlos.sgl.demo
 
-import org.w3c.dom.views.AbstractView
-import mlos.sgl.demo.AbstractVisualizer
-import mlos.sgl.canvas.CanvasSegment
-import mlos.sgl.core.Vec2d
 import java.awt.Color
+
+import mlos.sgl.canvas.CanvasSegment
 import mlos.sgl.core.Segment
+import mlos.sgl.core.Vec2d
 
 trait CanSignalSegment extends AbstractVisualizer {
 

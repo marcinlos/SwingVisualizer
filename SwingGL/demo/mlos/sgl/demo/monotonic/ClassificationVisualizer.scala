@@ -37,7 +37,6 @@ class ClassificationVisualizer(s: Scene) extends AbstractVisualizer(s)
     case VertexType.JOIN => Color.blue
     case VertexType.SPLIT => Color.cyan
     case VertexType.NORMAL => Color.darkGray
-    case _ => throw new IllegalArgumentException("Invalid color")
   }
 
   override def start = Unit

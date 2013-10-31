@@ -19,11 +19,6 @@ trait SplitterListener {
   def finished()
 }
 
-object Splitter {
-  def make(poly: Polygon, types: java.util.List[VertexType], listener: Splitter#EventListener) =
-    new Splitter(poly, types, listener)
-}
-
 class Splitter(
   poly: Polygon,
   types: Seq[VertexType],
@@ -33,7 +28,13 @@ class Splitter(
 
   def connect(p: Vertex, q: Vertex) = listener.segment(p.v, q.v)
 
-  class Vertex(val v: Vec2d, val t: VertexType, val left: Edge, val right: Edge, val ord: Int) {
+  class Vertex(
+    val v: Vec2d,
+    val t: VertexType,
+    val left: Edge,
+    val right: Edge,
+    val ord: Int
+  ) {
     def x = v.x
     def y = v.y
     def next = left.q
@@ -178,26 +179,26 @@ class Splitter(
             if (v.y == v.prev.y) {
 
             } else if (v.y == v.next.y) {
-              
+
             } else {
-              
+
             }
-//            if (v.y > v.next.y) { // :(((((
-//              if (v.right.aux != null) {
-//                onInitial(v)
-//                onFinal(v) //removeActiveEdge(v.right)
-//              }
-//            } else if (v.y < v.next.y) {
-//              if (v.right.aux != null) {
-//                onFinal(v)
-//              } else {
-//                updateLeft(v)
-//                //              onFinal(v)
-//              }
-//            } else {
-//              onFinal(v)
-//              onInitial(v)
-//            }
+            //            if (v.y > v.next.y) { // :(((((
+            //              if (v.right.aux != null) {
+            //                onInitial(v)
+            //                onFinal(v) //removeActiveEdge(v.right)
+            //              }
+            //            } else if (v.y < v.next.y) {
+            //              if (v.right.aux != null) {
+            //                onFinal(v)
+            //              } else {
+            //                updateLeft(v)
+            //                //              onFinal(v)
+            //              }
+            //            } else {
+            //              onFinal(v)
+            //              onInitial(v)
+            //            }
           }
       }
     }

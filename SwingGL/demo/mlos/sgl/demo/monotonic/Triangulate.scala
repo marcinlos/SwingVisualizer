@@ -141,8 +141,6 @@ class Triangulate(poly: Polygon, listener: Triangulate#EventListener) {
 
     def cut(n: Vertex) {
       val (p, top) = topTwo
-//      val prev = if (top.side == n.side) p else top 
-//      listener.addSegment(n.v, prev.v)
       if (top.side == Left)
         listener.addTriangle(p.v, top.v, n.v)
       else

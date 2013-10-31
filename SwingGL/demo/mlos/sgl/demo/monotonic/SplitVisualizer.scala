@@ -11,6 +11,8 @@ import mlos.sgl.demo.AbstractVisualizer
 import mlos.sgl.canvas.CanvasPoint
 import mlos.sgl.core.Geometry
 import mlos.sgl.demo.HasHorizontalSweepLine
+import mlos.sgl.demo.CanSignalSegment
+import mlos.sgl.demo.CanSignalPoint
 
 class SplitVisualizer(s: Scene) extends AbstractVisualizer(s)
   with Splitter#EventListener
