@@ -31,6 +31,10 @@ public final class Rect {
         return new Rect(x - w/2, y - h/2, x + w/2, y + h/2);
     }
     
+    public static Rect at(Vec2d center, double w, double h) {
+        return at(center.x, center.y, w, h);
+    }
+    
     public static Rect lbSize(double left, double bottom, double w, double h) {
         return new Rect(left, bottom, left + w, bottom + h);
     }
@@ -41,6 +45,15 @@ public final class Rect {
     
     public static Rect aroundOrigin(double extent) {
         return aroundOrigin(extent, extent);
+    }
+    
+    public static Rect expand(Rect r, double dx, double dy) {
+        return at(r.center(), r.width() + dx, r.height() + dy);
+    }
+    
+    public static Rect scale(Rect r, double sx, double sy) {
+        Vec2d c = r.center();
+        return at(c, r.width() * sx, r.width() * sy);
     }
     
     public double left() {

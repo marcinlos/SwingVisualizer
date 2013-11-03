@@ -23,6 +23,14 @@ JNIEXPORT void JNICALL Java_mlos_sgl_core_Schewchuck_init
 JNIEXPORT jdouble JNICALL Java_mlos_sgl_core_Schewchuck_schewchuckOrient2d
   (JNIEnv *, jclass, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble);
 
+/*
+ * Class:     mlos_sgl_core_Schewchuck
+ * Method:    schewchuckIncircle
+ * Signature: (DDDDDDDD)D
+ */
+JNIEXPORT jdouble JNICALL Java_mlos_sgl_core_Schewchuck_schewchuckIncircle
+  (JNIEnv *, jclass, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble);
+
 #ifdef __cplusplus
 }
 #endif

@@ -7,11 +7,6 @@ import mlos.sgl.ui.InputHandler
 abstract class AlgorithmScene(name: String) extends Scene(name) {
 
   val pool = Executors.newSingleThreadExecutor()
-  
-  val handler: InputHandler
-  
-  if (handler != null)
-      handlerStack.pushBack(handler)
 
   def async(action: => Unit) {
     pool.execute(new Runnable {

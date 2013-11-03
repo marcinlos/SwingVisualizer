@@ -111,9 +111,7 @@ class TriangulationVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
   
   override def finished() {
-    for (p <- stack) {
-      scene removeObject p
-    }
+    stack foreach scene.removeObject
     stack.clear()
     hideFocusPoint()
     hideSweepLine()

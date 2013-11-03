@@ -66,6 +66,22 @@ public class Geometry {
             throw new ArithmeticException("Cannot normalize zero-length vector");
         }
     }
+    
+    public static Vec2d normal(Vec2d a, Vec2d b) {
+        Vec2d d = diff(b, a);
+        return normalize(new Vec2d(d.y, -d.x));
+    }
+    
+    public static Vec2d center(Vec2d... points) {
+        double sx = 0;
+        double sy = 0;
+        for (Vec2d v : points) {
+            sx += v.x;
+            sy += v.y;
+        }
+        int n = points.length;
+        return n == 0 ? Vec2d.ZERO : new Vec2d(sx / n, sy / n);
+    }
 
     public static double dot(Vec2d a, Vec2d b) {
         return a.x * b.x + a.y * b.y;
@@ -166,6 +182,10 @@ public class Geometry {
         return orient2d(a, b, c) < 0;
     }
     
+    public double incircle(Vec2d a, Vec2d b, Vec2d c, Vec2d d) {
+        return Schewchuck.schewchuckIncircle(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
+    }
+    
     public static boolean properIntersect(Segment p, Segment q) {
         Orientation pqa = orientation(p.a, p.b, q.a);
         Orientation pqb = orientation(p.a, p.b, q.b);
@@ -258,6 +278,10 @@ public class Geometry {
     
     public static boolean inSquare(double r, Vec2d p) {
         return maxNorm(p) <= r;
+    }
+    
+    public static boolean inTriangle(Vec2d p, Vec2d a, Vec2d b, Vec2d c) {
+        return ccw(a, b, p) && ccw(b, c, p) && ccw(c, a, p);
     }
     
     public static final Comparator<Vec2d> LEXICOGRAPHIC = new Comparator<Vec2d>() {
