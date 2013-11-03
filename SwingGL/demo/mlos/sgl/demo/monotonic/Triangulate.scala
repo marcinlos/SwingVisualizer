@@ -55,7 +55,7 @@ class Triangulate(poly: Polygon, listener: Triangulate#EventListener) {
     return (top, bottom)
   }
 
-  def findSides(top: Int, bottom: Int): Tuple2[List[Vec2d], List[Vec2d]] = {
+  def findSides(top: Int, bottom: Int): Pair[List[Vec2d], List[Vec2d]] = {
     def fromTop(x: Int) = (x + top) % N
     def itemFromTop(x: Int) = vs(fromTop(x))
 
