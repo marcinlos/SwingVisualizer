@@ -8,14 +8,13 @@ import scala.collection.JavaConversions._
 import mlos.sgl.canvas.CanvasPolygon
 import mlos.sgl.core.Polygon
 import mlos.sgl.App
+import mlos.sgl.AlgorithmScene
 
-class TriangulationScene(s: String) extends Scene(s) { scene =>
+class TriangulationScene(s: String) extends AlgorithmScene(s) { scene =>
 
-  val pool = Executors.newSingleThreadExecutor()
-
-  handlerStack pushBack new InputAdapter {
+  val handler = new InputAdapter {
     override def keyPressed(e: KeyEvent) {
-      execute {
+      async {
         e.getKeyCode match {
           case KeyEvent.VK_F5 =>
             extractPolys() foreach { p =>
@@ -35,16 +34,9 @@ class TriangulationScene(s: String) extends Scene(s) { scene =>
     }
   }
 
-  def execute(action: => Unit) {
-    pool.execute(new Runnable {
-      override def run() = action
-    })
-  }
-
-  def extractPolys() = canvas getObjects () collect {
-    case p: CanvasPolygon =>
-      p.setOpaque(true)
-      new Polygon(p.getPoints())
+  def extractPolys() = extract(classOf[CanvasPolygon]) map { p =>
+    p.setOpaque(true)
+    new Polygon(p.getPoints())
   }
 }
 
