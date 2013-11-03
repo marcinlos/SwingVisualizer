@@ -1,5 +1,7 @@
 package mlos.sgl.ui.modes;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.awt.event.MouseEvent;
 
 import mlos.sgl.Scene;
@@ -16,10 +18,10 @@ public abstract class AbstractMode extends InputAdapter implements Mode {
     private final String name;
 
 
-    public AbstractMode(String name, Scene scene, CanvasView view) {
-        this.name = name;
-        this.scene = scene;
-        this.view = view;
+    public AbstractMode(String name, Scene scene) {
+        this.name = checkNotNull(name);
+        this.scene = checkNotNull(scene);
+        this.view = scene.getView();
     }
     
     @Override

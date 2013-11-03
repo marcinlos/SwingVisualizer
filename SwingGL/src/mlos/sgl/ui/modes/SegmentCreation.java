@@ -12,7 +12,6 @@ import mlos.sgl.canvas.CanvasSegment;
 import mlos.sgl.core.Segment;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
-import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.Drawer;
 import mlos.sgl.view.Painter;
 
@@ -37,8 +36,8 @@ public class SegmentCreation extends AbstractMode {
     };
 
 
-    public SegmentCreation(Scene scene, CanvasView view) {
-        super("Create segments", scene, view);
+    public SegmentCreation(Scene scene) {
+        super("Create segments", scene);
     }
 
     @Override

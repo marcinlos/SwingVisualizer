@@ -23,7 +23,6 @@ import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasPolygon;
 import mlos.sgl.core.Transform;
 import mlos.sgl.core.Vec2d;
-import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.Drawer;
 import mlos.sgl.view.Painter;
 
@@ -55,8 +54,8 @@ public class PolyCreation extends AbstractMode {
     };
 
 
-    public PolyCreation(Scene scene, CanvasView view) {
-        super("Polygons", scene, view);
+    public PolyCreation(Scene scene) {
+        super("Polygons", scene);
     }
 
     @Override

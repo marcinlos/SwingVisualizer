@@ -20,6 +20,7 @@ import mlos.sgl.ui.HandlerStack;
 import mlos.sgl.ui.ObjectController;
 import mlos.sgl.ui.ObjectControllerFactory;
 import mlos.sgl.ui.ToolPanel;
+import mlos.sgl.ui.modes.PointCreation;
 import mlos.sgl.ui.modes.PolyCreation;
 import mlos.sgl.ui.modes.RandomPoints;
 import mlos.sgl.ui.modes.SegmentCreation;
@@ -100,9 +101,10 @@ public abstract class Scene {
         refresher = new Refresher();
         properties.addListener(refresher);
         
-        sidePanel.addMode(new RandomPoints(this, view, canvasController));
-        sidePanel.addMode(new SegmentCreation(this, view));
-        sidePanel.addMode(new PolyCreation(this, view));
+        sidePanel.addMode(new RandomPoints(this, canvasController));
+        sidePanel.addMode(new SegmentCreation(this));
+        sidePanel.addMode(new PolyCreation(this));
+        sidePanel.addMode(new PointCreation(this));
     }
 
     private void establishInputListeners() {

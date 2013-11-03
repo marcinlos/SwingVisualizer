@@ -22,7 +22,6 @@ import mlos.sgl.core.Transforms;
 import mlos.sgl.core.Vec2d;
 import mlos.sgl.ui.CanvasController;
 import mlos.sgl.util.Randomizer;
-import mlos.sgl.view.CanvasView;
 import mlos.sgl.view.Drawer;
 import mlos.sgl.view.Painter;
 
@@ -66,8 +65,8 @@ public class RandomPoints extends AbstractMode {
         }
     };
 
-    public RandomPoints(Scene scene, CanvasView view, CanvasController controller) {
-        super("Random points", scene, view);
+    public RandomPoints(Scene scene, CanvasController controller) {
+        super("Random points", scene);
         setupUI();
     }
 
