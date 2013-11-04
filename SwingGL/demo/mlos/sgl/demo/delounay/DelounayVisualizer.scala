@@ -21,6 +21,8 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   with Delounay#Listener
   with CanSignalPoint {
 
+  setSpeed(50)
+  
   type Tri = (Vec2d, Vec2d, Vec2d)
 
   val triangles = new HashMap[Tri, CanvasPolygon]
@@ -36,7 +38,6 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   override def triangle(t: Triangle) {
     val (a, b, c) = t.points
     val vs = List(a, b, c)
-    //    vs foreach { signalPoint(_, Color.red) }
     val poly = new CanvasPolygon(vs)
     poly.setOpaque(true)
     poly.setFillColor(nextColor())
@@ -71,9 +72,9 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
 
   override def foundContaining(v: Vec2d, t: Triangle) {
-    //    val (a, b, c) = t.points
-    //    signalPoly(List(a, b, c), Color.green)
     lineTo(v)
+    val (a, b, c) = t.points
+    signalPoly(List(a, b, c), Color.green)
     path foreach scene.removeObject
     path.clear()
     prev = null
@@ -100,13 +101,30 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
 
   override def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle) {
-    signalTriangle(t, Color.red)
+    val p = new CanvasPolygon(t.pointSeq)
+    p.setThickness(3)
+    p.setBorderColor(Color.red)
+    p.setZ(0.15)
+    scene.addObject(p)
+    refresh()
     delay(300)
-    val (a, b, c) = t.points
-    val poly = triangles.remove((a, b, c))
+    val poly = triangles.remove(t.points)
     scene.removeObject(poly)
     List(ta, tb, tc) foreach triangle
+    scene.removeObject(p)
     refresh()
   }
 
+  override def swap(p: Triangle, q: Triangle) {
+    val pobj = triangles.remove(p.points)
+    val qobj = triangles.remove(q.points)
+
+    pobj.setFillColor(Color.cyan)
+    qobj.setFillColor(Color.cyan)
+    refresh()
+    delay(1000)
+    scene.removeObject(pobj)
+    scene.removeObject(qobj)
+    refresh()
+  }
 }

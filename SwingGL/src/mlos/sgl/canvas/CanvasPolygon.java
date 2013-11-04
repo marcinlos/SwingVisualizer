@@ -22,6 +22,8 @@ public class CanvasPolygon extends CanvasObject {
     
     private Color fillColor = new Color(0, 1, 0, 0.1f);
     
+    private Color borderColor = Color.black;
+    
     public CanvasPolygon() {
         this(Collections.<Vec2d>emptyList());
     }
@@ -51,8 +53,16 @@ public class CanvasPolygon extends CanvasObject {
         return fillColor;
     }
     
-    public synchronized void setFillColor(Color fillColor) {
-        this.fillColor = fillColor;
+    public synchronized void setFillColor(Color borderColor) {
+        this.fillColor = borderColor;
+    }
+    
+    public synchronized Color getBorderColor() {
+        return borderColor;
+    }
+    
+    public synchronized void setBorderColor(Color borderColor) {
+        this.borderColor = borderColor;
     }
     
 

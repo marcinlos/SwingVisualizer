@@ -182,7 +182,7 @@ public class Geometry {
         return orient2d(a, b, c) < 0;
     }
     
-    public double incircle(Vec2d a, Vec2d b, Vec2d c, Vec2d d) {
+    public static double incircle(Vec2d a, Vec2d b, Vec2d c, Vec2d d) {
         return Schewchuck.schewchuckIncircle(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
     }
     

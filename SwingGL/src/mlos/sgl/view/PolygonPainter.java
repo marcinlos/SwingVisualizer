@@ -1,6 +1,5 @@
 package mlos.sgl.view;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
 import mlos.sgl.canvas.CanvasObject;
@@ -22,7 +21,7 @@ public class PolygonPainter implements ObjectPainter {
             d.color(polygon.getFillColor())
                 .fillPolygon(polygon.getPoints());
         }
-        d.color(Color.black).polygon(polygon.getPoints());
+        d.color(polygon.getBorderColor()).polygon(polygon.getPoints());
         d.restore();
     }
 

@@ -50,17 +50,17 @@ case class Triangle(val a: Vec2d, val b: Vec2d, val c: Vec2d,
   def contains(v: Vec2d) = Geometry.inTriangle(v, a, b, c)
 
   def center = Geometry.center(a, b, c)
-
-  def replaceNeighbour(t: Triangle, old: Triangle) {
-    if (old eq na)
-      na = t
-    else if (old eq nb)
-      nb = t
-    else if (old eq nc)
-      nc = t
-    else throw new RuntimeException("Kurwa noo")
-  }
-
+  
+  def adjacentBy(t: Triangle): Edge = {
+    if (t eq na) Ea
+    else if (t eq nb) Eb
+    else if (t eq nc) Ec
+    else null
+  } 
+  
+  def replaceNeighbour(t: Triangle, old: Triangle) = 
+    this(adjacentBy(old)) = t
+  
   def opposite(a: Vec2d, b: Vec2d) =
     if (a == this.a && b == this.b)
       c
@@ -70,5 +70,5 @@ case class Triangle(val a: Vec2d, val b: Vec2d, val c: Vec2d,
       b
 
   def points = (a, b, c)
-
+  def pointSeq = Seq(a, b, c)
 }

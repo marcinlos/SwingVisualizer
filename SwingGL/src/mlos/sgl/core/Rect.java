@@ -53,7 +53,7 @@ public final class Rect {
     
     public static Rect scale(Rect r, double sx, double sy) {
         Vec2d c = r.center();
-        return at(c, r.width() * sx, r.width() * sy);
+        return at(c, r.width() * sx, r.height() * sy);
     }
     
     public double left() {
