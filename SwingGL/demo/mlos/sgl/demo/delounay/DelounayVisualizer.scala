@@ -30,8 +30,9 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   val path = new Stack[CanvasSegment]
   var prev: Vec2d = null
 
-  def nextColor(alpha: Double = 0.3): Color = {
+  def nextColor(alpha: Double = 0.6): Color = {
     val h = Random.nextDouble * 2 * math.Pi
+    println(h)
     return HSV.hsv2rgb(h, 1, 1, alpha)
   }
 
@@ -61,7 +62,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     p.setZ(0.3)
     scene.addObject(p)
     refresh()
-    delay(300)
+    delay(600)
     scene.removeObject(p)
     refresh()
   }
@@ -77,6 +78,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     signalPoly(List(a, b, c), Color.green)
     path foreach scene.removeObject
     path.clear()
+    refresh()
     prev = null
     delay(500)
   }
@@ -84,6 +86,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   def lineTo(p: Vec2d) {
     val s = new CanvasSegment(new Segment(prev, p))
     s.setDashed(true)
+    s.setColor(Color.red)
     s.setZ(0.2)
     scene.addObject(s)
     refresh()
@@ -119,12 +122,17 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     val pobj = triangles.remove(p.points)
     val qobj = triangles.remove(q.points)
 
-    pobj.setFillColor(Color.cyan)
-    qobj.setFillColor(Color.cyan)
+    pobj.setFillColor(Color.red)
+    qobj.setFillColor(Color.red)
     refresh()
     delay(1000)
     scene.removeObject(pobj)
     scene.removeObject(qobj)
     refresh()
   }
+  
+  override def finished() {
+    hideFocusPoint()
+  }
+  
 }

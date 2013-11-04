@@ -23,7 +23,7 @@ class DelounayScene(s: String) extends AlgorithmScene(s) { self =>
             val ps = points
             ps foreach { p =>
               p.setColor(Color.gray)
-              p.setSize(6)
+              p.setSize(4)
               p.setZ(0.9)
             }
             alg.run(points map { _.getPoint } toSeq)

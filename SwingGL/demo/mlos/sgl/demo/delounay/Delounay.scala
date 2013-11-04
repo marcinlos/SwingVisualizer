@@ -3,8 +3,6 @@ package mlos.sgl.demo.delounay
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Queue
 
-import Edge._
-import Vertex._
 import mlos.sgl.core.Geometry
 import mlos.sgl.core.Rect
 import mlos.sgl.core.Vec2d
@@ -16,6 +14,7 @@ trait DelounayListener {
   def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle)
   def swap(p: Triangle, q: Triangle)
   def triangle(t: Triangle)
+  def finished()
 }
 
 class Delounay(listener: Delounay#Listener) {
@@ -25,7 +24,7 @@ class Delounay(listener: Delounay#Listener) {
   var root: Triangle = null
 
   def run(points: Seq[Vec2d]) {
-    val bounds = Rect.scale(Geometry.aabb(points: _*), 1.1, 1.1)
+    val bounds = Rect.scale(Geometry.aabb(points: _*), 1.2, 1.2)
     val lb = bounds.leftBottom
     val lt = bounds.leftTop
     val rb = bounds.rightBottom
@@ -39,6 +38,7 @@ class Delounay(listener: Delounay#Listener) {
     listener.triangle(top)
 
     points foreach add
+    listener.finished()
   }
 
   def findTriangle(v: Vec2d): Triangle = {
@@ -54,7 +54,7 @@ class Delounay(listener: Delounay#Listener) {
         def worstDir(e: Edge) = -Geometry.dot(diff, t.normal(e))
 
         var found: Triangle = null
-        val edges = Edge.values.toSeq sortBy (worstDir)
+        val edges = Edge.all.toSeq sortBy (worstDir)
         edges.toStream takeWhile (_ => found == null) foreach { e =>
           val neighbour = t.n(e)
           if (neighbour != null && visited.add(neighbour))
@@ -107,7 +107,7 @@ class Delounay(listener: Delounay#Listener) {
         def trySwap(n: Triangle): Boolean = {
           var split = false
           if (n != null) {
-            val v = opposite(n adjacentBy t)
+            val v = (n adjacentBy t).opposite
             if (Geometry.incircle(t.a, t.b, t.c, n(v)) > 0) {
               val (r, s) = swapDiagonals(t, n)
               queue.enqueue(r, s)
@@ -121,28 +121,22 @@ class Delounay(listener: Delounay#Listener) {
     }
   }
 
-  def opposite(e: Edge) = e match {
-    case Ea => Vc
-    case Eb => Va
-    case Ec => Vb
-  }
-
   def swapDiagonals(p: Triangle, q: Triangle): (Triangle, Triangle) = {
 
     val ep = p.adjacentBy(q)
     val eq = q.adjacentBy(p)
-    val vp = opposite(ep)
-    val vq = opposite(eq)
+    val vp = ep.opposite
+    val vq = eq.opposite
 
-    val r = Triangle(p(vp), p(next(vp)), q(vq), null, null, null)
-    val s = Triangle(q(vq), q(next(vq)), p(vp), null, null, null)
+    val r = Triangle(p(vp), p(vp.next), q(vq), null, null, null)
+    val s = Triangle(q(vq), q(vq.next), p(vp), null, null, null)
 
-    r(Ea) = p.n(edgeOf(vp))
-    r(Eb) = q.n(edgeOf(prev(vq)))
+    r(Ea) = p.n(vp.edge)
+    r(Eb) = q.n(vq.prev.edge)
     r(Ec) = s
 
-    s(Ea) = q.n(edgeOf(vq))
-    s(Eb) = p.n(edgeOf(prev(vp)))
+    s(Ea) = q.n(vq.edge)
+    s(Eb) = p.n(vp.prev.edge)
     s(Ec) = r
 
     if (r.n(Ea) != null) r.n(Ea).replaceNeighbour(r, p)
@@ -159,41 +153,5 @@ class Delounay(listener: Delounay#Listener) {
       
     return (r, s)
   }
-
-  def next(v: Vertex) = v match {
-    case Va => Vb
-    case Vb => Vc
-    case Vc => Va
-  }
-
-  def vertexOf(e: Edge) = e match {
-    case Ea => Va
-    case Eb => Vb
-    case Ec => Vc
-  }
-
-  def edgeOf(v: Vertex) = v match {
-    case Va => Ea
-    case Vb => Eb
-    case Vc => Ec
-  }
-
-  def prev(v: Vertex) = v match {
-    case Va => Vc
-    case Vb => Va
-    case Vc => Vb
-  }
-
-  //  def next(e: Edge) = e match {
-  //    case Ea => Eb
-  //    case Eb => Ec
-  //    case Ec => Ea
-  //  }
-  //  
-  //  def pref(e: Edge) = e match {
-  //    case Ea => Ec
-  //    case Eb => Ea
-  //    case Ec => Eb
-  //  }
 
 }

@@ -1,13 +1,5 @@
 package mlos.sgl.demo.delounay
 
-import Edge.Ea
-import Edge.Eb
-import Edge.Ec
-import Edge.Edge
-import Vertex.Va
-import Vertex.Vb
-import Vertex.Vc
-import Vertex.Vertex
 import mlos.sgl.core.Geometry
 import mlos.sgl.core.Vec2d
 
