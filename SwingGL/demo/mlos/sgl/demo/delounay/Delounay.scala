@@ -32,7 +32,7 @@ class Delounay(listener: Delounay#Listener) {
 
     root = Triangle(lb, rb, rt)
     val top = Triangle(rt, lt, lb)
-    top.connect(Ec, root)
+    top.connect(Eca, root)
 
     listener.triangle(root)
     listener.triangle(top)
@@ -74,9 +74,9 @@ class Delounay(listener: Delounay#Listener) {
     val nb = Triangle(v, t.b, t.c)
     val nc = Triangle(v, t.c, t.a)
 
-    na.connect(nc, t(Ea), nb)
-    nb.connect(na, t(Eb), nc)
-    nc.connect(nb, t(Ec), na)
+    na.connect(nc, t(Eab), nb)
+    nb.connect(na, t(Ebc), nc)
+    nc.connect(nb, t(Eca), na)
     
     listener.break(t, v, na, nb, nc)
     if (root eq t)
@@ -116,14 +116,16 @@ class Delounay(listener: Delounay#Listener) {
 
   private def flip(p: Triangle, q: Triangle): (Triangle, Triangle) = {
 
-    val vp = (p commonEdge q).opposite
-    val vq = (q commonEdge p).opposite
+    val ep = p commonEdge q
+    val eq = q commonEdge p
+    val vp = ep.opposite
+    val vq = eq.opposite
 
     val r = Triangle(p(vp), p(vp.next), q(vq))
     val s = Triangle(q(vq), q(vq.next), p(vp))
 
-    r.connect(p(vp.edge), q(vq.prev.edge), s)
-    s.connect(q(vq.edge), p(vp.prev.edge), r)
+    r.connect(p(ep.prev), q(eq.next), s)
+    s.connect(q(eq.prev), p(ep.next), r)
     
     listener.flip(p, q)
     listener.triangle(r)

@@ -18,21 +18,21 @@ case class Triangle(
   }
 
   def apply(e: Edge) = e match {
-    case Ea => na
-    case Eb => nb
-    case Ec => nc
+    case Eab => na
+    case Ebc => nb
+    case Eca => nc
   }
 
   def update(e: Edge, t: Triangle) = e match {
-    case Ea => na = t
-    case Eb => nb = t
-    case Ec => nc = t
+    case Eab => na = t
+    case Ebc => nb = t
+    case Eca => nc = t
   }
 
   def segment(e: Edge) = e match {
-    case Ea => (a, b)
-    case Eb => (b, c)
-    case Ec => (c, a)
+    case Eab => (a, b)
+    case Ebc => (b, c)
+    case Eca => (c, a)
   }
 
   def normal(e: Edge): Vec2d = {
@@ -48,16 +48,16 @@ case class Triangle(
   def center = Geometry.center(a, b, c)
 
   def commonEdge(t: Triangle): Edge = {
-    if (t == na) Ea
-    else if (t == nb) Eb
-    else if (t == nc) Ec
+    if (t == na) Eab
+    else if (t == nb) Ebc
+    else if (t == nc) Eca
     else null
   }
 
   def edge(p: Vec2d, q: Vec2d) = (p, q) match {
-    case (`a`, `b`) => Ea
-    case (`b`, `c`) => Eb
-    case (`c`, `a`) => Ec
+    case (`a`, `b`) => Eab
+    case (`b`, `c`) => Ebc
+    case (`c`, `a`) => Eca
   }
 
   def connect(e: Edge, t: Triangle) {

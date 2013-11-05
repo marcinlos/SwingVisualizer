@@ -9,18 +9,18 @@ sealed trait Vertex {
 case object Va extends Vertex { 
   val next = Vb
   val prev = Vc
-  val edge = Ea
+  val edge = Eab
 }
 
 case object Vb extends Vertex { 
   val next = Vc
   val prev = Va
-  val edge = Eb
+  val edge = Ebc
 }
 
 case object Vc extends Vertex { 
   val next = Va
   val prev = Vb
-  val edge = Ec
+  val edge = Eca
 }
 
