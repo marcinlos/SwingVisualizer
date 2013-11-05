@@ -68,7 +68,8 @@ public class Drawer {
     }
     
     public Drawer solid(float width) {
-        return stroke(new BasicStroke(width));
+        return stroke(new BasicStroke(width, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_BEVEL, 1));
     }
     
     public Drawer dashed(float width, float... dash) {
@@ -148,11 +149,38 @@ public class Drawer {
         gfx.fillPolygon(p.xs, p.ys, p.n);
         return this;
     }
+    
+    public Drawer oval(Vec2d v, double rx, double ry) {
+        Vec2d rdir = toScreen.applyToDir(new Vec2d(rx, ry));
+        Vec2d center = toScreen.apply(v);
+        int w = (int) Math.abs(rdir.x);
+        int h = (int) Math.abs(rdir.y);
+        int x = (int) center.x - w;
+        int y = (int) center.y - h;
+        
+        gfx.drawOval(x, y, 2 * w, 2 * h);
+        return this;
+    }
 
-//    public Drawer rect(Vec2d leftTop, Vec2d rightBottom) {
-//        
-//        return this;
-//    }
+    public Drawer circle(Vec2d v, double r) {
+        return oval(v, r, r);
+    }
+    
+    public Drawer fillOval(Vec2d v, double rx, double ry) {
+        Vec2d rdir = toScreen.applyToDir(new Vec2d(rx, ry));
+        Vec2d center = toScreen.apply(v);
+        int w = (int) Math.abs(rdir.x);
+        int h = (int) Math.abs(rdir.y);
+        int x = (int) center.x - w;
+        int y = (int) center.y - h;
+        gfx.fillOval(x, y, 2 * w, 2 * h);
+        return this;
+    }
+    
+    
+    public Drawer fillCircle(Vec2d v, double r) {
+        return fillOval(v, r, r);
+    }
     
     public void restore() {
         if (oldColor != null) {

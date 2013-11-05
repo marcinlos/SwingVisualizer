@@ -47,6 +47,12 @@ public class Transform {
         }
     }
     
+    public Vec2d applyToDir(Vec2d a) {
+        double x = m[0][0] * a.x + m[0][1] * a.y;
+        double y = m[1][0] * a.x + m[1][1] * a.y;
+        return new Vec2d(x, y);
+    }
+    
     @Override
     public String toString() {
         String rowFmt = String.format("{%1$s, %1$s, %1$s}", "%.2f");

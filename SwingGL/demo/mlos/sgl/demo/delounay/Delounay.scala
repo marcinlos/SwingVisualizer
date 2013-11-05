@@ -11,8 +11,12 @@ trait DelounayListener {
   def point(a: Vec2d)
   def nextHop(t: Triangle)
   def foundContaining(v: Vec2d, t: Triangle)
+  def beginFixup()
+  def testCircle(t: Triangle, n: Triangle, v: Vertex)
   def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle)
+  def visit(t: Triangle)
   def flip(p: Triangle, q: Triangle)
+  def endFixup()
   def triangle(t: Triangle)
   def finished()
 }
@@ -77,11 +81,11 @@ class Delounay(listener: Delounay#Listener) {
     na.connect(nc, t(Eab), nb)
     nb.connect(na, t(Ebc), nc)
     nc.connect(nb, t(Eca), na)
-    
+
     listener.break(t, v, na, nb, nc)
     if (root eq t)
       root = na
-      
+
     fix(na, nb, nc)
   }
 
@@ -89,19 +93,23 @@ class Delounay(listener: Delounay#Listener) {
     val visited = new HashSet[Triangle]
     val queue = new Queue[Triangle]
     queue.enqueue(ts: _*)
-    
-    def incircle(t: Triangle, v: Vec2d) = 
-      Geometry.incircle(t.a, t.b, t.c, v) > 0
 
+    def incircle(t: Triangle, n: Triangle, v: Vertex) = {
+      listener.testCircle(t, n, v)
+      Geometry.incircle(t.a, t.b, t.c, n(v)) > 0
+    }
+
+    listener.beginFixup()
     while (!queue.isEmpty) {
       val t = queue.dequeue()
       if (visited.add(t)) {
+        listener.visit(t)
 
         def trySwap(n: Triangle): Boolean = {
           var split = false
           if (n != null) {
             val v = (n commonEdge t).opposite
-            if (incircle(t, n(v))) {
+            if (incircle(t, n, v)) {
               val (r, s) = flip(t, n)
               queue.enqueue(r, s)
               split = true
@@ -112,10 +120,10 @@ class Delounay(listener: Delounay#Listener) {
         trySwap(t.na) || trySwap(t.nb) || trySwap(t.nc)
       }
     }
+    listener.endFixup()
   }
 
   private def flip(p: Triangle, q: Triangle): (Triangle, Triangle) = {
-
     val ep = p commonEdge q
     val eq = q commonEdge p
     val vp = ep.opposite
@@ -126,14 +134,14 @@ class Delounay(listener: Delounay#Listener) {
 
     r.connect(p(ep.prev), q(eq.next), s)
     s.connect(q(eq.prev), p(ep.next), r)
-    
+
     listener.flip(p, q)
     listener.triangle(r)
     listener.triangle(s)
 
     if (root == p || root == q)
       root = s
-      
+
     return (r, s)
   }
 
