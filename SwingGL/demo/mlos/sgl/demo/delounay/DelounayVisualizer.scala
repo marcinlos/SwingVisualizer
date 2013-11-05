@@ -118,7 +118,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     refresh()
   }
 
-  override def swap(p: Triangle, q: Triangle) {
+  override def flip(p: Triangle, q: Triangle) {
     val pobj = triangles.remove(p.points)
     val qobj = triangles.remove(q.points)
 

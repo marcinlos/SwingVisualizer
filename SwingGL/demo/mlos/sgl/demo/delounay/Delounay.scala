@@ -12,7 +12,7 @@ trait DelounayListener {
   def nextHop(t: Triangle)
   def foundContaining(v: Vec2d, t: Triangle)
   def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle)
-  def swap(p: Triangle, q: Triangle)
+  def flip(p: Triangle, q: Triangle)
   def triangle(t: Triangle)
   def finished()
 }
@@ -30,9 +30,9 @@ class Delounay(listener: Delounay#Listener) {
     val rb = bounds.rightBottom
     val rt = bounds.rightTop
 
-    root = Triangle(lb, rb, rt, null, null, null)
-    val top = Triangle(rt, lt, lb, null, null, root)
-    root.nc = top
+    root = Triangle(lb, rb, rt)
+    val top = Triangle(rt, lt, lb)
+    top.connect(Ec, root)
 
     listener.triangle(root)
     listener.triangle(top)
@@ -56,7 +56,7 @@ class Delounay(listener: Delounay#Listener) {
         var found: Triangle = null
         val edges = Edge.all.toSeq sortBy (worstDir)
         edges.toStream takeWhile (_ => found == null) foreach { e =>
-          val neighbour = t.n(e)
+          val neighbour = t(e)
           if (neighbour != null && visited.add(neighbour))
             found = visit(neighbour)
         }
@@ -70,35 +70,28 @@ class Delounay(listener: Delounay#Listener) {
     listener.point(v)
     val t = findTriangle(v)
 
-    val na = Triangle(v, t.a, t.b, null, t.n(Ea), null)
-    val nb = Triangle(v, t.b, t.c, null, t.n(Eb), null)
-    val nc = Triangle(v, t.c, t.a, null, t.n(Ec), null)
+    val na = Triangle(v, t.a, t.b)
+    val nb = Triangle(v, t.b, t.c)
+    val nc = Triangle(v, t.c, t.a)
 
-    na(Ea) = nc
-    na(Ec) = nb
-    nb(Ea) = na
-    nb(Ec) = nc
-    nc(Ea) = nb
-    nc(Ec) = na
+    na.connect(nc, t(Ea), nb)
+    nb.connect(na, t(Eb), nc)
+    nc.connect(nb, t(Ec), na)
+    
     listener.break(t, v, na, nb, nc)
-
-    if (na.n(Eb) != null)
-      na.n(Eb).replaceNeighbour(na, t)
-    if (nb.n(Eb) != null)
-      nb.n(Eb).replaceNeighbour(nb, t)
-    if (nc.n(Eb) != null)
-      nc.n(Eb).replaceNeighbour(nc, t)
-
     if (root eq t)
       root = na
       
     fix(na, nb, nc)
   }
 
-  def fix(ts: Triangle*) {
+  private def fix(ts: Triangle*) {
     val visited = new HashSet[Triangle]
     val queue = new Queue[Triangle]
     queue.enqueue(ts: _*)
+    
+    def incircle(t: Triangle, v: Vec2d) = 
+      Geometry.incircle(t.a, t.b, t.c, v) > 0
 
     while (!queue.isEmpty) {
       val t = queue.dequeue()
@@ -107,9 +100,9 @@ class Delounay(listener: Delounay#Listener) {
         def trySwap(n: Triangle): Boolean = {
           var split = false
           if (n != null) {
-            val v = (n adjacentBy t).opposite
-            if (Geometry.incircle(t.a, t.b, t.c, n(v)) > 0) {
-              val (r, s) = swapDiagonals(t, n)
+            val v = (n commonEdge t).opposite
+            if (incircle(t, n(v))) {
+              val (r, s) = flip(t, n)
               queue.enqueue(r, s)
               split = true
             }
@@ -121,34 +114,22 @@ class Delounay(listener: Delounay#Listener) {
     }
   }
 
-  def swapDiagonals(p: Triangle, q: Triangle): (Triangle, Triangle) = {
+  private def flip(p: Triangle, q: Triangle): (Triangle, Triangle) = {
 
-    val ep = p.adjacentBy(q)
-    val eq = q.adjacentBy(p)
-    val vp = ep.opposite
-    val vq = eq.opposite
+    val vp = (p commonEdge q).opposite
+    val vq = (q commonEdge p).opposite
 
-    val r = Triangle(p(vp), p(vp.next), q(vq), null, null, null)
-    val s = Triangle(q(vq), q(vq.next), p(vp), null, null, null)
+    val r = Triangle(p(vp), p(vp.next), q(vq))
+    val s = Triangle(q(vq), q(vq.next), p(vp))
 
-    r(Ea) = p.n(vp.edge)
-    r(Eb) = q.n(vq.prev.edge)
-    r(Ec) = s
-
-    s(Ea) = q.n(vq.edge)
-    s(Eb) = p.n(vp.prev.edge)
-    s(Ec) = r
-
-    if (r.n(Ea) != null) r.n(Ea).replaceNeighbour(r, p)
-    if (r.n(Eb) != null) r.n(Eb).replaceNeighbour(r, q)
-    if (s.n(Ea) != null) s.n(Ea).replaceNeighbour(s, q)
-    if (s.n(Eb) != null) s.n(Eb).replaceNeighbour(s, p)
-
-    listener.swap(p, q)
+    r.connect(p(vp.edge), q(vq.prev.edge), s)
+    s.connect(q(vq.edge), p(vp.prev.edge), r)
+    
+    listener.flip(p, q)
     listener.triangle(r)
     listener.triangle(s)
 
-    if ((root eq p) || (root eq q))
+    if (root == p || root == q)
       root = s
       
     return (r, s)
