@@ -19,22 +19,29 @@ class DelounayScene(s: String) extends AlgorithmScene(s) { self =>
       async {
         e.getKeyCode match {
           case KeyEvent.VK_F5 =>
-            val alg = new Delounay(new DelounayVisualizer(self))
-            val ps = points
-            ps foreach { p =>
-              p.setColor(Color.gray)
-              p.setSize(4)
-              p.setZ(0.9)
-            }
-            alg.run(points map { _.getPoint } toSeq)
-          case _ => 
+            val alg = prepareDelounay()
+            alg.run(points map { _.getPoint } toSeq, alg.findByWalk)
+          case KeyEvent.VK_F16 =>
+            val alg = prepareDelounay()
+            alg.run(points map { _.getPoint } toSeq, alg.findByHistory)
+          case _ =>
         }
       }
     }
   }
-  
+
+  def prepareDelounay() = {
+    val ps = points
+    ps foreach { p =>
+      p.setColor(Color.gray)
+      p.setSize(4)
+      p.setZ(0.9)
+    }
+    new Delounay(new DelounayVisualizer(self))
+  }
+
   def points = extract(classOf[CanvasPoint])
-  
+
 }
 
 object DelounayScene extends scala.App {

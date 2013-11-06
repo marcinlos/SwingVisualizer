@@ -10,8 +10,10 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 
 import mlos.sgl.Scene;
 import mlos.sgl.canvas.CanvasPoint;
@@ -28,6 +30,7 @@ import mlos.sgl.view.Painter;
 public class RandomPoints extends AbstractMode {
 
     private JPanel optionsPanel;
+    final JSlider amountSlider = new JSlider(0, 100, 10);
 
     private Vec2d startPos;
     private Vec2d currentPos;
@@ -86,6 +89,9 @@ public class RandomPoints extends AbstractMode {
         optionsPanel.add(radioRect);
         optionsPanel.add(radioCircle);
         optionsPanel.add(onBorder);
+        
+        optionsPanel.add(new JLabel("Count"));
+        optionsPanel.add(amountSlider);
     }
 
     @Override
@@ -120,7 +126,7 @@ public class RandomPoints extends AbstractMode {
 
     private void addRandomPoints(Vec2d startNorm, Vec2d endNorm) {
         Rect bounds = Geometry.aabb(startNorm, endNorm);
-        int n = 20;
+        int n = amountSlider.getValue();
         List<Vec2d> points = Randomizer.inRect(bounds).list(n);
         
         List<Vec2d> planePoints = new ArrayList<>(points.size());

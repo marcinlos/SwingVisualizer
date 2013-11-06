@@ -3,13 +3,13 @@ package mlos.sgl.demo.delounay
 import mlos.sgl.core.Geometry
 import mlos.sgl.core.Vec2d
 
-case class Triangle(
-  val a: Vec2d,
-  val b: Vec2d,
-  val c: Vec2d,
-  var na: Triangle = null,
-  var nb: Triangle = null,
-  var nc: Triangle = null) {
+case class Triangle(val a: Vec2d, val b: Vec2d, val c: Vec2d) {
+  
+  var na: Triangle = null
+  var nb: Triangle = null
+  var nc: Triangle = null
+  
+  var children: List[Triangle] = List.empty
 
   def apply(v: Vertex) = v match {
     case Va => a

@@ -25,27 +25,31 @@ class Delounay(listener: Delounay#Listener) {
 
   type Listener = DelounayListener
 
-  var root: Triangle = null
+  var root1: Triangle = null
+  var root2: Triangle = null
 
-  def run(points: Seq[Vec2d]) {
+  var init: Triangle = null
+
+  def run(points: Seq[Vec2d], find: Vec2d => Triangle) {
     val bounds = Rect.scale(Geometry.aabb(points: _*), 1.2, 1.2)
     val lb = bounds.leftBottom
     val lt = bounds.leftTop
     val rb = bounds.rightBottom
     val rt = bounds.rightTop
 
-    root = Triangle(lb, rb, rt)
-    val top = Triangle(rt, lt, lb)
-    top.connect(Eca, root)
+    root1 = Triangle(lb, rb, rt)
+    root2 = Triangle(rt, lt, lb)
+    root2.connect(Eca, root1)
 
-    listener.triangle(root)
-    listener.triangle(top)
+    listener.triangle(root1)
+    listener.triangle(root2)
 
-    points foreach add
+    init = root1
+    points foreach add(find)
     listener.finished()
   }
 
-  def findTriangle(v: Vec2d): Triangle = {
+  def findByWalk(v: Vec2d): Triangle = {
     val visited = new HashSet[Triangle]
 
     def visit(t: Triangle): Triangle = {
@@ -67,12 +71,28 @@ class Delounay(listener: Delounay#Listener) {
         found
       }
     }
-    visit(root)
+    visit(init)
   }
 
-  def add(v: Vec2d) {
+  def findByHistory(v: Vec2d): Triangle = {
+
+    def visit(t: Triangle): Triangle = {
+      listener.nextHop(t)
+      if (!t.children.isEmpty) {
+        val Some(triangle) = t.children.find(_.contains(v))
+        visit(triangle)
+      } else {
+        listener.foundContaining(v, t)
+        return t
+      }
+    }
+    val Some(first) = List(root1, root2).find(_.contains(v))
+    visit(first)
+  }
+
+  def add(find: Vec2d => Triangle)(v: Vec2d) {
     listener.point(v)
-    val t = findTriangle(v)
+    val t = find(v)
 
     val na = Triangle(v, t.a, t.b)
     val nb = Triangle(v, t.b, t.c)
@@ -82,9 +102,11 @@ class Delounay(listener: Delounay#Listener) {
     nb.connect(na, t(Ebc), nc)
     nc.connect(nb, t(Eca), na)
 
+    t.children = List(na, nb, nc)
+
     listener.break(t, v, na, nb, nc)
-    if (root eq t)
-      root = na
+    if (init eq t)
+      init = na
 
     fix(na, nb, nc)
   }
@@ -135,12 +157,16 @@ class Delounay(listener: Delounay#Listener) {
     r.connect(p(ep.prev), q(eq.next), s)
     s.connect(q(eq.prev), p(ep.next), r)
 
+    val flipped = List(r, s)
+    p.children = flipped
+    q.children = flipped
+
     listener.flip(p, q)
     listener.triangle(r)
     listener.triangle(s)
 
-    if (root == p || root == q)
-      root = s
+    if (init == p || init == q)
+      init = s
 
     return (r, s)
   }

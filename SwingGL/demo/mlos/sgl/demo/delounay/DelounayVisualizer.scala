@@ -33,13 +33,20 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   val triangles = new HashMap[Tri, CanvasPolygon]
 
   val path = new Stack[CanvasSegment]
+  val pathTriangles = new Stack[CanvasPolygon]
   var prev: Vec2d = null
 
   val fixup = new Stack[CanvasPolygon]
   
   val faceCol = new Color(0, 1, 0, 0.5f)
+  val pathFaceCol = Color.blue
   val testBaseCol = Color.yellow
   val testedFaceCol = Color.cyan
+
+//  def nextColor(alpha: Double = 0.3): Color = {
+//    val h = Random.nextDouble * 2 * math.Pi
+//    HSV.hsv2rgb(h, 1, 1, alpha)
+//  }
   
   override def triangle(t: Triangle) {
     val poly = new CanvasPolygon(t.pointSeq)
@@ -77,6 +84,8 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     signalPoly(t.pointSeq, Color.green)
     path foreach scene.removeObject
     path.clear()
+    pathTriangles foreach scene.removeObject
+    pathTriangles.clear()
     refresh()
     prev = null
     delay(500)
@@ -163,6 +172,14 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
       lineTo(t.center)
     }
     prev = t.center
+    signalTriangle(t, Color.red)
+    val p = new CanvasPolygon(t.pointSeq)
+    p.setOpaque(true)
+    p.setFillColor(pathFaceCol)
+    p.setZ(0.3 - pathTriangles.size * 1e-5)
+    p.setThickness(1)
+    scene.addObject(p)
+    pathTriangles.push(p)
   }
 
   override def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle) {
