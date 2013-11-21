@@ -20,11 +20,13 @@ import mlos.sgl.util.{ Color => HSV }
 import mlos.sgl.view.Drawer
 import mlos.sgl.view.Painter
 import mlos.sgl.demo.HasAdjustableSpeed
+import mlos.sgl.demo.Steppable
 
 class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   with Delounay#Listener
   with HasAdjustableSpeed
-  with CanSignalPoint {
+  with CanSignalPoint
+  with Steppable {
 
   setSpeed(1)
 
@@ -65,11 +67,11 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     delay(200)
   }
 
-  def signalPoly(a: Traversable[Vec2d], c: Color) {
+  def signalPoly(a: Traversable[Vec2d], c: Color, z: Double = 0.3) {
     val p = new CanvasPolygon(a.toSeq)
     p.setOpaque(true)
     p.setFillColor(c)
-    p.setZ(0.3)
+    p.setZ(z)
     scene.addObject(p)
     refresh()
     delay(600)
@@ -77,7 +79,8 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     refresh()
   }
 
-  def signalTriangle(t: Triangle, c: Color) = signalPoly(t.pointSeq, c)
+  def signalTriangle(t: Triangle, c: Color, z: Double = 0.3) = 
+    signalPoly(t.pointSeq, c, z)
 
   override def foundContaining(v: Vec2d, t: Triangle) {
     lineTo(v)
@@ -125,6 +128,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
 
   override def testCircle(t: Triangle, n: Triangle, v: Vertex) {
+    breakpoint()
     val p = new CanvasPolygon(t.pointSeq)
     p.setOpaque(true)
     p.setFillColor(testBaseCol)
@@ -168,21 +172,24 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
 
   override def nextHop(t: Triangle) {
+    breakpoint()
     if (prev != null) {
       lineTo(t.center)
     }
     prev = t.center
-    signalTriangle(t, Color.red)
+    val z = 0.3 - pathTriangles.size * 1e-5 
+    signalTriangle(t, Color.red, z)
     val p = new CanvasPolygon(t.pointSeq)
     p.setOpaque(true)
     p.setFillColor(pathFaceCol)
-    p.setZ(0.3 - pathTriangles.size * 1e-5)
+    p.setZ(z)
     p.setThickness(1)
     scene.addObject(p)
     pathTriangles.push(p)
   }
 
   override def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle) {
+    breakpoint()
     val p = new CanvasPolygon(t.pointSeq)
     p.setThickness(3)
     p.setBorderColor(Color.red)
@@ -202,6 +209,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   }
 
   override def flip(p: Triangle, q: Triangle) {
+    breakpoint()
     val pobj = triangles.remove(p.points)
     val qobj = triangles.remove(q.points)
 

@@ -17,6 +17,7 @@ class TriangulationScene(s: String) extends AlgorithmScene(s) { scene =>
       async {
         e.getKeyCode match {
           case KeyEvent.VK_F5 =>
+            println("sdfsdf")
             extractPolys() foreach { p =>
               val classifier = new ClassifyVertices(p.vs)
               classifier.setListener(new ClassificationVisualizer(scene))
@@ -33,6 +34,7 @@ class TriangulationScene(s: String) extends AlgorithmScene(s) { scene =>
       }
     }
   }
+  handlerStack.push(handler)
 
   def extractPolys() = extract(classOf[CanvasPolygon]) map { p =>
     p.setOpaque(true)

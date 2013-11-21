@@ -21,7 +21,7 @@ class DelounayScene(s: String) extends AlgorithmScene(s) { self =>
           case KeyEvent.VK_F5 =>
             val alg = prepareDelounay()
             alg.run(points map { _.getPoint } toSeq, alg.findByWalk)
-          case KeyEvent.VK_F16 =>
+          case KeyEvent.VK_F6 =>
             val alg = prepareDelounay()
             alg.run(points map { _.getPoint } toSeq, alg.findByHistory)
           case _ =>
