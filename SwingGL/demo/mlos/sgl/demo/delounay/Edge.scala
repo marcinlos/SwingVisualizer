@@ -1,7 +1,8 @@
 package mlos.sgl.demo.delounay
 
 sealed trait Edge { 
-  def vertex: Vertex
+  def start: Vertex
+  def end: Vertex
   def opposite: Vertex
   
   def next: Edge
@@ -9,21 +10,24 @@ sealed trait Edge {
 }
 
 case object Eab extends Edge { 
-  val vertex = Va
+  val start = Va
+  val end = Vb
   val opposite = Vc
   val next = Ebc
   val prev = Eca
 }
 
 case object Ebc extends Edge { 
-  val vertex = Vb
+  val start = Vb
+  val end = Vc
   val opposite = Va
   val next = Eca
   val prev = Eab
 }
 
 case object Eca extends Edge { 
-  val vertex = Vc 
+  val start = Vc
+  val end = Va
   val opposite = Vb
   val next = Eab
   val prev = Ebc

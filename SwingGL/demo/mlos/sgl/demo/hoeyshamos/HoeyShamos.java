@@ -123,10 +123,6 @@ public class HoeyShamos {
                 T.remove(s);
                 moveLine(e.point.x);
             } else if (e.isIntersection()) {
-                System.out.println("p = " + e.p);
-                System.out.println("q = " + e.q);
-                System.out.println("p vs q: " + comparator.compare(e.p, e.q));
-                
                 Segment s1 = T.lower(e.p);
                 Segment s2 = T.higher(e.q);
                 chekForIntersection(e.p, s2);

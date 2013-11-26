@@ -11,6 +11,10 @@ import mlos.sgl.ui.InputHandler
 import mlos.sgl.ui.InputAdapter
 import java.awt.event.KeyEvent
 import java.awt.Color
+import mlos.sgl.core.Vec2d
+import mlos.sgl.util.Randomizer
+import mlos.sgl.core.Rect
+import mlos.sgl.core.Geometry
 
 class DelounayScene(s: String) extends AlgorithmScene(s) { self =>
 
@@ -20,10 +24,10 @@ class DelounayScene(s: String) extends AlgorithmScene(s) { self =>
         e.getKeyCode match {
           case KeyEvent.VK_F5 =>
             val alg = prepareDelounay()
-            alg.run(points map { _.getPoint } toSeq, alg.findByWalk)
+            alg.run(points map { _.getPoint } toSeq, _.findByWalk)
           case KeyEvent.VK_F6 =>
             val alg = prepareDelounay()
-            alg.run(points map { _.getPoint } toSeq, alg.findByHistory)
+            alg.run(points map { _.getPoint } toSeq, _.findByHistory)
           case _ =>
         }
       }
@@ -41,9 +45,33 @@ class DelounayScene(s: String) extends AlgorithmScene(s) { self =>
   }
 
   def points = extract(classOf[CanvasPoint])
+  
+  def this(s: String, ps: Iterable[Vec2d]) = {
+    this(s)
+    for (p <- ps) {
+      addPoint(p)
+    }
+    println(canvas.getObjects())
+  }
 
 }
 
 object DelounayScene extends scala.App {
-  App.create(new DelounayScene("Free"))
+  
+  def onSegment(n: Int, a: Vec2d, b: Vec2d) =
+    Range.Double(0, 1 + 1.0 / n, 1.0 / n) map { Geometry.lerp(_, a, b) }
+  
+  def squareBorder(n: Int) = {
+    val r = Rect.aroundOrigin(1)
+    val left = onSegment(n, r.leftTop, r.leftBottom)
+    val right = onSegment(n, r.rightTop, r.rightBottom)
+    val top = onSegment(n, r.leftTop, r.rightTop)
+    val bottom = onSegment(n, r.leftBottom, r.rightBottom)
+    Iterable.concat(left, right, top, bottom)
+  }
+  
+  App.create(
+      new DelounayScene("Free"),
+      new DelounayScene("Square", squareBorder(10))
+  )
 }

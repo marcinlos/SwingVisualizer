@@ -2,10 +2,11 @@ package mlos.sgl.demo.delounay
 
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Queue
-
 import mlos.sgl.core.Geometry
 import mlos.sgl.core.Rect
 import mlos.sgl.core.Vec2d
+import scala.annotation.tailrec
+import mlos.sgl.core.Segment
 
 trait DelounayListener {
   def point(a: Vec2d)
@@ -14,6 +15,7 @@ trait DelounayListener {
   def beginFixup()
   def testCircle(t: Triangle, n: Triangle, v: Vertex)
   def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle)
+  def breakEdge(t: Triangle, s: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, sa: Triangle, sb: Triangle)
   def visit(t: Triangle)
   def flip(p: Triangle, q: Triangle)
   def endFixup()
@@ -30,7 +32,7 @@ class Delounay(listener: Delounay#Listener) {
 
   var init: Triangle = null
 
-  def run(points: Seq[Vec2d], find: Vec2d => Triangle) {
+  def run(points: Seq[Vec2d], findFunc: Delounay => Vec2d => Triangle) {
     val bounds = Rect.scale(Geometry.aabb(points: _*), 1.2, 1.2)
     val lb = bounds.leftBottom
     val lt = bounds.leftTop
@@ -45,30 +47,33 @@ class Delounay(listener: Delounay#Listener) {
     listener.triangle(root2)
 
     init = root1
-    points foreach add(find)
+    points foreach add(findFunc(this))
     listener.finished()
   }
 
   def findByWalk(v: Vec2d): Triangle = {
     val visited = new HashSet[Triangle]
 
+    @tailrec
     def visit(t: Triangle): Triangle = {
       listener.nextHop(t)
       if (t.contains(v)) {
         listener.foundContaining(v, t)
         t
       } else {
-        val diff = Geometry.diff(v, t.center)
-        def worstDir(e: Edge) = -Geometry.dot(diff, t.normal(e))
+        val d = Geometry.diff(v, t.center)
+        val diff = new Segment(v, t.center)
+        def worstDir(e: Edge) = -Geometry.dot(d, t.normal(e))
 
         var found: Triangle = null
-        val edges = Edge.all.toSeq sortBy (worstDir)
-        edges.toStream takeWhile (_ => found == null) foreach { e =>
-          val neighbour = t(e)
-          if (neighbour != null && visited.add(neighbour))
-            found = visit(neighbour)
+        Edge.all takeWhile (_ => found == null) foreach { e =>
+          val p = t(e.start)
+          val q = t(e.end)
+          if (Geometry.properIntersect(new Segment(p, q), diff)) {
+            found = t(e)
+          }
         }
-        found
+        visit(found)
       }
     }
     visit(init)
@@ -94,21 +99,48 @@ class Delounay(listener: Delounay#Listener) {
     listener.point(v)
     val t = find(v)
 
-    val na = Triangle(v, t.a, t.b)
-    val nb = Triangle(v, t.b, t.c)
-    val nc = Triangle(v, t.c, t.a)
+    if (t.inside(v)) {
+      val ta = Triangle(v, t.a, t.b)
+      val tb = Triangle(v, t.b, t.c)
+      val tc = Triangle(v, t.c, t.a)
 
-    na.connect(nc, t(Eab), nb)
-    nb.connect(na, t(Ebc), nc)
-    nc.connect(nb, t(Eca), na)
+      ta.connect(tc, t(Eab), tb)
+      tb.connect(ta, t(Ebc), tc)
+      tc.connect(tb, t(Eca), ta)
 
-    t.children = List(na, nb, nc)
+      t.children = List(ta, tb, tc)
 
-    listener.break(t, v, na, nb, nc)
-    if (init eq t)
-      init = na
+      listener.break(t, v, ta, tb, tc)
+      if (init eq t)
+        init = ta
 
-    fix(na, nb, nc)
+      fix(ta, tb, tc)
+    } else {
+      val et = t.containingEdge(v)
+      val n = t(et)
+      val en = n.containingEdge(v)
+
+      val ta = Triangle(t(et.opposite), v, t(et.end))
+      val tb = Triangle(t(et.opposite), t(et.start), v)
+
+      val na = Triangle(n(en.opposite), v, n(en.end))
+      val nb = Triangle(n(en.opposite), n(en.start), v)
+
+      ta.connect(tb, nb, t(et.next))
+      tb.connect(t(et.prev), na, ta)
+      na.connect(nb, tb, n(en.next))
+      nb.connect(n(en.prev), ta, na)
+
+      t.children = List(ta, tb)
+      n.children = List(na, nb)
+      listener.breakEdge(t, n, v, ta, tb, na, nb)
+
+      if (init eq t)
+        init = ta
+      if (init eq n)
+        init = na
+      fix(ta, tb, na, nb)
+    }
   }
 
   private def fix(ts: Triangle*) {
@@ -139,7 +171,9 @@ class Delounay(listener: Delounay#Listener) {
           }
           split
         }
-        trySwap(t.na) || trySwap(t.nb) || trySwap(t.nc)
+        trySwap(t.na) ||
+      trySwap(t.nb) ||
+          trySwap(t.nc)
       }
     }
     listener.endFixup()

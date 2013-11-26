@@ -39,17 +39,17 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
   var prev: Vec2d = null
 
   val fixup = new Stack[CanvasPolygon]
-  
+
   val faceCol = new Color(0, 1, 0, 0.5f)
   val pathFaceCol = Color.blue
   val testBaseCol = Color.yellow
   val testedFaceCol = Color.cyan
 
-//  def nextColor(alpha: Double = 0.3): Color = {
-//    val h = Random.nextDouble * 2 * math.Pi
-//    HSV.hsv2rgb(h, 1, 1, alpha)
-//  }
-  
+  //  def nextColor(alpha: Double = 0.3): Color = {
+  //    val h = Random.nextDouble * 2 * math.Pi
+  //    HSV.hsv2rgb(h, 1, 1, alpha)
+  //  }
+
   override def triangle(t: Triangle) {
     val poly = new CanvasPolygon(t.pointSeq)
     poly.setOpaque(true)
@@ -79,7 +79,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     refresh()
   }
 
-  def signalTriangle(t: Triangle, c: Color, z: Double = 0.3) = 
+  def signalTriangle(t: Triangle, c: Color, z: Double = 0.3) =
     signalPoly(t.pointSeq, c, z)
 
   override def foundContaining(v: Vec2d, t: Triangle) {
@@ -177,7 +177,7 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
       lineTo(t.center)
     }
     prev = t.center
-    val z = 0.3 - pathTriangles.size * 1e-5 
+    val z = 0.3 - pathTriangles.size * 1e-5
     signalTriangle(t, Color.red, z)
     val p = new CanvasPolygon(t.pointSeq)
     p.setOpaque(true)
@@ -188,12 +188,17 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     pathTriangles.push(p)
   }
 
+  def makePoly(tri: Triangle): CanvasPolygon = {
+      val p = new CanvasPolygon(tri.pointSeq)
+      p.setThickness(3)
+      p.setBorderColor(Color.red)
+      p.setZ(0.15)
+      return p
+  }
+  
   override def break(t: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, tc: Triangle) {
     breakpoint()
-    val p = new CanvasPolygon(t.pointSeq)
-    p.setThickness(3)
-    p.setBorderColor(Color.red)
-    p.setZ(0.15)
+    val p = makePoly(t)
     scene.addObject(p)
     refresh()
     delay(300)
@@ -202,6 +207,24 @@ class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
     List(ta, tb, tc) foreach triangle
     scene.removeObject(p)
     refresh()
+  }
+
+  override def breakEdge(t: Triangle, s: Triangle, v: Vec2d, ta: Triangle, tb: Triangle, sa: Triangle, sb: Triangle) {
+      breakpoint()
+      val pt = makePoly(t)
+      val ps = makePoly(s)
+      scene.addObject(pt)
+      scene.addObject(ps)
+      refresh()
+      delay(300)
+      val tpoly = triangles.remove(t.points)
+      val spoly = triangles.remove(s.points)
+      scene.removeObject(tpoly)
+      scene.removeObject(spoly)
+      List(ta, tb, sa, sb) foreach triangle
+      scene.removeObject(pt)
+      scene.removeObject(ps)
+      refresh()
   }
 
   override def visit(t: Triangle) {

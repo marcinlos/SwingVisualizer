@@ -139,7 +139,7 @@ public class Geometry {
     }
     
     public static double orient2d(Vec2d a, Vec2d b, Vec2d c) {
-        return fastOrient2d_v2(a, b, c);
+        return exactOrient2d(a, b, c);
     }
     
     public static Segment swapEndpoints(Segment s) {
@@ -280,8 +280,12 @@ public class Geometry {
         return maxNorm(p) <= r;
     }
     
-    public static boolean inTriangle(Vec2d p, Vec2d a, Vec2d b, Vec2d c) {
+    public static boolean insideTriangle(Vec2d p, Vec2d a, Vec2d b, Vec2d c) {
         return ccw(a, b, p) && ccw(b, c, p) && ccw(c, a, p);
+    }
+    
+    public static boolean insideTriangleClosure(Vec2d p, Vec2d a, Vec2d b, Vec2d c) {
+        return !cw(a, b, p) && !cw(b, c, p) && !cw(c, a, p);
     }
     
     public static final Comparator<Vec2d> LEXICOGRAPHIC = new Comparator<Vec2d>() {

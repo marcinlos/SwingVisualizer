@@ -82,6 +82,13 @@ public class PolyCreation extends AbstractMode {
             if (duringCreation) {
                 if (points.size() > 2) {
                     CanvasPolygon poly = new CanvasPolygon(points);
+                    for (Vec2d v : points) {
+                        System.out.print(v.x + " ");
+                    }
+                    System.out.println();
+                    for (Vec2d v : points) {
+                        System.out.print(v.y + " ");
+                    }
                     scene.addObject(poly);
                 }
                 points.clear();

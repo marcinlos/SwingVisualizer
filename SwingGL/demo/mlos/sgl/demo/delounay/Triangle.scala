@@ -4,11 +4,11 @@ import mlos.sgl.core.Geometry
 import mlos.sgl.core.Vec2d
 
 case class Triangle(val a: Vec2d, val b: Vec2d, val c: Vec2d) {
-  
+
   var na: Triangle = null
   var nb: Triangle = null
   var nc: Triangle = null
-  
+
   var children: List[Triangle] = List.empty
 
   def apply(v: Vertex) = v match {
@@ -43,7 +43,19 @@ case class Triangle(val a: Vec2d, val b: Vec2d, val c: Vec2d) {
   override def hashCode =
     31 * (a.hashCode + 31 * (b.hashCode + 31 * c.hashCode))
 
-  def contains(v: Vec2d) = Geometry.inTriangle(v, a, b, c)
+  def contains(v: Vec2d) = Geometry.insideTriangleClosure(v, a, b, c)
+  
+  def inside(v: Vec2d) = Geometry.insideTriangle(v, a, b, c)
+
+  def containingEdge(v: Vec2d) = {
+    if (Geometry.colinear(v, a, b))
+      Eab
+    else if (Geometry.colinear(v, b, c))
+      Ebc
+    else if (Geometry.colinear(v, c, a))
+      Eca
+    else null
+  }
 
   def center = Geometry.center(a, b, c)
 
@@ -68,10 +80,14 @@ case class Triangle(val a: Vec2d, val b: Vec2d, val c: Vec2d) {
       t(otherEdge) = this
     }
   }
-  
+
   def connect(na: Triangle, nb: Triangle, nc: Triangle) {
     List(na, nb, nc) zip Edge.all foreach { p => connect(p._2, p._1) }
   }
+  
+  def doubleArea = Geometry.orient2d(a, b, c)
+  
+  override def toString = s"($a, $b, $c)"
 
   def points = (a, b, c)
   def pointSeq = Seq(a, b, c)
