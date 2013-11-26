@@ -1,4 +1,4 @@
-package mlos.sgl.demo.delounay
+package mlos.sgl.demo.delaunay
 
 case class Stats(
   val t: Long,

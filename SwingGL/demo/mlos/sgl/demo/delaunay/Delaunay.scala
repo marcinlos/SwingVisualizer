@@ -1,4 +1,4 @@
-package mlos.sgl.demo.delounay
+package mlos.sgl.demo.delaunay
 
 import scala.collection.mutable.HashSet
 import scala.collection.mutable.Queue
@@ -8,7 +8,7 @@ import mlos.sgl.core.Vec2d
 import scala.annotation.tailrec
 import mlos.sgl.core.Segment
 
-trait DelounayListener {
+trait DelaunayListener {
   def point(a: Vec2d)
   def nextHop(t: Triangle)
   def foundContaining(v: Vec2d, t: Triangle)
@@ -23,16 +23,16 @@ trait DelounayListener {
   def finished()
 }
 
-class Delounay(listener: Delounay#Listener) {
+class Delaunay(listener: Delaunay#Listener) {
 
-  type Listener = DelounayListener
+  type Listener = DelaunayListener
 
   var root1: Triangle = null
   var root2: Triangle = null
 
   var init: Triangle = null
 
-  def run(points: Seq[Vec2d], findFunc: Delounay => Vec2d => Triangle) {
+  def run(points: Seq[Vec2d], findFunc: Delaunay => Vec2d => Triangle) {
     val bounds = Rect.scale(Geometry.aabb(points: _*), 1.2, 1.2)
     val lb = bounds.leftBottom
     val lt = bounds.leftTop

@@ -1,4 +1,4 @@
-package mlos.sgl.demo.delounay
+package mlos.sgl.demo.delaunay
 
 import mlos.sgl.core.Geometry
 import mlos.sgl.core.Vec2d

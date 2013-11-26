@@ -1,8 +1,8 @@
-package mlos.sgl.demo.delounay
+package mlos.sgl.demo.delaunay
 
 import mlos.sgl.core.Vec2d
 
-class BookKeeper extends Delounay#Listener {
+class BookKeeper extends Delaunay#Listener {
 
   var hops = 0
   var incircleTests = 0

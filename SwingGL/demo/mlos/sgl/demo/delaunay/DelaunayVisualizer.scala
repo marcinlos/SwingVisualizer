@@ -1,4 +1,4 @@
-package mlos.sgl.demo.delounay
+package mlos.sgl.demo.delaunay
 
 import java.awt.Color
 import java.awt.Graphics2D
@@ -22,8 +22,8 @@ import mlos.sgl.view.Painter
 import mlos.sgl.demo.HasAdjustableSpeed
 import mlos.sgl.demo.Steppable
 
-class DelounayVisualizer(s: Scene) extends AbstractVisualizer(s)
-  with Delounay#Listener
+class DelaunayVisualizer(s: Scene) extends AbstractVisualizer(s)
+  with Delaunay#Listener
   with HasAdjustableSpeed
   with CanSignalPoint
   with Steppable {

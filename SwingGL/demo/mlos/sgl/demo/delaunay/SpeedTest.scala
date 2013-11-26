@@ -1,4 +1,4 @@
-package mlos.sgl.demo.delounay
+package mlos.sgl.demo.delaunay
 
 import mlos.sgl.core.Vec2d
 import mlos.sgl.util.Randomizer
@@ -10,7 +10,7 @@ import scala.util.Random
 
 object SpeedTest extends App {
 
-  val dummy = new Delounay#Listener {
+  val dummy = new Delaunay#Listener {
     def point(a: Vec2d) = ()
     def nextHop(t: Triangle) = ()
     def foundContaining(v: Vec2d, t: Triangle) = ()
@@ -44,12 +44,12 @@ object SpeedTest extends App {
     return (after - before) / 1000000
   }
 
-  private def randomUniform(n: Int, f: Delounay => Vec2d => Triangle) = {
+  private def randomUniform(n: Int, f: Delaunay => Vec2d => Triangle) = {
     val points = Randomizer.inRect(Rect.aroundOrigin(1)).list(n)
     delounay.run(points, f)
   }
 
-  val delounay = new Delounay(dummy)
+  val delounay = new Delaunay(dummy)
 
   //  val nums = Array(100, 500, 1000, 10000, 100000)
   val nums = Range(1000, 50000, 1000)
@@ -93,9 +93,9 @@ object SpeedTest extends App {
     }
   }
 
-  def fullStats(points: Seq[Vec2d], f: Delounay => Vec2d => Triangle) = {
+  def fullStats(points: Seq[Vec2d], f: Delaunay => Vec2d => Triangle) = {
     val stats = new BookKeeper
-    val del = new Delounay(stats)
+    val del = new Delaunay(stats)
     val t = measure { del.run(points, f) }
     stats.makeStats(t)
   }
