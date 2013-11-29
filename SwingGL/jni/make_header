@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ ! ${JAVA_HOME} ]]; then
+    echo "Please set JAVA_HOME"
+    exit 1
+fi
+javah -cp $( dirname $0 )/../bin -o schewchuk.h  mlos.sgl.core.Schewchuck

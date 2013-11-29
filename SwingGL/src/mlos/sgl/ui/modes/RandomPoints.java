@@ -7,12 +7,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 
 import mlos.sgl.Scene;
@@ -74,22 +70,7 @@ public class RandomPoints extends AbstractMode {
     }
 
     private void setupUI() {
-        optionsPanel = new JPanel();
-
-        ButtonGroup selectionTypes = new ButtonGroup();
-        JRadioButton radioRect = new JRadioButton("rectangle");
-        JRadioButton radioCircle = new JRadioButton("circle");
-        selectionTypes.add(radioRect);
-        selectionTypes.add(radioCircle);
-        radioRect.setSelected(true);
-
-        JCheckBox onBorder = new JCheckBox("border only");
-
-        optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
-        optionsPanel.add(radioRect);
-        optionsPanel.add(radioCircle);
-        optionsPanel.add(onBorder);
-        
+        optionsPanel = new JPanel();       
         optionsPanel.add(new JLabel("Count"));
         optionsPanel.add(amountSlider);
     }

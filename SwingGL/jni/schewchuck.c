@@ -1,4 +1,4 @@
-#include "schewchuck.h"
+#include "schewchuk.h"
 
 double orient2dfast(double*, double*, double*);
 double orient2dexact(double*, double*, double*);

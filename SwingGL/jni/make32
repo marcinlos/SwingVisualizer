@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./make_header
+export ARCH=32
+make

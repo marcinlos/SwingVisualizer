@@ -3,7 +3,14 @@ package mlos.sgl.core;
 class Schewchuck {
 
     static {
-        System.loadLibrary("schewchuck");
+        String arch = System.getProperty("os.arch");
+        String libName = "schewchuck";
+        if (arch.contains("86")) {
+            libName += "32";
+        } else {
+            libName += "64";
+        }
+        System.loadLibrary(libName);
         init();
     }
 

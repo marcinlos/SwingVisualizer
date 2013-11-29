@@ -51,7 +51,6 @@ class DelaunayScene(s: String) extends AlgorithmScene(s) { self =>
     for (p <- ps) {
       addPoint(p)
     }
-    println(canvas.getObjects())
   }
 
 }
