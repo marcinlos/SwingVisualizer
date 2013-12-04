@@ -73,6 +73,8 @@ public class RandomPoints extends AbstractMode {
         optionsPanel = new JPanel();       
         optionsPanel.add(new JLabel("Count"));
         optionsPanel.add(amountSlider);
+        amountSlider.setPaintLabels(true);
+        amountSlider.setMajorTickSpacing(20);
     }
 
     @Override
